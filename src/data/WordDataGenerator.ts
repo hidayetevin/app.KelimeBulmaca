@@ -59,12 +59,12 @@ export class WordDataGenerator {
         let maxLength = 10; // Daha esnek
 
         switch (levelNumber) {
-            case 1: wordCount = 4; rows = 6; cols = 6; minLength = 3; break;
-            case 2: wordCount = 5; rows = 7; cols = 7; minLength = 3; break;
-            case 3: wordCount = 6; rows = 8; cols = 8; minLength = 4; break;
-            case 4: wordCount = 7; rows = 9; cols = 9; minLength = 4; break;
-            case 5: wordCount = 8; rows = 10; cols = 10; minLength = 5; break;
-            default: wordCount = 8; rows = 10; cols = 10; minLength = 5; break; // Level 5+ -> max
+            case 1: wordCount = 4; rows = 6; cols = 6; minLength = 3; maxLength = 6; break;
+            case 2: wordCount = 5; rows = 7; cols = 7; minLength = 3; maxLength = 7; break;
+            case 3: wordCount = 6; rows = 8; cols = 8; minLength = 4; maxLength = 8; break;
+            case 4: wordCount = 7; rows = 9; cols = 9; minLength = 4; maxLength = 9; break;
+            case 5: wordCount = 8; rows = 10; cols = 10; minLength = 5; maxLength = 10; break;
+            default: wordCount = 8; rows = 10; cols = 10; minLength = 5; maxLength = 10; break; // Level 5+ -> max
         }
 
         // Grid boyutunu biraz daha büyük verelim ki rahat yerleşsin
