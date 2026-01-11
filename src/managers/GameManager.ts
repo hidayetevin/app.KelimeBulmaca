@@ -180,7 +180,8 @@ class GameManager {
             gridSize: config.gridSize,
             levelNumber,
             categoryId,
-            categoryId
+            letters: [], // Placeholder for letters array
+            difficulty: 'easy' // Default
         };
     }
 
