@@ -109,8 +109,12 @@ export const Z_INDEX = {
 
 // ==================== OYUN MEKANIĞI SABITLERI ====================
 export const MAX_WRONG_ATTEMPTS_FOR_HINT = 3; // 3 yanlış denemeden sonra ipucu sor
-export const HINT_COST_STARS = 5; // İpucu için gereken yıldız
+export const HINT_COST_STARS = 5; // Game Mechanics
+export const HINT_COST = 50;
 export const CATEGORY_UNLOCK_REQUIRED_STARS = 20; // 3. kategori için gereken yıldız
+
+export const DAILY_REWARD_AMOUNT = 50;
+export const DAILY_REWARD_STREAK_BONUS = 10;
 
 // Günlük ödüller
 export const DAILY_REWARDS = [

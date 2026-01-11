@@ -1,4 +1,4 @@
-import { GameState, GameSettings, LevelConfiguration, DailyRewardData } from '@/types';
+import { GameState, GameSettings, LevelConfiguration } from '@/types';
 import StorageManager from './StorageManager';
 import AchievementManager from './AchievementManager';
 import WordDataGenerator from '@/data/WordDataGenerator';
@@ -144,7 +144,7 @@ class GameManager {
 
         // Play count artır
         const category = this.gameState.categories.find(c => c.id === categoryId);
-        const level = category?.levels.find(l => l.levelNumber === levelNumber);
+        const level = category?.levels.find((l: any) => l.levelNumber === levelNumber);
 
         if (level) {
             level.playCount++;
@@ -154,12 +154,33 @@ class GameManager {
         this.gameState.user.lastPlayedDate = new Date().toISOString();
         this.saveGame();
 
+        // Grid algoritmasını çalıştırarak kelime pozisyonlarını belirle
+        // Ancak henüz grid display yok, sadece data dönüyoruz.
+        // LevelConfiguration tipi WordDefinition[] istiyor olabilir veya string[]
+        // Types'a bakarsak: LevelConfiguration -> words: WordDefinition[]
+        // WordDataGenerator -> words: string[]
+        // Bu yüzden burada GridAlgorithm kullanarak kelimeleri yerleştirmeli ve WordDefinition üretmeliyiz.
+
+        // Şimdilik basitçe string[] -> WordDefinition[] dönüşümü yapalım (GridAlgorithm 16. adımda entegre edilecek)
+        // Veya types'ı güncelleyelim.
+        // Type definition'a bakmak lazım, eğer WordDefinition[] ise GridAlgorithm şart.
+        // Ancak burada basit mapper yapalım.
+
+        const wordsDef = config.words.map(w => ({
+            text: w,
+            direction: 0, // Placeholder
+            startPos: { row: 0, col: 0 }, // Placeholder
+            endPos: { row: 0, col: 0 },
+            isFound: false,
+            hintLettersShown: 0
+        }));
+
         return {
-            words: config.words,
+            words: wordsDef,
             gridSize: config.gridSize,
             levelNumber,
             categoryId,
-            targetStars: 3 // Sabit 3 yıldız max
+            targetStars: 3
         };
     }
 
