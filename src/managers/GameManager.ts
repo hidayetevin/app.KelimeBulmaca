@@ -181,7 +181,7 @@ class GameManager {
             levelNumber,
             categoryId,
             letters: [], // Placeholder for letters array
-            difficulty: 'easy' // Default
+            difficulty: 1 // Default difficulty (1: Easy)
         };
     }
 
