@@ -9,7 +9,7 @@ import Panel from '@/components/UI/Panel';
 import Toggle from '@/components/UI/Toggle';
 import Slider from '@/components/UI/Slider';
 import Button from '@/components/UI/Button';
-import { GameSettings } from '@/types';
+import { GameSettings } from '@/types/GameTypes'; // Specific import
 
 export default class SettingsScene extends Phaser.Scene {
     private panel!: Panel;
@@ -57,13 +57,13 @@ export default class SettingsScene extends Phaser.Scene {
         let yPos = startY;
 
         const gameState = GameManager.getGameState();
-        // Safe default settings if null
         const defaultSettings: GameSettings = {
-            sound: true,
-            vibration: true,
-            theme: 'light',
             language: 'tr',
-            notifications: true
+            darkMode: false,
+            soundEnabled: true,
+            soundVolume: 1.0,
+            vibrationEnabled: true,
+            showHints: true
         };
         const settings = gameState?.settings || defaultSettings;
 
@@ -82,7 +82,6 @@ export default class SettingsScene extends Phaser.Scene {
             style: 'secondary',
             onClick: async () => {
                 const newLang = currentLang === 'TR' ? 'en' : 'tr';
-                // LocalizationManager.setLanguage(newLang) logic placeholder
                 localStorage.setItem('language', newLang);
                 window.location.reload();
             }
@@ -97,10 +96,10 @@ export default class SettingsScene extends Phaser.Scene {
             scene: this,
             x: 100,
             y: yPos,
-            value: settings.sound,
+            value: settings.soundEnabled,
             onToggle: (val) => {
                 const current = GameManager.getSettings();
-                const newSettings = { ...current, sound: val };
+                const newSettings = { ...current, soundEnabled: val };
                 GameManager.updateSettings(newSettings);
                 if (val) AudioManager.enableSound(); else AudioManager.disableSound();
             }
@@ -116,8 +115,12 @@ export default class SettingsScene extends Phaser.Scene {
             x: 50,
             y: yPos + 35,
             width: 250,
-            value: AudioManager.getVolume(),
+            value: settings.soundVolume,
             onValueChange: (val) => {
+                const current = GameManager.getSettings();
+                const newSettings = { ...current, soundVolume: val };
+                // Debounce save? For now direct update.
+                GameManager.updateSettings(newSettings);
                 AudioManager.setVolume(val);
             }
         });
@@ -131,10 +134,10 @@ export default class SettingsScene extends Phaser.Scene {
             scene: this,
             x: 100,
             y: yPos,
-            value: settings.vibration,
+            value: settings.vibrationEnabled,
             onToggle: (val) => {
                 const current = GameManager.getSettings();
-                const newSettings = { ...current, vibration: val };
+                const newSettings = { ...current, vibrationEnabled: val };
                 GameManager.updateSettings(newSettings);
                 if (val) HapticManager.light();
             }
@@ -153,7 +156,7 @@ export default class SettingsScene extends Phaser.Scene {
             width: 260,
             onClick: () => {
                 if (confirm('Tüm ilerleme silinecek. Emin misiniz?')) {
-                    GameManager.resetGame(); // resetGame() method matches implementation
+                    GameManager.resetGame();
                     HapticManager.heavy();
                     this.scene.start(SCENES.PRELOADER);
                 }
@@ -163,9 +166,7 @@ export default class SettingsScene extends Phaser.Scene {
     }
 
     private createLabel(x: number, y: number, text: string) {
-        // Convert hex number to string with # prefix
         const colorStr = '#' + LIGHT_COLORS.TEXT_DARK.toString(16).padStart(6, '0');
-
         const label = this.add.text(x, y, text, {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '20px',

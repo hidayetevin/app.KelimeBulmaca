@@ -10,7 +10,6 @@ export default class AchievementScene extends Phaser.Scene {
     private panel!: Panel;
     private scrollContainer!: Phaser.GameObjects.Container;
     private minScrollY = 0;
-    // private maxScrollY = 0;
     private isDragging = false;
     private lastY = 0;
 

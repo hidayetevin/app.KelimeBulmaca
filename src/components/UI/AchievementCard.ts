@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import { LIGHT_COLORS } from '@/utils/colors';
 import { FONT_FAMILY_PRIMARY } from '@/utils/constants';
-import { Achievement } from '@/types';
+import { Achievement } from '@/types/AchievementTypes'; // Correct import
+import LocalizationManager from '@/managers/LocalizationManager';
 
 interface AchievementCardConfig {
     scene: Phaser.Scene;
@@ -49,7 +50,7 @@ export default class AchievementCard extends Phaser.GameObjects.Container {
         const iconContainer = this.scene.add.container(-w / 2 + 40, 0);
 
         const iconBg = this.scene.add.graphics();
-        iconBg.fillStyle(isUnlocked ? 0xFFF5F0 : 0xEDF2F7, 1); // Unlock: Light orange, Lock: Light gray
+        iconBg.fillStyle(isUnlocked ? 0xFFF5F0 : 0xEDF2F7, 1);
         iconBg.fillCircle(0, 0, 24);
         iconContainer.add(iconBg);
 
@@ -64,20 +65,27 @@ export default class AchievementCard extends Phaser.GameObjects.Container {
         // Text Content
         const textX = -w / 2 + 80;
 
+        // Localization logic
+        const lang = LocalizationManager.getCurrentLanguage(); // 'tr' | 'en'
+        const titleStr = this.achievement.name[lang];
+        const descStr = this.achievement.description[lang];
+
         // Title
-        const title = this.scene.add.text(textX, -20, this.achievement.title, {
+        const titleColor = isUnlocked ? '#' + this.colors.TEXT_DARK.toString(16).padStart(6, '0') : '#' + this.colors.TEXT_LIGHT.toString(16).padStart(6, '0');
+        const title = this.scene.add.text(textX, -20, titleStr, {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '18px',
-            color: isUnlocked ? this.colors.TEXT_DARK : this.colors.TEXT_LIGHT,
+            color: titleColor,
             fontStyle: 'bold'
         }).setOrigin(0, 0.5);
         this.add(title);
 
         // Description
-        const desc = this.scene.add.text(textX, 5, this.achievement.description, {
+        const descColor = '#' + this.colors.TEXT_LIGHT.toString(16).padStart(6, '0');
+        const desc = this.scene.add.text(textX, 5, descStr, {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '14px',
-            color: this.colors.TEXT_LIGHT,
+            color: descColor,
             wordWrap: { width: w - 100 }
         }).setOrigin(0, 0);
         this.add(desc);
@@ -89,7 +97,12 @@ export default class AchievementCard extends Phaser.GameObjects.Container {
             const barY = h / 2 - 20;
             const barX = textX;
 
-            const progress = Phaser.Math.Clamp(this.achievement.progress / this.achievement.targetValue, 0, 1);
+            // AchievementTypes has 'target' not 'targetValue' as per file view
+            // But we might have mixed it in previous edit. 
+            // File view of AchievementTypes.ts showed: name, description, progress, target.
+            // So used `target`.
+            const target = this.achievement.target || 1;
+            const progress = Phaser.Math.Clamp(this.achievement.progress / target, 0, 1);
 
             const track = this.scene.add.graphics();
             track.fillStyle(0xCBD5E0, 1);
@@ -104,31 +117,33 @@ export default class AchievementCard extends Phaser.GameObjects.Container {
             }
 
             // Text Progress
-            const progText = this.scene.add.text(w / 2 - 20, barY + 3, `${this.achievement.progress}/${this.achievement.targetValue}`, {
+            const progText = this.scene.add.text(w / 2 - 20, barY + 3, `${this.achievement.progress}/${target}`, {
                 fontFamily: FONT_FAMILY_PRIMARY,
                 fontSize: '10px',
-                color: this.colors.TEXT_LIGHT
+                color: descColor
             }).setOrigin(1, 0);
             this.add(progText);
         } else {
             // Reward Badge if unlocked
-            // or "Completed" text
+            const successColor = '#' + this.colors.SUCCESS.toString(16).padStart(6, '0');
             const completedText = this.scene.add.text(w / 2 - 20, h / 2 - 20, 'TAMAMLANDI', {
                 fontFamily: FONT_FAMILY_PRIMARY,
                 fontSize: '12px',
-                color: this.colors.SUCCESS,
+                color: successColor,
                 fontStyle: 'bold'
             }).setOrigin(1, 0.5);
             this.add(completedText);
         }
 
         // Reward Value Display
-        const rewardText = this.scene.add.text(w / 2 - 20, -h / 2 + 20, `+${this.achievement.reward} ⭐`, {
-            fontFamily: FONT_FAMILY_PRIMARY,
-            fontSize: '14px',
-            color: '#F6AD55', // Gold
-            fontStyle: 'bold'
-        }).setOrigin(1, 0.5);
-        this.add(rewardText);
+        if (this.achievement.reward) {
+            const rewardText = this.scene.add.text(w / 2 - 20, -h / 2 + 20, `+${this.achievement.reward} ⭐`, {
+                fontFamily: FONT_FAMILY_PRIMARY,
+                fontSize: '14px',
+                color: '#F6AD55', // Gold
+                fontStyle: 'bold'
+            }).setOrigin(1, 0.5);
+            this.add(rewardText);
+        }
     }
 }
