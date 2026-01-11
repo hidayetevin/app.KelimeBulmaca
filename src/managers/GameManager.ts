@@ -1,8 +1,8 @@
-import { GameState, GameSettings, LevelConfiguration, Direction, WordDefinition } from '@/types';
+import { GameState, GameSettings, LevelConfiguration, Direction, WordDefinition, LevelData } from '@/types';
 import StorageManager from './StorageManager';
 import AchievementManager from './AchievementManager';
 import WordDataGenerator from '@/data/WordDataGenerator';
-import { gridAlgorithm } from '@/utils/GridAlgorithm';
+import { gridAlgorithm } from '@/utils/gridAlgorithm';
 import { DAILY_REWARD_AMOUNT, DAILY_REWARD_STREAK_BONUS } from '@/utils/constants';
 
 /**
@@ -158,7 +158,7 @@ class GameManager {
 
         // Play count artır
         const category = this.gameState.categories.find(c => c.id === categoryId);
-        const level = category?.levels.find((l: any) => l.levelNumber === levelNumber);
+        const level = category?.levels.find((l: LevelData) => l.levelNumber === levelNumber);
 
         if (level) {
             level.playCount++;
@@ -180,8 +180,8 @@ class GameManager {
             gridSize: rawConfig.gridSize,
             levelNumber,
             categoryId,
-            letters: rawConfig.letters,
-            difficulty: rawConfig.difficulty,
+            letters: [], // No letters needed for Word Search
+            difficulty: 1, // Default
             grid: result.grid
         };
     }
@@ -244,7 +244,7 @@ class GameManager {
         if (!category) return 1;
 
         // Tamamlanmamış ilk level
-        const nextLevel = category.levels.find(l => !l.isCompleted);
+        const nextLevel = category.levels.find((l: LevelData) => !l.isCompleted);
         return nextLevel ? nextLevel.levelNumber : category.levels.length; // Hepsi bittiyse sonuncusu
     }
 

@@ -41,7 +41,6 @@ export default class GridTile extends Phaser.GameObjects.Container {
     }
 
     private createContent() {
-        const r = 8; // rounded radius
         const s = this.size;
 
         // Background
