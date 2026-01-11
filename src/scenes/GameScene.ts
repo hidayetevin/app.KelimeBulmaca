@@ -26,7 +26,7 @@ export default class GameScene extends Phaser.Scene {
     private startTile: GridTile | null = null;
 
     // UI
-    private wordListText!: Phaser.GameObjects.Text;
+    private wordListContainer!: Phaser.GameObjects.Container;
     private scoreText!: Phaser.GameObjects.Text;
     private levelText!: Phaser.GameObjects.Text;
 
@@ -122,12 +122,25 @@ export default class GameScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Score / Stars
-        this.scoreText = this.add.text(GAME_WIDTH - 60, headerH / 2, '0 ⭐️', {
+        this.scoreText = this.add.text(GAME_WIDTH - 160, headerH / 2, '0 ⭐️', {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '20px',
             color: '#F6AD55',
             fontStyle: 'bold'
         }).setOrigin(0.5);
+
+        // Hint Button (Top Right)
+        new Button({
+            scene: this,
+            x: GAME_WIDTH - 60,
+            y: headerH / 2,
+            text: '💡',
+            style: 'warning',
+            width: 45,
+            height: 45,
+            fontSize: 24,
+            onClick: () => this.useHint()
+        });
     }
 
     private createGrid() {
@@ -328,15 +341,8 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private createWordListDisplay() {
-        const y = GAME_HEIGHT * 0.85; // Lowered
-        this.wordListText = this.add.text(GAME_WIDTH / 2, y, '', {
-            fontFamily: FONT_FAMILY_PRIMARY,
-            fontSize: '20px',
-            color: '#4A5568',
-            align: 'center',
-            wordWrap: { width: GAME_WIDTH - 40 }
-        }).setOrigin(0.5, 0);
-
+        const y = GAME_HEIGHT * 0.85;
+        this.wordListContainer = this.add.container(GAME_WIDTH / 2, y);
         this.updateWordList();
     }
 
@@ -356,18 +362,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private createFooter() {
-        const y = GAME_HEIGHT - 60;
-
-        new Button({
-            scene: this,
-            x: GAME_WIDTH / 2,
-            y: y,
-            text: '💡 İPUCU',
-            style: 'secondary', // Changed from warning to secondary
-            width: 140,
-            height: 50,
-            onClick: () => this.useHint()
-        });
+        // Footer removed - hint button moved to header
     }
 
     private useHint() {
