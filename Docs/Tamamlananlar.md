@@ -230,6 +230,30 @@
   - Rastgele kelime seçimi (Shuffle).
   - Asenkron veri yükleme (fetch API).
 
+## ✅ ADIM 11: Achievement Manager
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **AchievementManager Oluşturuldu:**
+  - `src/managers/AchievementManager.ts` dosyası oluşturuldu.
+  - Singleton pattern.
+
+- **Temel Metodlar:**
+  - `checkAchievements(gameState)`: Tüm başarı kriterlerini kontrol eder ve açılanları döndürür.
+  - `unlockAchievement()`: Başarıyı açar, ödülü verir, ses ve titreşim efekti çalar.
+  - `updateProgress()`: Manuel ilerleme güncellemeleri için.
+
+- **Otomatik Kontroller:**
+  - `first_step`, `word_finder` (Oyun içi aksiyonlar)
+  - `star_collector` (Yıldız sayısı)
+  - `category_master`, `all_categories` (Kategori tamamlama)
+  - `streak` (Günlük giriş serileri)
+
+- **Entegrasyonlar:**
+  - AudioManager (Unlock sesi)
+  - HapticManager (Unlock titreşimi)
+  - StorageManager (State kaydı)
+
+
 
 
 
