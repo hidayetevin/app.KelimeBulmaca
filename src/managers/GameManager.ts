@@ -1,4 +1,4 @@
-import { GameState, GameSettings, LevelConfiguration } from '@/types';
+import { GameState, GameSettings, LevelConfiguration, Direction } from '@/types';
 import StorageManager from './StorageManager';
 import AchievementManager from './AchievementManager';
 import WordDataGenerator from '@/data/WordDataGenerator';
@@ -168,7 +168,7 @@ class GameManager {
 
         const wordsDef = config.words.map(w => ({
             text: w,
-            direction: 0, // Placeholder
+            direction: Direction.HORIZONTAL, // Placeholder: Direction enum import edilmeli
             startPos: { row: 0, col: 0 }, // Placeholder
             endPos: { row: 0, col: 0 },
             isFound: false,
