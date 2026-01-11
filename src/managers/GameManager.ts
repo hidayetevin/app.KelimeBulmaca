@@ -294,11 +294,52 @@ class GameManager {
             // Ardışık gün, streak devam ediyor
             // Bu sadece played date update'inde artırılmalı, burası sadece kontrol
         } else if (diffDays > 1) {
-            // Streak bozuldu
             this.gameState.user.streakDays = 0;
             this.gameState.dailyReward.currentStreak = 0;
         }
     }
+
+    /**
+     * Günlük ödül alınabilir mi?
+     */
+    public canClaimDailyReward(): boolean {
+        if (!this.gameState) return false;
+
+        const lastClaim = new Date(this.gameState.dailyReward.lastClaimDate);
+        const now = new Date();
+
+        // Basit gün kontrolü: Tarihler farklı günse true
+        return lastClaim.getDate() !== now.getDate() ||
+            lastClaim.getMonth() !== now.getMonth() ||
+            lastClaim.getFullYear() !== now.getFullYear();
+    }
+
+    /**
+     * Günlük ödülü alır
+     */
+    public claimDailyReward(): boolean {
+        if (!this.canClaimDailyReward() || !this.gameState) return false;
+
+        // Ödül ver
+        const streak = this.gameState.dailyReward.currentStreak;
+        let reward = DAILY_REWARD_AMOUNT;
+
+        // Streak bonus (her 7 günde büyük ödül mantığı veya artan)
+        // Burada basit: streak * 10 max 50 gibi
+        // Veya sabit + streak * 5
+        reward += Math.min(streak * DAILY_REWARD_STREAK_BONUS, 100);
+
+        this.addStars(reward);
+
+        // State güncelle
+        this.gameState.dailyReward.lastClaimDate = new Date().toISOString();
+        this.gameState.dailyReward.currentStreak++;
+        this.gameState.user.streakDays++; // User streak ile daily streak senkronize olmalı
+
+        this.saveGame();
+        return true;
+    }
+}
 }
 
 export default GameManager.getInstance(); // Export as singleton instance explicitly
