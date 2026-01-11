@@ -180,7 +180,7 @@ class GameManager {
             gridSize: config.gridSize,
             levelNumber,
             categoryId,
-            targetStars: 3
+            categoryId
         };
     }
 
