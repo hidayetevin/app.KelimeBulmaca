@@ -3,7 +3,6 @@ import { SCENES, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY } from '@/utils/co
 import { LIGHT_COLORS } from '@/utils/colors';
 import GameManager from '@/managers/GameManager';
 import LocalizationManager from '@/managers/LocalizationManager';
-import AdManager from '@/managers/AdManager';
 import AudioManager from '@/managers/AudioManager';
 import HapticManager from '@/managers/HapticManager';
 import Panel from '@/components/UI/Panel';
@@ -108,9 +107,10 @@ export default class SettingsScene extends Phaser.Scene {
             scene: this,
             x: 100,
             y: yPos,
-            value: settings.sound,
+            value: settings?.sound ?? true,
             onToggle: (val) => {
-                const newSettings = { ...GameManager.getGameState().settings, sound: val };
+                const currentSettings = GameManager.getGameState()?.settings || { sound: true, vibration: true, theme: 'light', language: 'tr' };
+                const newSettings = { ...currentSettings, sound: val };
                 GameManager.updateSettings(newSettings);
                 if (val) AudioManager.enableSound(); else AudioManager.disableSound();
             }

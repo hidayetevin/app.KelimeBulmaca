@@ -13,8 +13,8 @@ interface ToggleConfig {
 
 export default class Toggle extends Phaser.GameObjects.Container {
     private isOn: boolean;
-    private track: Phaser.GameObjects.Graphics;
-    private thumb: Phaser.GameObjects.Graphics;
+    private track!: Phaser.GameObjects.Graphics;
+    private thumb!: Phaser.GameObjects.Graphics;
     private thumbXOff = 0;
     private thumbXOn = 0;
     private config: ToggleConfig;

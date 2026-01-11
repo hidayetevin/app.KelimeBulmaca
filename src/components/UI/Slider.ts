@@ -11,8 +11,8 @@ interface SliderConfig {
 }
 
 export default class Slider extends Phaser.GameObjects.Container {
-    private track: Phaser.GameObjects.Graphics;
-    private thumb: Phaser.GameObjects.Graphics;
+    private track!: Phaser.GameObjects.Graphics;
+    private thumb!: Phaser.GameObjects.Graphics;
     private value: number;
     private config: SliderConfig;
     private colors = LIGHT_COLORS;
@@ -70,7 +70,7 @@ export default class Slider extends Phaser.GameObjects.Container {
             this.scene.tweens.add({ targets: this.thumb, scale: 1.2, duration: 100 });
         });
 
-        this.thumb.on('drag', (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+        this.thumb.on('drag', (pointer: Phaser.Input.Pointer) => {
             // DragX is local? No, it's relative to container if container used? 
             // Phaser container drag is tricky. Better to use pointer worldX.
             this.calculateValueFromX(pointer.worldX);
@@ -120,7 +120,7 @@ export default class Slider extends Phaser.GameObjects.Container {
         // Simple approach: 
         // localX = worldX - this.x (if parent is scene root and no cam scroll)
         // More robust:
-        const transformMatrix = this.getWorldTransformMatrix();
+
         // Since getLocalPoint is not easily available on Container in straightforward way without transform matrix,
         // let's assume root placement.
 
