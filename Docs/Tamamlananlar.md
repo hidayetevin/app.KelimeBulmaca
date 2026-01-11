@@ -206,6 +206,31 @@
   - Timeout mekanizması (Sonsuz döngü koruması).
   - Uzun kelime önceliği ile optimize edilmiş yerleşim.
 
+## ✅ ADIM 10: Word Data Generator
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **JSON Veri Dosyaları Oluşturuldu:**
+  - `public/data/categories/animals.json`: 50 hayvan ismi.
+  - `public/data/categories/fruits.json`: 50 meyve ismi.
+  - `public/data/categories/cities.json`: 81 il + ekstra şehirler.
+
+- **WordDataGenerator Oluşturuldu:**
+  - `src/data/WordDataGenerator.ts` dosyası oluşturuldu.
+  - Dinamik seviye zorluğu ayarlama (Level Scaling).
+
+- **Seviye Konfigürasyonu:**
+  - **Level 1:** 4 kelime, 6x6 grid.
+  - **Level 2:** 5 kelime, 7x7 grid.
+  - **Level 3:** 6 kelime, 8x8 grid.
+  - **Level 4:** 7 kelime, 9x9 grid.
+  - **Level 5:** 8 kelime, 10x10 grid.
+
+- **Özellikler:**
+  - Kelime uzunluğu filtresi (min/max length).
+  - Rastgele kelime seçimi (Shuffle).
+  - Asenkron veri yükleme (fetch API).
+
+
 
 
 
