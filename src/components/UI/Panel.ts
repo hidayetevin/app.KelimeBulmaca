@@ -15,9 +15,9 @@ interface PanelConfig {
 }
 
 export default class Panel extends Phaser.GameObjects.Container {
-    private bg: Phaser.GameObjects.Graphics;
+    private bg!: Phaser.GameObjects.Graphics;
     private titleText?: Phaser.GameObjects.Text;
-    private closeBtn?: Phaser.GameObjects.Container;
+
     private backdrop?: Phaser.GameObjects.Rectangle;
 
     private config: PanelConfig;
@@ -126,7 +126,7 @@ export default class Panel extends Phaser.GameObjects.Container {
 
         btn.add(hitArea);
         this.add(btn);
-        this.closeBtn = btn;
+        // this.closeBtn = btn;
     }
 
     public addContent(gameObject: Phaser.GameObjects.GameObject) {
