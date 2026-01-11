@@ -397,6 +397,17 @@
   - **Progress Sıfırlama:** Onaylı sıfırlama seçeneği (Danger zone).
   - **Kalıcılık:** Ayarlar `GameManager` üzerinden `localStorage`'a kaydedilir.
 
+## ✅ ADIM 21: Achievement Scene
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **Achievement Card:** `src/components/UI/AchievementCard.ts`
+- **Achievement Scene:** `src/scenes/AchievementScene.ts`
+- **Özellikler:**
+  - **Scrollable List:** Başarıların kaydırılabilir listesi.
+  - **Durum Görselleştirme:** Kilitli/Açık durumlarına göre renk ve ikon değişimi.
+  - **Rewards:** Kazanılan yıldızların gösterimi.
+
+
 
 
 
