@@ -17,8 +17,6 @@ class AdManager {
     private AdMob: any = null;
     private BannerAdSize: any = null;
     private BannerAdPosition: any = null;
-    private AdMobRewardItem: any = null;
-    private AdMobAdOptions: any = null;
 
     private constructor() {
         this.checkAdMobAvailability();
