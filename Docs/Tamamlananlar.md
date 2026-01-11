@@ -130,3 +130,33 @@
   - Volume clamping (0-1 aralığında).
   - Error handling ile güvenli çalışma.
 
+## ✅ ADIM 7: Haptic Manager
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **HapticManager Oluşturuldu:**
+  - `src/managers/HapticManager.ts` dosyası oluşturuldu.
+  - **Singleton Pattern** ile tasarlandı.
+
+- **Dual API Desteği:**
+  - **Mobil:** Capacitor Haptics plugin kullanır.
+  - **Web:** Vibration API fallback.
+  - Otomatik platform algılama.
+
+- **Temel Metodlar:**
+  - `init()`: Async başlatma, Capacitor kontrolü.
+  - `light()`, `medium()`, `heavy()`: Farklı şiddetlerde titreşim.
+  - `success()`, `warning()`, `error()`: Feedback tipleri.
+  - `isHapticEnabled()`: Durum kontrolü.
+  - `toggle()`, `enable()`, `disable()`: Kontrol metodları.
+
+- **Kolaylık Metodları (8 adet):**
+  - `onLetterSelect()`, `onWordCorrect()`, `onWordWrong()`
+  - `onLevelComplete()`, `onButtonClick()`, `onHintShow()`
+  - `onUnlock()`, `onAchievementUnlock()`
+
+- **Özellikler:**
+  - Capacitor mevcut değilse Web API'ye otomatik geçiş.
+  - Farklı titreşim pattern'leri (tekli, çoklu).
+  - Error handling (sessizce başarısız olur).
+
+
