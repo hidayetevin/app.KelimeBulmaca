@@ -1,18 +1,23 @@
 import Phaser from 'phaser';
+import { SCENES } from '@/utils/constants';
 
 export default class BootScene extends Phaser.Scene {
     constructor() {
-        super('BootScene');
+        super(SCENES.BOOT);
     }
 
     preload() {
-        // Logo ve loading bar gibi temel assetler burada yüklenecek
-        // this.load.image('logo', 'assets/images/logo.png');
+        // Splash screen veya logo için asset yükle
+        // Şimdilik sadece text tabanlı splash olacağı için gerek yok
+        // Ama loading bar için basit bir beyaz kutu üretebiliriz texture olarak
+        const graphics = this.make.graphics({ x: 0, y: 0, add: false });
+        graphics.fillStyle(0xffffff);
+        graphics.fillRect(0, 0, 32, 32);
+        graphics.generateTexture('white_box', 32, 32);
     }
 
     create() {
         console.log('BootScene started');
-        // Preloader sahnesine geçiş
-        this.scene.start('PreloaderScene');
+        this.scene.start(SCENES.PRELOADER);
     }
 }

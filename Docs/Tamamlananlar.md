@@ -295,6 +295,24 @@
   - **Test Mode:** Test ID'leri ile güvenli geliştirme modu aktif.
   - **Otomatik Ödül:** Reklam başarıyla izlenince GameManager.addStars() çağrılır.
 
+## ✅ ADIM 14: Boot & Preloader Scenes
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **BootScene:**
+  - Temel sahne yapılandırması.
+  - Preloader'a hızlı geçiş.
+
+- **PreloaderScene:**
+  - **Asset Loading:** `constants.ts` içindeki tüm image/audio/json dosyaları yükleniyor.
+  - **Error Handling:** Eksik assetler için `loaderror` dinleyicisi ile oyunun kilitlenmesi önlendi.
+  - **Manager Initialization:**
+    - `LocalizationManager` (Dil yükleme)
+    - `AdManager` (Plugin init)
+    - `GameManager` (State load)
+  - **Loading UI:** Modern loading bar, logo text, percentage göstergesi.
+  - **Auto Navigation:** Yükleme bitince `DailyReward` veya `MainMenu` sahnesine yönlendirme mantığı.
+
+
 
 
 
