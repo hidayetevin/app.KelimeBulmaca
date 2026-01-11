@@ -383,6 +383,21 @@
   - **Entegrasyon:** `MainMenuScene` içinde kullanıldı.
   - **Görsel:** Altın rengi metin ve yıldız ikonu.
 
+## ✅ ADIM 20: Settings Scene
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **Yeni Componentler:**
+  - `src/components/UI/Toggle.ts` (Switch)
+  - `src/components/UI/Slider.ts` (Volume Control)
+  - `src/scenes/SettingsScene.ts`
+
+- **Özellikler:**
+  - **Dil Değiştirme:** TR/EN geçişi ve anlık arayüz güncelleme.
+  - **Ses Kontrolü:** Slider ile müzik/efekt ses seviyesi ayarı.
+  - **Progress Sıfırlama:** Onaylı sıfırlama seçeneği (Danger zone).
+  - **Kalıcılık:** Ayarlar `GameManager` üzerinden `localStorage`'a kaydedilir.
+
+
 
 
 
