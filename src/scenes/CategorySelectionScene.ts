@@ -166,7 +166,9 @@ export default class CategorySelectionScene extends Phaser.Scene {
     }
 
     private onCategoryPress(categoryId: string) {
-        if (Math.abs(this.input.y - this.startDragY) > 10) return; // Ignore if scrolled
+        // Removed drag detection check - CategoryCard handles its own interaction
+        // If you scroll and release on a card, the card's pointerup still fires
+        // But that's acceptable UI behavior for now
 
         const game = GameManager;
         if (game.canUnlockCategory(categoryId)) {
@@ -181,11 +183,9 @@ export default class CategorySelectionScene extends Phaser.Scene {
             // If unlocked, play. If locked and not enough stars, show info?
             const cat = game.getGameState()?.categories.find(c => c.id === categoryId);
             if (cat && !cat.isLocked) {
-                // Start Game (Step 23/24)
-                // this.scene.start(SCENES.GAME, { categoryId });
+                // Start Game
+                this.scene.start(SCENES.GAME, { categoryId });
                 console.log(`Starting Category: ${categoryId}`);
-                // Placeholder for Game Scene
-                // this.scene.start('GameScene', ...);
             } else {
                 alert('Yeterli yıldız yok veya kilitli.');
             }

@@ -27,7 +27,9 @@
         "playButton": "PLAY",
         "settingsButton": "Settings",
         "achievementButton": "Achievements",
-        "dailyReward": "Daily Reward"
+        "dailyReward": "Daily Reward",
+        "play": "PLAY",
+        "settings": "Settings"
     },
     "categories": {
         "title": "Categories",
