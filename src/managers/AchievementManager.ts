@@ -1,4 +1,4 @@
-import { Achievement, AchievementCategory, GameState } from '@/types';
+import { Achievement, GameState } from '@/types';
 import StorageManager from './StorageManager';
 import AudioManager from './AudioManager';
 import HapticManager from './HapticManager';
@@ -81,7 +81,7 @@ class AchievementManager {
                 case 'category_master':
                     // Bir kategorinin tüm seviyelerini tamamla
                     const completedCategories = gameState.categories.filter(c =>
-                        c.levels.every(l => l.isCompleted)
+                        c.levels.every((l: any) => l.isCompleted)
                     ).length;
                     currentProgress = completedCategories;
                     achievement.progress = Math.min(currentProgress, achievement.target);
@@ -91,8 +91,8 @@ class AchievementManager {
                 case 'all_categories':
                     // Tüm kategorileri tamamla
                     const allCompleted = gameState.categories.length > 0 &&
-                        gameState.categories.every(c => c.levels.every(l => l.isCompleted));
-                    currentProgress = allCompleted ? achievement.target : gameState.categories.filter(c => c.levels.every(l => l.isCompleted)).length;
+                        gameState.categories.every(c => c.levels.every((l: any) => l.isCompleted));
+                    currentProgress = allCompleted ? achievement.target : gameState.categories.filter(c => c.levels.every((l: any) => l.isCompleted)).length;
                     achievement.progress = currentProgress;
                     isConditionMet = allCompleted;
                     break;
