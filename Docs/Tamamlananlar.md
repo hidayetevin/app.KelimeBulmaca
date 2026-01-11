@@ -10,8 +10,8 @@
   - `index.html` oluşturuldu.
 
 - **Dosya Sistemi:**
-  - `src/` altında `scenes`, `components`, `managers`, `types`, `utils`, `data` klasörleri planlandı.
-  - `public/` klasör yapısı hazırlandı.
+  - `src/` altında `scenes`, `components`, `managers`, `types`, `utils`, `data` klasörleri oluşturuldu.
+  - `public/` klasör yapısı tam olarak hazırlandı (assets/images/backgrounds, ui, icons, audio/sfx, fonts, locales).
 
 - **Temel Oyun Dosyaları:**
   - `src/config.ts`: Oyunun temel yapılandırması (Boyut, Scale modu, Arka plan) eklendi.
@@ -30,3 +30,22 @@
   - `src/types/CategoryTypes.ts`: Kategori, seviye, grid ve kelime yapıları tanımlandı. `Direction` enum'ı oluşturuldu.
   - `src/types/AchievementTypes.ts`: Başarı sistemi için gerekli interfaceler ve `AchievementCategory` enum'ı eklendi.
   - `src/types/index.ts`: Tüm tipler merkezi bir noktadan export edildi.
+
+## ✅ ADIM 3: Renk Sistemi ve Sabitler
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **Renk Sistemi:**
+  - `src/utils/colors.ts` oluşturuldu.
+  - Light mode renk paleti tanımlandı (Background: #F5F7FA, Primary: #FFFFFF, Accent: #6C63FF).
+  - Dark mode renk paleti tanımlandı (Background: #0F172A, Primary: #1E293B, Accent: #E94560).
+  - Renk yardımcı fonksiyonları eklendi: `hexToNumber`, `numberToHex`, `rgbToNumber`, `colorWithAlpha`, `blendColors`, `darkenColor`, `lightenColor`.
+
+- **Oyun Sabitleri:**
+  - `src/utils/constants.ts` oluşturuldu.
+  - Grid ve letter circle boyut sabitleri eklendi.
+  - Animasyon süreleri tanımlandı.
+  - Asset dosya yolları (ses, görsel) belirlendi.
+  - Font ayarları yapılandırıldı.
+  - Z-index değerleri hiyerarşik olarak tanımlandı.
+  - Oyun mekaniği sabitleri (ipucu maliyeti, günlük ödüller, reklam cooldown) eklendi.
+  - Scene isimleri sabit olarak tanımlandı.
