@@ -15,11 +15,11 @@ export default class StarDisplay extends Phaser.GameObjects.Container {
     private countText: Phaser.GameObjects.Text;
     private displayedValue: number;
     private targetValue: number;
-    private config: StarDisplayConfig;
+    // private config: StarDisplayConfig;
 
     constructor(config: StarDisplayConfig) {
         super(config.scene, config.x, config.y);
-        this.config = config;
+        // this.config = config;
 
         this.displayedValue = config.initialValue || 0;
         this.targetValue = this.displayedValue;
@@ -64,7 +64,7 @@ export default class StarDisplay extends Phaser.GameObjects.Container {
                 to: this.targetValue,
                 duration: 500,
                 onUpdate: (tween) => {
-                    const current = Math.floor(tween.getValue());
+                    const current = Math.floor(tween.getValue() || 0);
                     this.countText.setText(current.toString());
                 },
                 onComplete: () => {

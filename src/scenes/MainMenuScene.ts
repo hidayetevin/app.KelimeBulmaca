@@ -55,24 +55,15 @@ export default class MainMenuScene extends Phaser.Scene {
         });
 
         // 3. Star Display
-        const starContainer = this.add.container(centerX, 250);
-
-        let starIcon: Phaser.GameObjects.GameObject;
-        if (this.textures.exists('star_filled')) {
-            starIcon = this.add.image(-40, 0, 'star_filled').setScale(0.8);
-        } else {
-            starIcon = this.add.text(-40, 0, '⭐', { fontSize: '32px' }).setOrigin(0.5);
-        }
-
-        const totalStars = GameManager.getGameState()?.user.totalStars || 0;
-        const starText = this.add.text(0, 0, totalStars.toString(), {
-            fontFamily: FONT_FAMILY_PRIMARY,
-            fontSize: '32px',
-            color: '#F6AD55', // colors.WARNING (Gold)
-            fontStyle: 'bold'
-        }).setOrigin(0, 0.5); // Iconun sağına
-
-        starContainer.add([starIcon, starText]);
+        const starDisplay = new StarDisplay({
+            scene: this,
+            x: centerX,
+            y: 250,
+            initialValue: GameManager.getGameState()?.user.totalStars || 0
+        });
+        // Center adjustment: icon is -40, text starts at 0. Visual center is approx -20.
+        // We shift it slightly right to make it look centered.
+        starDisplay.setX(centerX + 20);
 
         // 4. Buttons
 
