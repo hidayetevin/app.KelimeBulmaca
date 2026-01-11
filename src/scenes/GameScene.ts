@@ -59,7 +59,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private async startLevelSequence(loadingText: Phaser.GameObjects.Text) {
-        const game = GameManager.getInstance();
+        const game = GameManager; // Already an instance
         const levelNum = game.getCurrentLevel(this.categoryId);
 
         try {
