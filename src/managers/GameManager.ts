@@ -1,4 +1,4 @@
-import { GameState, GameSettings, LevelConfiguration, Direction } from '@/types';
+import { GameState, GameSettings, LevelConfiguration, Direction, WordDefinition } from '@/types';
 import StorageManager from './StorageManager';
 import AchievementManager from './AchievementManager';
 import WordDataGenerator from '@/data/WordDataGenerator';
@@ -73,6 +73,19 @@ class GameManager {
         return this.gameState;
     }
 
+    // --- AYARLAR ---
+
+    public getSettings(): GameSettings {
+        if (!this.gameState) return { language: 'tr', darkMode: false, soundEnabled: true, soundVolume: 1, vibrationEnabled: true, showHints: true };
+        return this.gameState.settings;
+    }
+
+    public updateSettings(settings: GameSettings): void {
+        if (!this.gameState) return;
+        this.gameState.settings = settings;
+        this.saveGame();
+    }
+
     // --- STAR İŞLEMLERİ ---
 
     /**
@@ -141,7 +154,7 @@ class GameManager {
         await WordDataGenerator.loadCategoryWords(categoryId);
 
         // Level konfigürasyonunu oluştur
-        const config = WordDataGenerator.getLevelConfiguration(categoryId, levelNumber);
+        const rawConfig = WordDataGenerator.getLevelConfiguration(categoryId, levelNumber);
 
         // Play count artır
         const category = this.gameState.categories.find(c => c.id === categoryId);
@@ -155,34 +168,21 @@ class GameManager {
         this.gameState.user.lastPlayedDate = new Date().toISOString();
         this.saveGame();
 
-        // Grid algoritmasını çalıştırarak kelime pozisyonlarını belirle
-        // Ancak henüz grid display yok, sadece data dönüyoruz.
-        // LevelConfiguration tipi WordDefinition[] istiyor olabilir veya string[]
-        // Types'a bakarsak: LevelConfiguration -> words: WordDefinition[]
-        // WordDataGenerator -> words: string[]
-        // Bu yüzden burada GridAlgorithm kullanarak kelimeleri yerleştirmeli ve WordDefinition üretmeliyiz.
+        // Grid oluştur
+        const result = gridAlgorithm.generateGrid(rawConfig.words, rawConfig.gridSize);
 
-        // Şimdilik basitçe string[] -> WordDefinition[] dönüşümü yapalım (GridAlgorithm 16. adımda entegre edilecek)
-        // Veya types'ı güncelleyelim.
-        // Type definition'a bakmak lazım, eğer WordDefinition[] ise GridAlgorithm şart.
-        // Ancak burada basit mapper yapalım.
-
-        const wordsDef = config.words.map(w => ({
-            text: w,
-            direction: Direction.HORIZONTAL, // Placeholder: Direction enum import edilmeli
-            startPos: { row: 0, col: 0 }, // Placeholder
-            endPos: { row: 0, col: 0 },
-            isFound: false,
-            hintLettersShown: 0
-        }));
+        if (!result.success) {
+            console.warn('Grid generation failed, retrying or fallback');
+        }
 
         return {
-            words: wordsDef,
-            gridSize: config.gridSize,
+            words: result.placedWords, // WordDefinition[] with positions
+            gridSize: rawConfig.gridSize,
             levelNumber,
             categoryId,
-            letters: [], // Placeholder for letters array
-            difficulty: 1 // Default difficulty (1: Easy)
+            letters: rawConfig.letters,
+            difficulty: rawConfig.difficulty,
+            grid: result.grid
         };
     }
 
@@ -228,8 +228,7 @@ class GameManager {
         // Update play time
         this.gameState.user.totalPlayTime += timeSeconds;
 
-        // Sonraki leveli aç (Eğer dinamik level açma varsa, şu an hepsi açık varsayılıyor defaultState içinde)
-        // Ancak createDefaultLevels içinde isCompleted false, sadece levelNumber var, kilit mekanizması level bazlı yok, sequential oynanış var.
+        // Unlock next level (if needed, but assuming sequential unlock by default or static levels)
 
         this.saveGame();
         this.checkAchievements();
@@ -299,60 +298,7 @@ class GameManager {
             this.gameState.user.streakDays = 0;
             this.gameState.dailyReward.currentStreak = 0;
         }
-
-        // Streak artırma işlemi aslında günlük ödül alındığında veya ilk oyunda yapılmalı.
-        // Basitlik için oyun her açıldığında diffDays >= 1 ise daily reward claimable yapılır.
-    }
-
-    public canClaimDailyReward(): boolean {
-        if (!this.gameState) return false;
-
-        const lastClaimed = this.gameState.dailyReward.lastClaimedDate
-            ? new Date(this.gameState.dailyReward.lastClaimedDate)
-            : null;
-
-        if (!lastClaimed) return true; // Hiç almadı
-
-        const now = new Date();
-        // Aynı gün mü kontrolü
-        return now.toDateString() !== lastClaimed.toDateString();
-    }
-
-    public claimDailyReward(): number {
-        if (!this.gameState || !this.canClaimDailyReward()) return 0;
-
-        // Streak artır
-        this.gameState.dailyReward.currentStreak++;
-        this.gameState.user.streakDays = this.gameState.dailyReward.currentStreak;
-
-        // Ödül hesapla (Base + Streak Bonus)
-        let reward = DAILY_REWARD_AMOUNT;
-        if (this.gameState.dailyReward.currentStreak > 1) {
-            reward += (this.gameState.dailyReward.currentStreak - 1) * DAILY_REWARD_STREAK_BONUS;
-        }
-
-        this.gameState.user.totalStars += reward;
-        this.gameState.dailyReward.totalClaimed++;
-        this.gameState.dailyReward.lastClaimedDate = new Date().toISOString();
-
-        this.saveGame();
-        this.checkAchievements(); // Streak achievement kontrolü
-
-        return reward;
-    }
-
-    // --- SETTINGS ---
-
-    public getSettings(): GameSettings {
-        return this.gameState?.settings || StorageManager.getDefaultGameState().settings;
-    }
-
-    public updateSettings(newSettings: Partial<GameSettings>): void {
-        if (!this.gameState) return;
-
-        this.gameState.settings = { ...this.gameState.settings, ...newSettings };
-        this.saveGame();
     }
 }
 
-export default GameManager.getInstance();
+export default GameManager.getInstance(); // Export as singleton instance explicitly
