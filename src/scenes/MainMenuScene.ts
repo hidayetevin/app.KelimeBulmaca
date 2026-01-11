@@ -61,8 +61,6 @@ export default class MainMenuScene extends Phaser.Scene {
             y: 250,
             initialValue: GameManager.getGameState()?.user.totalStars || 0
         });
-        // Center adjustment: icon is -40, text starts at 0. Visual center is approx -20.
-        // We shift it slightly right to make it look centered.
         starDisplay.setX(centerX + 20);
 
         // 4. Buttons
@@ -75,8 +73,7 @@ export default class MainMenuScene extends Phaser.Scene {
             text: LocalizationManager.t('mainMenu.achievements', 'BAŞARILAR'),
             style: 'secondary',
             onClick: () => {
-                // this.scene.start(SCENES.ACHIEVEMENT);
-                console.log('Go to Achievements');
+                this.scene.start(SCENES.ACHIEVEMENT);
             }
         });
 
@@ -91,7 +88,9 @@ export default class MainMenuScene extends Phaser.Scene {
             height: 70,
             fontSize: 28,
             onClick: () => {
-                this.scene.start(SCENES.CATEGORY_SELECTION);
+                // Next Step: Category Selection
+                // this.scene.start(SCENES.CATEGORY_SELECTION);
+                console.log('Category Selection step coming soon...');
             }
         });
 
@@ -103,8 +102,7 @@ export default class MainMenuScene extends Phaser.Scene {
             text: LocalizationManager.t('mainMenu.settings', 'AYARLAR'),
             style: 'secondary',
             onClick: () => {
-                // this.scene.start(SCENES.SETTINGS);
-                console.log('Go to Settings');
+                this.scene.start(SCENES.SETTINGS);
             }
         });
 
