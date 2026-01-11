@@ -305,7 +305,7 @@ class GameManager {
     public canClaimDailyReward(): boolean {
         if (!this.gameState) return false;
 
-        const lastClaim = new Date(this.gameState.dailyReward.lastClaimDate);
+        const lastClaim = new Date(this.gameState.dailyReward.lastClaimedDate);
         const now = new Date();
 
         // Basit gün kontrolü: Tarihler farklı günse true
@@ -332,14 +332,13 @@ class GameManager {
         this.addStars(reward);
 
         // State güncelle
-        this.gameState.dailyReward.lastClaimDate = new Date().toISOString();
+        this.gameState.dailyReward.lastClaimedDate = new Date().toISOString();
         this.gameState.dailyReward.currentStreak++;
         this.gameState.user.streakDays++; // User streak ile daily streak senkronize olmalı
 
         this.saveGame();
         return true;
     }
-}
 }
 
 export default GameManager.getInstance(); // Export as singleton instance explicitly
