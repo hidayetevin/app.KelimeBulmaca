@@ -83,6 +83,9 @@ export default class GameScene extends Phaser.Scene {
         // Grid Area
         this.createGrid();
 
+        // Score Display (Between Grid and Word List)
+        this.createScoreDisplay();
+
         // Word List (Bottom)
         this.createWordListDisplay();
 
@@ -113,19 +116,11 @@ export default class GameScene extends Phaser.Scene {
             }
         });
 
-        // Level Title
+        // Level Title (Left-Center)
         this.levelText = this.add.text(GAME_WIDTH / 2, headerH / 2, `SEVİYE ${this.currentLevelConfig.levelNumber}`, {
             fontFamily: FONT_FAMILY_PRIMARY,
-            fontSize: '24px',
+            fontSize: '22px',
             color: '#2D3748',
-            fontStyle: 'bold'
-        }).setOrigin(0.5);
-
-        // Score / Stars
-        this.scoreText = this.add.text(GAME_WIDTH - 160, headerH / 2, '0 ⭐️', {
-            fontFamily: FONT_FAMILY_PRIMARY,
-            fontSize: '20px',
-            color: '#F6AD55',
             fontStyle: 'bold'
         }).setOrigin(0.5);
 
@@ -135,7 +130,7 @@ export default class GameScene extends Phaser.Scene {
             x: GAME_WIDTH - 60,
             y: headerH / 2,
             text: '💡',
-            style: 'warning',
+            style: 'secondary',
             width: 45,
             height: 45,
             fontSize: 24,
@@ -311,7 +306,7 @@ export default class GameScene extends Phaser.Scene {
     private checkWord() {
         const word = this.selectedTiles.map(t => t.letter).join('').toLocaleLowerCase('tr');
         const config = this.currentLevelConfig;
-        const foundDef = config.words.find(w => w.text.toLocaleLowerCase('tr') === word && !w.isFound);
+        const foundDef = config.words.find((w: WordDefinition) => w.text.toLocaleLowerCase('tr') === word && !w.isFound);
 
         if (foundDef) {
             this.onWordFound(foundDef);
@@ -340,6 +335,16 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
+    private createScoreDisplay() {
+        const y = GAME_HEIGHT * 0.72; // Between grid and word list
+        this.scoreText = this.add.text(GAME_WIDTH / 2, y, '0 ⭐️', {
+            fontFamily: FONT_FAMILY_PRIMARY,
+            fontSize: '22px',
+            color: '#F6AD55',
+            fontStyle: 'bold'
+        }).setOrigin(0.5);
+    }
+
     private createWordListDisplay() {
         const y = GAME_HEIGHT * 0.85;
         this.wordListContainer = this.add.container(GAME_WIDTH / 2, y);
@@ -349,15 +354,23 @@ export default class GameScene extends Phaser.Scene {
     private updateWordList() {
         const words = this.currentLevelConfig.words;
 
-        // Use Phaser's text styling with color tags
-        this.wordListText.setText('');
+        // Clear previous words
+        this.wordListContainer.removeAll(true);
 
-        words.forEach((w, index) => {
-            const prefix = w.isFound ? '✅ ' : '';
-            const color = w.isFound ? '#22C55E' : '#4A5568'; // Green for found, gray for not found
-            const separator = index < words.length - 1 ? '   ' : '';
+        let offsetX = 0;
+        const startX = -(words.length * 80) / 2; // Center alignment estimate
 
-            this.wordListText.text += `[color=${color}]${prefix}${w.text}[/color]${separator}`;
+        words.forEach((w: WordDefinition, index: number) => {
+            const color = w.isFound ? '#22C55E' : '#4A5568';
+            const text = this.add.text(startX + offsetX, 0, w.text, {
+                fontFamily: FONT_FAMILY_PRIMARY,
+                fontSize: '20px',
+                color: color,
+                fontStyle: w.isFound ? 'bold' : 'normal'
+            }).setOrigin(0, 0);
+
+            this.wordListContainer.add(text);
+            offsetX += text.width + 15; // Gap between words
         });
     }
 
@@ -412,6 +425,6 @@ export default class GameScene extends Phaser.Scene {
         AudioManager.playSfx('level_complete');
         HapticManager.success();
 
-        GameManager.getInstance().completeLevel(this.categoryId, this.currentLevelConfig.levelNumber, stars, 60);
+        GameManager.completeLevel(this.categoryId, this.currentLevelConfig.levelNumber, stars, 60);
     }
 }
