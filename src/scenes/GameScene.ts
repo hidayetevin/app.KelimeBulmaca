@@ -99,17 +99,17 @@ export default class GameScene extends Phaser.Scene {
         const headerH = 80;
         this.add.rectangle(0, 0, GAME_WIDTH, headerH, 0xFFFFFF).setOrigin(0);
 
-        // Pause Button
+        // Back Button
         new Button({
             scene: this,
             x: 50,
             y: headerH / 2,
-            text: '||',
+            text: '<',
             width: 40,
             height: 40,
             style: 'secondary',
             onClick: () => {
-                alert('Pause');
+                this.scene.start(SCENES.CATEGORY_SELECTION);
             }
         });
 
@@ -296,9 +296,9 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private checkWord() {
-        const word = this.selectedTiles.map(t => t.letter).join('');
+        const word = this.selectedTiles.map(t => t.letter).join('').toLocaleLowerCase('tr');
         const config = this.currentLevelConfig;
-        const foundDef = config.words.find(w => w.text === word && !w.isFound);
+        const foundDef = config.words.find(w => w.text.toLocaleLowerCase('tr') === word && !w.isFound);
 
         if (foundDef) {
             this.onWordFound(foundDef);
