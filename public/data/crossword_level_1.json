@@ -6,9 +6,7 @@
         "D",
         "İ",
         "A",
-        "V",
-        "L",
-        "U"
+        "L"
     ],
     "words": [
         {
@@ -29,23 +27,23 @@
         },
         {
             "id": 2,
-            "text": "DEVE",
-            "startRow": 2,
-            "startCol": 1,
+            "text": "LALE",
+            "startRow": 3,
+            "startCol": 0,
             "direction": "horizontal",
             "isFound": false
         },
         {
             "id": 3,
-            "text": "İLAV",
-            "startRow": 1,
+            "text": "DEDİ",
+            "startRow": 0,
             "startCol": 2,
-            "direction": "horizontal",
+            "direction": "vertical",
             "isFound": false
         }
     ],
     "gridSize": {
         "rows": 4,
-        "cols": 5
+        "cols": 4
     }
 }

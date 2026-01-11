@@ -1,4 +1,5 @@
 import { GridSize } from '@/types';
+import { CrosswordGenerator } from '@/utils/CrosswordGenerator';
 
 /**
  * Kelime verisi ve seviye oluşturucu
@@ -120,6 +121,23 @@ export class WordDataGenerator {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
+    }
+
+    /**
+     * Generate crossword configuration for a level
+     */
+    public getCrosswordConfiguration(categoryId: string, levelNumber: number) {
+        const allWords = this.wordPools.get(categoryId) || [];
+
+        // Determine word count based on level
+        let wordCount = 4;
+        if (levelNumber === 2) wordCount = 5;
+        else if (levelNumber === 3) wordCount = 6;
+        else if (levelNumber === 4) wordCount = 7;
+        else if (levelNumber >= 5) wordCount = 8;
+
+        // Use CrosswordGenerator (imported at top of file)
+        return CrosswordGenerator.generate(allWords, wordCount);
     }
 }
 

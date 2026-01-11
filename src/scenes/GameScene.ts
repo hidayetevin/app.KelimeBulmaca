@@ -4,6 +4,7 @@ import GameManager from '@/managers/GameManager';
 import LocalizationManager from '@/managers/LocalizationManager';
 import AudioManager from '@/managers/AudioManager';
 import HapticManager from '@/managers/HapticManager';
+import WordDataGenerator from '@/data/WordDataGenerator';
 import Button from '@/components/UI/Button';
 import Panel from '@/components/UI/Panel';
 import LetterPalette from '@/components/UI/LetterPalette';
@@ -51,16 +52,20 @@ export default class GameScene extends Phaser.Scene {
 
     private async loadCrosswordData() {
         try {
-            // Load crossword data for current level
-            const response = await fetch(`/data/crossword_level_${this.levelNumber}.json`);
-            const data = await response.json();
+            // Load category words first
+            await WordDataGenerator.loadCategoryWords(this.categoryId);
 
-            this.palette = data.palette;
-            this.targetWords = data.words;
+            // Generate crossword dynamically
+            const config = WordDataGenerator.getCrosswordConfiguration(this.categoryId, this.levelNumber);
+
+            this.palette = config.palette;
+            this.targetWords = config.words;
+
+            console.log('✅ Generated crossword:', config);
 
             this.buildScene();
         } catch (error) {
-            console.error('Failed to load crossword data:', error);
+            console.error('Failed to generate crossword:', error);
             this.scene.start(SCENES.CATEGORY_SELECTION);
         }
     }
