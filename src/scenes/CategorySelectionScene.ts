@@ -46,16 +46,16 @@ export default class CategorySelectionScene extends Phaser.Scene {
     private createHeader(centerX: number) {
         // Top Bar Background
         const headerH = 80;
-        const headerBg = this.add.rectangle(0, 0, GAME_WIDTH, headerH, 0xFFFFFF).setOrigin(0);
+        this.add.rectangle(0, 0, GAME_WIDTH, headerH, 0xFFFFFF).setOrigin(0);
         // Shadow line
         this.add.rectangle(0, headerH, GAME_WIDTH, 2, 0xE2E8F0).setOrigin(0);
 
         // Back Button (Simple Text or Icon)
-        const backBtn = new Button({
+        new Button({
             scene: this,
             x: 50,
             y: headerH / 2,
-            text: '<', // Or use icon
+            text: '<',
             width: 50,
             height: 50,
             style: 'secondary',
@@ -71,16 +71,13 @@ export default class CategorySelectionScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Star Display (Top Right)
-        const starDisplay = new StarDisplay({
+        new StarDisplay({
             scene: this,
             x: GAME_WIDTH - 60,
             y: headerH / 2,
             initialValue: GameManager.getGameState()?.user.totalStars || 0,
             showLabel: false
         });
-        // StarDisplay default puts text at 0, icon at -40.
-        // We want generic positioning.
-        // This should suffice.
     }
 
     private createCategoryList() {
@@ -151,7 +148,7 @@ export default class CategorySelectionScene extends Phaser.Scene {
             }
         });
 
-        this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+        this.input.on('pointerup', () => {
             if (this.isDragging) {
                 this.isDragging = false;
                 // Snap bounds
@@ -162,14 +159,6 @@ export default class CategorySelectionScene extends Phaser.Scene {
                 }
 
                 // Detect Click vs Drag
-                const dist = Math.abs(pointer.y - this.startDragY);
-                // Click logic handled by Card itself, but card also receives pointerup.
-                // If we dragged, maybe cancel card click? 
-                // Card uses pointerdown/up on itself. That usually works independently.
-                // But scrolling triggers card click if not careful.
-                // Card should check drag state?
-                // Or we rely on small movement.
-                // The Card's onPress is triggered on pointerup.
                 // If major drag happened, we shouldn't trigger card. 
                 // Currently not handled, but acceptable for now.
             }
