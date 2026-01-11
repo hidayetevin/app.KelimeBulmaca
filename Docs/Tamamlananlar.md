@@ -329,6 +329,22 @@
   - Konfeti efekti ve başarı sesi.
   - `GameManager` entegrasyonu ile persistence.
 
+## ✅ ADIM 16: Main Menu Scene
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **Layout:**
+  - Logo ve Pulse animasyonu.
+  - Yıldız göstergesi (oyuncu bakiyesi).
+  - Dikey buton yerleşimi (Başarılar, OYNA, Ayarlar).
+  - Alt kısımda Banner reklam alanı.
+
+- **Özellikler:**
+  - **Dinamik Arka Plan:** Gradient graphics.
+  - **Navigasyon:** Kategori Seçimi, Ayarlar ve Başarılar sahnelerine yönlendirme.
+  - **Reklam:** Sahne açıldığında otomatik banner gösterimi.
+  - **Efektler:** Buton tıklama efektleri (press/shadow), açılış fade-in.
+
+
 
 
 
