@@ -358,6 +358,20 @@
   - **Animasyon:** Tıklama ve hover scale efektleri.
   - **Responsive:** Dinamik genişlik ve metin ortalama.
 
+## ✅ ADIM 18: UI Components - Panel
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **UIPanel Oluşturuldu:**
+  - `src/components/UI/Panel.ts`
+  - Popup ve modal pencereler için temel bileşen.
+
+- **Özellikler:**
+  - **Animasyon:** `open()` ve `close()` Promise tabanlı açılış/kapanış.
+  - **Backdrop:** Otomatik karartılmış arka plan.
+  - **Title Bar & Close:** Opsiyonel başlık ve kapatma butonu.
+  - **Esneklik:** `addContent()` ile her türlü obje eklenebilir.
+
+
 
 
 
