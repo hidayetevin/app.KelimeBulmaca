@@ -49,3 +49,28 @@
   - Z-index değerleri hiyerarşik olarak tanımlandı.
   - Oyun mekaniği sabitleri (ipucu maliyeti, günlük ödüller, reklam cooldown) eklendi.
   - Scene isimleri sabit olarak tanımlandı.
+
+## ✅ ADIM 4: Storage Manager
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **StorageManager Oluşturuldu:**
+  - `src/managers/StorageManager.ts` dosyası oluşturuldu.
+  - **Singleton Pattern** ile tasarlandı.
+  
+- **Temel Metodlar:**
+  - `saveGameState()`: Oyun durumunu localStorage'a JSON formatında kaydeder.
+  - `loadGameState()`: localStorage'dan veri yükler, parse eder.
+  - `clearGameState()`: Tüm oyun verilerini siler (reset için).
+  - `getDefaultGameState()`: Yeni oyun için varsayılan durum oluşturur.
+
+- **Özellikler:**
+  - Versiyon kontrolü ve migration desteği (`migrateGameState`).
+  - Try-catch ile hata yönetimi.
+  - Storage quota aşımı kontrolü.
+  - UUID generator ile benzersiz kullanıcı ID'si.
+  
+- **Varsayılan Durum:**
+  - 3 kategori (animals, fruits, cities) - ilk 2 açık, 3. kilitli (20 yıldız gerekli).
+  - Her kategoride 5 boş seviye.
+  - 10 başarı rozeti (hepsi kilitli).
+  - Varsayılan ayarlar: TR dil, dark mode aktif, ses açık (%70).
