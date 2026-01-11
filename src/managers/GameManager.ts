@@ -305,7 +305,10 @@ class GameManager {
     public canClaimDailyReward(): boolean {
         if (!this.gameState) return false;
 
-        const lastClaim = new Date(this.gameState.dailyReward.lastClaimedDate);
+        const lastClaimDateStr = this.gameState.dailyReward.lastClaimedDate;
+        if (!lastClaimDateStr) return true; // Hiç alınmamışsa alınabilir
+
+        const lastClaim = new Date(lastClaimDateStr);
         const now = new Date();
 
         // Basit gün kontrolü: Tarihler farklı günse true
