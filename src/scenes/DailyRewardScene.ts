@@ -51,7 +51,7 @@ export default class DailyRewardScene extends Phaser.Scene {
         const titleText = this.add.text(0, -210, LocalizationManager.t('dailyReward.title', 'Günlük Ödül'), {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '28px',
-            color: colors.TEXT_DARK,
+            color: '#' + colors.TEXT_DARK.toString(16).padStart(6, '0'),
             fontStyle: 'bold'
         }).setOrigin(0.5);
         this.mainContainer.add(titleText);
@@ -60,7 +60,7 @@ export default class DailyRewardScene extends Phaser.Scene {
         const subtitleText = this.add.text(0, -170, LocalizationManager.t('dailyReward.subtitle', 'Her gün gel, daha çok kazan!'), {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '14px',
-            color: colors.TEXT_LIGHT
+            color: '#' + colors.TEXT_LIGHT.toString(16).padStart(6, '0')
         }).setOrigin(0.5);
         this.mainContainer.add(subtitleText);
 
