@@ -344,6 +344,21 @@
   - **Reklam:** Sahne açıldığında otomatik banner gösterimi.
   - **Efektler:** Buton tıklama efektleri (press/shadow), açılış fade-in.
 
+## ✅ ADIM 17: UI Components - Button
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **UIButton Oluşturuldu:**
+  - `src/components/UI/Button.ts`
+  - Yeniden kullanılabilir, özelleştirilebilir buton bileşeni.
+
+- **Özellikler:**
+  - **Styles:** Primary, Secondary, Success, Danger.
+  - **States:** Normal, Hover, Pressed, Disabled.
+  - **Events:** `onClick` callback desteği.
+  - **Animasyon:** Tıklama ve hover scale efektleri.
+  - **Responsive:** Dinamik genişlik ve metin ortalama.
+
+
 
 
 
