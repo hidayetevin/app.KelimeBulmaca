@@ -125,11 +125,8 @@ export default class CategorySelectionScene extends Phaser.Scene {
             this.maxY = this.minY; // No scroll needed
         }
 
-        // Interaction
-        const hitZone = this.add.rectangle(centerX, headerH + listH / 2, GAME_WIDTH, listH, 0x000000, 0);
-        hitZone.setInteractive();
-
-        hitZone.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+        // Interaction for scrolling - use scene input instead of overlay rectangle
+        this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
             this.isDragging = true;
             this.lastY = pointer.y;
             this.startDragY = pointer.y;
