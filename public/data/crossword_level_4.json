@@ -1,0 +1,78 @@
+{
+    "level": 4,
+    "palette": [
+        "K",
+        "A",
+        "R",
+        "T",
+        "L",
+        "İ",
+        "P",
+        "O",
+        "S",
+        "M",
+        "N"
+    ],
+    "words": [
+        {
+            "id": 0,
+            "text": "KARTAL",
+            "startRow": 0,
+            "startCol": 0,
+            "direction": "horizontal",
+            "isFound": false
+        },
+        {
+            "id": 1,
+            "text": "KARPUZ",
+            "startRow": 0,
+            "startCol": 0,
+            "direction": "vertical",
+            "isFound": false
+        },
+        {
+            "id": 2,
+            "text": "MASA",
+            "startRow": 2,
+            "startCol": 2,
+            "direction": "horizontal",
+            "isFound": false
+        },
+        {
+            "id": 3,
+            "text": "TARAK",
+            "startRow": 0,
+            "startCol": 3,
+            "direction": "vertical",
+            "isFound": false
+        },
+        {
+            "id": 4,
+            "text": "LIMONI",
+            "startRow": 1,
+            "startCol": 4,
+            "direction": "horizontal",
+            "isFound": false
+        },
+        {
+            "id": 5,
+            "text": "KART",
+            "startRow": 3,
+            "startCol": 0,
+            "direction": "horizontal",
+            "isFound": false
+        },
+        {
+            "id": 6,
+            "text": "POSTA",
+            "startRow": 4,
+            "startCol": 1,
+            "direction": "horizontal",
+            "isFound": false
+        }
+    ],
+    "gridSize": {
+        "rows": 6,
+        "cols": 10
+    }
+}

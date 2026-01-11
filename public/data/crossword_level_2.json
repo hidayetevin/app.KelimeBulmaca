@@ -1,19 +1,20 @@
 {
-    "level": 1,
+    "level": 2,
     "palette": [
-        "K",
-        "E",
-        "D",
-        "İ",
         "A",
-        "V",
+        "R",
+        "I",
+        "K",
+        "T",
+        "O",
+        "P",
         "L",
-        "U"
+        "M"
     ],
     "words": [
         {
             "id": 0,
-            "text": "KEDİ",
+            "text": "ARPA",
             "startRow": 0,
             "startCol": 0,
             "direction": "horizontal",
@@ -21,7 +22,7 @@
         },
         {
             "id": 1,
-            "text": "KALE",
+            "text": "ARMUT",
             "startRow": 0,
             "startCol": 0,
             "direction": "vertical",
@@ -29,23 +30,31 @@
         },
         {
             "id": 2,
-            "text": "DEVE",
-            "startRow": 2,
+            "text": "TARAK",
+            "startRow": 1,
             "startCol": 1,
             "direction": "horizontal",
             "isFound": false
         },
         {
             "id": 3,
-            "text": "İLAV",
+            "text": "KRAL",
             "startRow": 1,
-            "startCol": 2,
+            "startCol": 5,
+            "direction": "vertical",
+            "isFound": false
+        },
+        {
+            "id": 4,
+            "text": "PORTAKAL",
+            "startRow": 4,
+            "startCol": 0,
             "direction": "horizontal",
             "isFound": false
         }
     ],
     "gridSize": {
-        "rows": 4,
-        "cols": 5
+        "rows": 5,
+        "cols": 8
     }
 }

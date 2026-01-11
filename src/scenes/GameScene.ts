@@ -51,8 +51,8 @@ export default class GameScene extends Phaser.Scene {
 
     private async loadCrosswordData() {
         try {
-            // For MVP, load static crossword data
-            const response = await fetch('/data/crossword_level_1.json');
+            // Load crossword data for current level
+            const response = await fetch(`/data/crossword_level_${this.levelNumber}.json`);
             const data = await response.json();
 
             this.palette = data.palette;
