@@ -11,6 +11,9 @@ export const LIGHT_COLORS = {
     BACKGROUND: 0xF5F7FA,
     PRIMARY: 0xFFFFFF,
     SECONDARY: 0xE2E8F0,
+    SURFACE: 0xFFFFFF,
+    TEXT_DARK: 0x1A202C,
+    TEXT_LIGHT: 0x718096,
 
     // Accent renkler
     ACCENT: 0x6C63FF,

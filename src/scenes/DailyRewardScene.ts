@@ -255,7 +255,7 @@ export default class DailyRewardScene extends Phaser.Scene {
         this.isClaimed = true;
 
         // Logic
-        const reward = GameManager.claimDailyReward();
+        const _reward = GameManager.claimDailyReward();
 
         // Feedback
         AudioManager.playSfx('word_correct'); // Özel ses olmalı ama şimdilik bu
