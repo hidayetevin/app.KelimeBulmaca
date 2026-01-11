@@ -407,6 +407,17 @@
   - **Durum Görselleştirme:** Kilitli/Açık durumlarına göre renk ve ikon değişimi.
   - **Rewards:** Kazanılan yıldızların gösterimi.
 
+## ✅ ADIM 22: Category Selection Scene
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **Category Card:** `src/components/UI/CategoryCard.ts`
+- **Category Selection Scene:** `src/scenes/CategorySelectionScene.ts`
+- **Özellikler:**
+  - **Kategori Listesi:** Dinamik ve kaydırılabilir liste.
+  - **Kilit Mekanizması:** Yıldız karşılığı kilit açma (Confirm dialog).
+  - **İlerleme Takibi:** Her kategorinin doluluk oranı.
+
+
 
 
 
