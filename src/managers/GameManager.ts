@@ -2,6 +2,7 @@ import { GameState, GameSettings, LevelConfiguration, Direction } from '@/types'
 import StorageManager from './StorageManager';
 import AchievementManager from './AchievementManager';
 import WordDataGenerator from '@/data/WordDataGenerator';
+import { gridAlgorithm } from '@/utils/GridAlgorithm';
 import { DAILY_REWARD_AMOUNT, DAILY_REWARD_STREAK_BONUS } from '@/utils/constants';
 
 /**
