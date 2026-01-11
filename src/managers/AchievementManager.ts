@@ -44,7 +44,7 @@ class AchievementManager {
                 case 'first_step':
                     // İlk seviyeyi tamamla
                     currentProgress = gameState.user.gamesPlayed; // Basitçe oynanan oyun sayısı > 0 ise
-                    isConditionMet = gameState.categories.some(c => c.levels.some(l => l.isCompleted));
+                    isConditionMet = gameState.categories.some(c => c.levels.some((l: any) => l.isCompleted));
                     achievement.progress = isConditionMet ? 1 : 0;
                     break;
 
