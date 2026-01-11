@@ -10,7 +10,7 @@ export default class AchievementScene extends Phaser.Scene {
     private panel!: Panel;
     private scrollContainer!: Phaser.GameObjects.Container;
     private minScrollY = 0;
-    private maxScrollY = 0;
+    // private maxScrollY = 0;
     private isDragging = false;
     private lastY = 0;
 
@@ -104,7 +104,8 @@ export default class AchievementScene extends Phaser.Scene {
         // Mask Rect (World Coordinates roughly)
         // Panel is at centerX, centerY.
         // List top is roughly centerY - listHeight/2
-        const maskX = (GAME_WIDTH - listW) / 2; // ?
+        // Mask Rect
+        // const maskX = (GAME_WIDTH - listW) / 2; // ?
         const maskY = (GAME_HEIGHT - listHeight) / 2 + 20; // Offset for title
 
         const maskShape = this.make.graphics({});
@@ -175,7 +176,7 @@ export default class AchievementScene extends Phaser.Scene {
         const text = this.add.text(0, y, `Kazanılan: ${unlocked}/${total}`, {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '16px',
-            color: LIGHT_COLORS.TEXT_LIGHT
+            color: '#' + LIGHT_COLORS.TEXT_LIGHT.toString(16).padStart(6, '0') // Converted
         }).setOrigin(0.5);
         this.panel.add(text);
     }
