@@ -89,8 +89,8 @@ export default class MainMenuScene extends Phaser.Scene {
             fontSize: 28,
             onClick: () => {
                 // Next Step: Category Selection
-                // this.scene.start(SCENES.CATEGORY_SELECTION);
-                console.log('Category Selection step coming soon...');
+                this.scene.start(SCENES.CATEGORY_SELECTION);
+                // console.log('Category Selection step coming soon...');
             }
         });
 

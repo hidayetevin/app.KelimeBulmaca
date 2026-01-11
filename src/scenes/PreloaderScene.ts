@@ -41,10 +41,14 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.image('close_icon', IMAGE_PATHS.CLOSE);
 
         // --- AUDIO ---
+        // --- AUDIO ---
+        // Assets klasörü boş olduğu için geçici olarak devre dışı
+        /*
         Object.values(AUDIO_PATHS).forEach(path => {
             const key = path.split('/').pop()?.replace('.mp3', '') || path;
             this.load.audio(key, path);
         });
+        */
 
         // --- DATA ---
         // Kategori JSON'larını WordDataGenerator zaten fetch ile çekiyor, 

@@ -27,7 +27,9 @@
         "playButton": "OYNA",
         "settingsButton": "Ayarlar",
         "achievementButton": "Başarılar",
-        "dailyReward": "Günlük Ödül"
+        "dailyReward": "Günlük Ödül",
+        "play": "OYNA",
+        "settings": "Ayarlar"
     },
     "categories": {
         "title": "Kategoriler",
