@@ -186,5 +186,26 @@
   - `cancelAll()` fonksiyonu ile tüm animasyonları iptal.
   - Type-safe GameObject handling.
 
+## ✅ ADIM 9: Grid Algorithm
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **GridAlgorithm Oluşturuldu:**
+  - `src/utils/gridAlgorithm.ts` dosyası oluşturuldu.
+  - **Backtracking Algoritması** kullanılarak kelime yerleştirme.
+
+- **Temel Metodlar:**
+  - `generateGrid(words, gridSize)`: Kelimeleri yerleştirip dolu grid döner.
+  - `tryPlaceWords()`: Rekürsif yerleştirme fonksiyonu.
+  - `canPlaceWord()`: Çakışma ve sınır kontrolü.
+  - `fillEmptyCells()`: Boşlukları rastgele harflerle doldurur.
+  - `getWordPath()`: Kelimenin hücre koordinatlarını hesaplar.
+
+- **Özellikler:**
+  - 4 yön desteği (Yatay, Dikey, Çapraz Aşağı, Çapraz Yukarı).
+  - Ortak harf kullanımı (Kelimeler kesişebilir).
+  - Timeout mekanizması (Sonsuz döngü koruması).
+  - Uzun kelime önceliği ile optimize edilmiş yerleşim.
+
+
 
 
