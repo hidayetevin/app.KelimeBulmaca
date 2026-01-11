@@ -92,4 +92,5 @@ export interface LevelConfiguration {
     words: WordDefinition[];            // Bulunacak kelimeler
     letters: string[];                  // Alt dairede gösterilecek unique harfler
     difficulty: number;                 // Zorluk seviyesi (1-5)
+    grid?: GridCell[][];                // Generated grid data
 }
