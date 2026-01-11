@@ -194,7 +194,8 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private onTileDown(tile: GridTile) {
-        if (tile.isFound) return;
+        // Removed: if (tile.isFound) return;
+        // Allow starting selection from found tiles
 
         this.isSelecting = true;
         this.startTile = tile;
@@ -204,7 +205,8 @@ export default class GameScene extends Phaser.Scene {
 
     private onTileOver(tile: GridTile) {
         if (!this.isSelecting || !this.startTile) return;
-        if (tile.isFound) return;
+        // Removed: if (tile.isFound) return;
+        // Allow selecting found tiles for words with shared letters
 
         if (this.isValidSelectionStep(tile)) {
             // Backtracking check
