@@ -5,10 +5,42 @@
 export interface GameState {
     version: string;                    // "1.0.0" formatında versiyon
     user: UserData;                     // Kullanıcı istatistikleri
-    categories: CategoryData[];         // Kategori ve seviye ilerlemeleri
+    categories: Category[];         // Kategori ve seviye ilerlemeleri
     achievements: Achievement[];        // Başarı rozetleri durumu
     settings: GameSettings;             // Oyun ayarları
     dailyReward: DailyRewardData;       // Günlük ödül durumu
+}
+
+// ==================== WORD CONNECT / CROSSWORD TYPES ====================
+
+export interface CrosswordLevelConfig {
+    levelNumber: number;
+    palette: string[];              // Available letters (e.g., ["U", "Z", "A", "K", "L", "I"])
+    words: CrosswordWord[];         // Target words to find
+    gridSize: GridSize;
+    layout: CrosswordLayout;        // Grid structure
+}
+
+export interface CrosswordWord {
+    id: number;
+    text: string;
+    startRow: number;
+    startCol: number;
+    direction: 'horizontal' | 'vertical';
+    clue?: string;
+    isFound: boolean;
+}
+
+export interface CrosswordLayout {
+    cells: CrosswordCellData[][];
+}
+
+export interface CrosswordCellData {
+    isActive: boolean;              // false for black/inactive cells
+    letter?: string;                // filled letter (when word is found)
+    wordIds: number[];              // which word(s) use this cell
+    row: number;
+    col: number;
 }
 
 /**

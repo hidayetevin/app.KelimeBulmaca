@@ -1,0 +1,33 @@
+{
+    "level": 1,
+    "palette": [
+        "T",
+        "A",
+        "V",
+        "U",
+        "K",
+        "L"
+    ],
+    "words": [
+        {
+            "id": 0,
+            "text": "TAVUK",
+            "startRow": 0,
+            "startCol": 0,
+            "direction": "horizontal",
+            "isFound": false
+        },
+        {
+            "id": 1,
+            "text": "KULA",
+            "startRow": 0,
+            "startCol": 4,
+            "direction": "vertical",
+            "isFound": false
+        }
+    ],
+    "gridSize": {
+        "rows": 3,
+        "cols": 5
+    }
+}
