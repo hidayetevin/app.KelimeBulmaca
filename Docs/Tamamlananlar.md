@@ -21,3 +21,12 @@
 
 - **Bağımlılıklar:**
   - `npm install` komutu ile tüm paketler yüklendi.
+
+## ✅ ADIM 2: TypeScript Type Definitions
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **Type Dosyaları Oluşturuldu:**
+  - `src/types/GameTypes.ts`: Genel oyun durumu, kullanıcı verileri ve ayarlar için interfaceler tanımlandı.
+  - `src/types/CategoryTypes.ts`: Kategori, seviye, grid ve kelime yapıları tanımlandı. `Direction` enum'ı oluşturuldu.
+  - `src/types/AchievementTypes.ts`: Başarı sistemi için gerekli interfaceler ve `AchievementCategory` enum'ı eklendi.
+  - `src/types/index.ts`: Tüm tipler merkezi bir noktadan export edildi.
