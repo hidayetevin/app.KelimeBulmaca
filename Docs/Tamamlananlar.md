@@ -312,6 +312,24 @@
   - **Loading UI:** Modern loading bar, logo text, percentage göstergesi.
   - **Auto Navigation:** Yükleme bitince `DailyReward` veya `MainMenu` sahnesine yönlendirme mantığı.
 
+## ✅ ADIM 15: Daily Reward Scene
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **Sahne Tasarımı:**
+  - Modern popup UI (Dimmed background, rounded corners).
+  - 7 günlük ödül takvimi (Grid layout).
+
+- **Durum Göstergeleri:**
+  - **Geçmiş Günler:** Yeşil tik (✓) ve soluk görünüm.
+  - **Bugünkü Ödül:** Parlayan çerçeve ve canlı renkler.
+  - **Gelecek Günler:** Soluk ve kilitli görünüm.
+
+- **Etkileşim:**
+  - "Topla" butonu ile ödül alma.
+  - Konfeti efekti ve başarı sesi.
+  - `GameManager` entegrasyonu ile persistence.
+
+
 
 
 
