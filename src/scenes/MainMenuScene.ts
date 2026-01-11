@@ -6,6 +6,7 @@ import LocalizationManager from '@/managers/LocalizationManager';
 import AdManager from '@/managers/AdManager';
 import { fadeIn } from '@/utils/animations';
 import Button from '@/components/UI/Button';
+import StarDisplay from '@/components/UI/StarDisplay';
 
 export default class MainMenuScene extends Phaser.Scene {
     constructor() {

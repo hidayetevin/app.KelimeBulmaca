@@ -371,6 +371,19 @@
   - **Title Bar & Close:** Opsiyonel başlık ve kapatma butonu.
   - **Esneklik:** `addContent()` ile her türlü obje eklenebilir.
 
+## ✅ ADIM 19: UI Components - StarDisplay
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **StarDisplay Oluşturuldu:**
+  - `src/components/UI/StarDisplay.ts`
+  - Oyuncu yıldız bakiyesini gösteren animasyonlu bileşen.
+
+- **Özellikler:**
+  - **Animasyon:** Sayı artışlarında sayaç efekti (tween counter).
+  - **Entegrasyon:** `MainMenuScene` içinde kullanıldı.
+  - **Görsel:** Altın rengi metin ve yıldız ikonu.
+
+
 
 
 
