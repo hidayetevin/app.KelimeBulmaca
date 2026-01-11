@@ -277,6 +277,25 @@
   - Storage, Achievement, WordData manager'larını koordine eder.
   - Tüm veri değişikliklerini otomatik kaydeder (`saveGame`).
 
+## ✅ ADIM 13: Ad Manager
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **AdManager Oluşturuldu:**
+  - `src/managers/AdManager.ts` dosyası oluşturuldu.
+  - **Capacitor Community AdMob** plugin wrapper.
+  - Singleton pattern.
+
+- **Desteklenen Reklamlar:**
+  - **Banner:** Alt/Üst pozisyonlama, gösterme/gizleme.
+  - **Interstitial (Geçiş):** Yükleme ve gösterme, Cooldown (2dk) kontrolü.
+  - **Rewarded (Ödüllü):** İpucu kazanmak içinvideo reklam.
+
+- **Özellikler:**
+  - **Web Fallback (Mock):** Tarayıcıda çalışırken consol log ve mock confirm popup ile test edilebilir.
+  - **Test Mode:** Test ID'leri ile güvenli geliştirme modu aktif.
+  - **Otomatik Ödül:** Reklam başarıyla izlenince GameManager.addStars() çağrılır.
+
+
 
 
 
