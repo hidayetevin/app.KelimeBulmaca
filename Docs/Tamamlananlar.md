@@ -74,3 +74,27 @@
   - Her kategoride 5 boş seviye.
   - 10 başarı rozeti (hepsi kilitli).
   - Varsayılan ayarlar: TR dil, dark mode aktif, ses açık (%70).
+
+## ✅ ADIM 5: Localization Manager
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **LocalizationManager Oluşturuldu:**
+  - `src/managers/LocalizationManager.ts` dosyası oluşturuldu.
+  - **Singleton Pattern** ile tasarlandı.
+
+- **Temel Metodlar:**
+  - `loadLocale(lang)`: Asenkron olarak dil dosyasını yükler (fetch API).
+  - `t(key, fallback)`: Çeviri anahtarına karşılık gelen metni döndürür.
+  - `getCurrentLanguage()`: Aktif dili döndürür.
+  - `changeLanguage(lang)`: Dili değiştirir ve yeni dosyayı yükler.
+  - `hasTranslation(key)`: Çeviri var mı kontrol eder.
+
+- **Özellikler:**
+  - **Nested key desteği**: `"game.wordsFound"` gibi nokta notasyonu.
+  - Fallback mekanizması: Çeviri bulunamazsa key veya fallback döner.
+  - Error handling: Dil yüklenemezse otomatik İngilizce'ye geçer.
+
+- **Çeviri Dosyaları:**
+  - `public/locales/tr.json`: 100+ Türkçe çeviri terimi.
+  - `public/locales/en.json`: 100+ İngilizce çeviri terimi.
+  - Kapsam: common, mainMenu, categories, game, hints, achievements, settings, dailyReward, levelComplete, ads, errors.
