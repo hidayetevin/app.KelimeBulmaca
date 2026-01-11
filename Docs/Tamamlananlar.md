@@ -98,3 +98,35 @@
   - `public/locales/tr.json`: 100+ Türkçe çeviri terimi.
   - `public/locales/en.json`: 100+ İngilizce çeviri terimi.
   - Kapsam: common, mainMenu, categories, game, hints, achievements, settings, dailyReward, levelComplete, ads, errors.
+
+## ✅ ADIM 6: Audio Manager
+**Tamamlanma Tarihi:** 11.01.2026
+
+- **AudioManager Oluşturuldu:**
+  - `src/managers/AudioManager.ts` dosyası oluşturuldu.
+  - **Singleton Pattern** ile tasarlandı.
+  - Phaser Sound Manager wrapper olarak çalışır.
+
+- **Temel Metodlar:**
+  - `init(scene)`: Audio manager'ı Phaser scene ile başlatır.
+  - `playSfx(key, config)`: Ses efekti çalar, volume kontrolü ile.
+  - `stopAllSfx()`: Tüm sesleri durdurur.
+  - `stopSfx(key)`: Belirli sesi durdurur.
+  - `setVolume(volume)`: Ses seviyesi ayarlar (0.0-1.0).
+  - `isSoundEnabled()`: Ses durumunu döndürür.
+  - `toggleSound()`: Sesi aç/kapat.
+  - `enableSound()` / `disableSound()`: Programatik kontrol.
+
+- **Kolaylık Metodları (11 adet):**
+  - `playLetterSelect()`, `playLetterDeselect()`
+  - `playWordCorrect()`, `playWordWrong()`
+  - `playLevelComplete()`, `playCategoryComplete()`
+  - `playAchievementUnlock()`, `playStarCollect()`
+  - `playUnlock()`, `playButtonClick()`, `playHintShow()`
+
+- **Özellikler:**
+  - Otomatik ses temizleme (complete event'te destroy).
+  - Cache kontrolü (ses yüklü mü?).
+  - Volume clamping (0-1 aralığında).
+  - Error handling ile güvenli çalışma.
+
