@@ -8,7 +8,6 @@ import { AUDIO_PATHS } from '@/utils/constants';
 class AudioManager {
     private static instance: AudioManager;
     private scene?: Phaser.Scene;
-    private sounds: Map<string, Phaser.Sound.BaseSound> = new Map();
     private soundEnabled: boolean = true;
     private volume: number = 0.7;
 
