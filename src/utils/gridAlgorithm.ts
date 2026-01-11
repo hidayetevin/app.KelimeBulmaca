@@ -29,7 +29,6 @@ export class GridAlgorithm {
         timeoutMs: number = 2000
     ): GridGenerationResult {
         const startTime = Date.now();
-        let bestResult: GridGenerationResult | null = null;
         let attempts = 0;
 
         // Kelimeleri uzunluklarına göre sırala (en uzundan en kısaya) - daha kolay yerleşim için
@@ -339,7 +338,7 @@ export class GridAlgorithm {
     /**
      * Grid validasyonunu yapar
      */
-    public validateGrid(grid: GridCell[][], words: string[]): boolean {
+    public validateGrid(_grid: GridCell[][], _words: string[]): boolean {
         // Burada daha kompleks kontroller yapılabilir
         // Şimdilik sadece tüm kelimelerin grid içinde var olup olmadığını kontrol edelim
         // Ancak bu işlem generateGrid içinde zaten garanti altına alınıyor.
