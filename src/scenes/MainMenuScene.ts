@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { SCENES, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY, IMAGE_PATHS } from '@/utils/constants';
+import { SCENES, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY } from '@/utils/constants';
 import { LIGHT_COLORS } from '@/utils/colors';
 import GameManager from '@/managers/GameManager';
 import LocalizationManager from '@/managers/LocalizationManager';
@@ -134,9 +134,7 @@ export default class MainMenuScene extends Phaser.Scene {
         const width = isLarge ? 240 : 200;
         const height = isLarge ? 70 : 60;
         const fontSize = isLarge ? '28px' : '20px';
-        const primaryColor = isLarge ? 0xFFFFFF : 0x1A202C; // Yazı rengi
         const bgColor = isLarge ? color : 0xFFFFFF; // Arkaplan
-        const strokeColor = isLarge ? 0xFFFFFF : color;
 
         // Shadow
         const shadow = this.add.graphics();
@@ -175,7 +173,7 @@ export default class MainMenuScene extends Phaser.Scene {
         hitArea.on('pointerup', () => {
             container.y = y;
             shadow.visible = true;
-            AudioManager.playButton();
+            AudioManager.playSfx('button_click');
             callback();
         });
 
