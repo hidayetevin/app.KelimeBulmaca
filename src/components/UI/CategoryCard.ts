@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { LIGHT_COLORS } from '@/utils/colors';
 import { FONT_FAMILY_PRIMARY } from '@/utils/constants';
-import { CategoryData } from '@/types/GameTypes';
+import { CategoryData } from '@/types/CategoryTypes';
 import LocalizationManager from '@/managers/LocalizationManager';
 
 interface CategoryCardConfig {
@@ -116,7 +116,7 @@ export default class CategoryCard extends Phaser.GameObjects.Container {
         } else {
             // Level progress
             const totalLevels = this.category.levels.length;
-            const completedLevels = this.category.levels.filter(l => l.isCompleted).length;
+            const completedLevels = this.category.levels.filter((l: any) => l.isCompleted).length;
 
             const progressText = this.scene.add.text(textStart, 15, `${completedLevels}/${totalLevels} Seviye`, {
                 fontFamily: FONT_FAMILY_PRIMARY,
