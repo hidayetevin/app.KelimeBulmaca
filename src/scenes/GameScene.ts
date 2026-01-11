@@ -316,7 +316,13 @@ export default class GameScene extends Phaser.Scene {
         this.updateWordList();
 
         const allFound = this.currentLevelConfig.words.every(w => w.isFound);
+        const foundCount = this.currentLevelConfig.words.filter(w => w.isFound).length;
+        const totalCount = this.currentLevelConfig.words.length;
+
+        console.log(`Words found: ${foundCount}/${totalCount}`, allFound ? 'LEVEL COMPLETE!' : '');
+
         if (allFound) {
+            console.log('🎉 Triggering level complete in 1 second...');
             this.time.delayedCall(1000, () => this.onLevelComplete());
         }
     }
@@ -336,9 +342,17 @@ export default class GameScene extends Phaser.Scene {
 
     private updateWordList() {
         const words = this.currentLevelConfig.words;
-        const displayList = words.map(w => w.isFound ? `✅ ${w.text}` : w.text).join('   ');
 
-        this.wordListText.setText(displayList);
+        // Use Phaser's text styling with color tags
+        this.wordListText.setText('');
+
+        words.forEach((w, index) => {
+            const prefix = w.isFound ? '✅ ' : '';
+            const color = w.isFound ? '#22C55E' : '#4A5568'; // Green for found, gray for not found
+            const separator = index < words.length - 1 ? '   ' : '';
+
+            this.wordListText.text += `[color=${color}]${prefix}${w.text}[/color]${separator}`;
+        });
     }
 
     private createFooter() {
