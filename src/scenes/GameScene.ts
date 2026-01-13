@@ -172,7 +172,7 @@ export default class GameScene extends Phaser.Scene {
 
         // Check if word is correct
         const foundWord = this.targetWords.find(w =>
-            w.text.toUpperCase() === word.toUpperCase() && !w.isFound
+            w.text.toLocaleUpperCase('tr-TR') === word.toLocaleUpperCase('tr-TR') && !w.isFound
         );
 
         if (foundWord) {

@@ -28,8 +28,10 @@ export class WordDataGenerator {
         try {
             const response = await fetch(`/data/categories/${categoryId}.json`);
             if (!response.ok) throw new Error(`Category not found: ${categoryId}`);
-            const words = await response.json();
-            this.wordPools.set(categoryId, words);
+            const words: string[] = await response.json();
+            // Normalize to Turkish uppercase immediately
+            const normalizedWords = words.map(w => w.toLocaleUpperCase('tr-TR'));
+            this.wordPools.set(categoryId, normalizedWords);
             console.log(`✅ Loaded ${words.length} words for category: ${categoryId}`);
         } catch (error) {
             console.error(`❌ Failed to load words for category ${categoryId}:`, error);
