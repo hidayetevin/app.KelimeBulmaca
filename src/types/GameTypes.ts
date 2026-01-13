@@ -5,6 +5,12 @@ import { GridSize } from './CategoryTypes';
  * Oyunun ana state yapısını tanımlar.
  * Tüm oyun verileri bu interface üzerinde tutulur.
  */
+export enum Difficulty {
+    Easy = 0,
+    Medium = 1,
+    Hard = 2
+}
+
 export interface GameState {
     version: string;                    // "1.0.0" formatında versiyon
     user: UserData;                     // Kullanıcı istatistikleri
