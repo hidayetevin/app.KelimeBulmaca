@@ -36,6 +36,7 @@ export default class LevelSelectionScene extends Phaser.Scene {
 
         // Header background
         const bg = this.add.rectangle(0, 0, GAME_WIDTH, headerHeight, 0xFFFFFF).setOrigin(0);
+        bg.setInteractive(); // Block clicks from passing through
         headerContainer.add(bg);
 
         // Shadow/Line separator (optional but looks nice)
@@ -109,7 +110,7 @@ export default class LevelSelectionScene extends Phaser.Scene {
 
         // Add padding at bottom for scrolling
         const totalRows = Math.ceil(totalLevels / cols);
-        const totalHeight = startY + totalRows * (buttonSize + spacing) + 100;
+        // const totalHeight = startY + totalRows * (buttonSize + spacing) + 100;
 
         // Invisible graphic to define content height if needed, OR just handle in scroll logic
         // For now, scroll logic handles bounds.
