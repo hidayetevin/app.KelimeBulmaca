@@ -19,17 +19,31 @@ export default class LevelSelectionScene extends Phaser.Scene {
         // Background
         this.add.rectangle(0, 0, width, height, 0xF7FAFC).setOrigin(0);
 
-        this.createHeader();
+        // Create grid first (so it stays behind header)
         this.createLevelGrid();
+
+        // Create header on top
+        this.createHeader();
+
         this.setupScrolling();
     }
 
     private createHeader() {
         const headerHeight = 80;
-        this.add.rectangle(0, 0, GAME_WIDTH, headerHeight, 0xFFFFFF).setOrigin(0);
+
+        const headerContainer = this.add.container(0, 0);
+        headerContainer.setDepth(100); // Ensure header is always on top
+
+        // Header background
+        const bg = this.add.rectangle(0, 0, GAME_WIDTH, headerHeight, 0xFFFFFF).setOrigin(0);
+        headerContainer.add(bg);
+
+        // Shadow/Line separator (optional but looks nice)
+        const line = this.add.rectangle(0, headerHeight, GAME_WIDTH, 2, 0xE2E8F0).setOrigin(0);
+        headerContainer.add(line);
 
         // Back button
-        new Button({
+        const backBtn = new Button({
             scene: this,
             x: 50,
             y: headerHeight / 2,
@@ -41,24 +55,30 @@ export default class LevelSelectionScene extends Phaser.Scene {
                 this.scene.start(SCENES.MAIN_MENU);
             }
         });
+        headerContainer.add(backBtn);
 
         // Title
-        this.add.text(GAME_WIDTH / 2, headerHeight / 2, 'SEVİYELER', {
+        const title = this.add.text(GAME_WIDTH / 2, headerHeight / 2, 'SEVİYELER', {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '28px',
             color: '#2D3748',
             fontStyle: 'bold'
         }).setOrigin(0.5);
+        headerContainer.add(title);
     }
 
     private createLevelGrid() {
-        const startY = 100;
+        const startY = 100; // Start below header
         const cols = 5;
         const totalLevels = 100;
         const buttonSize = 60;
         const spacing = 15;
-        const gridWidth = cols * (buttonSize + spacing) - spacing;
-        const startX = (GAME_WIDTH - gridWidth) / 2;
+
+        // Calculate total grid width
+        const gridWidth = cols * buttonSize + (cols - 1) * spacing;
+
+        // Calculate starting X (left margin) to center the grid
+        const leftMargin = (GAME_WIDTH - gridWidth) / 2;
 
         this.scrollContainer = this.add.container(0, 0);
 
@@ -68,8 +88,14 @@ export default class LevelSelectionScene extends Phaser.Scene {
             const col = (i - 1) % cols;
             const row = Math.floor((i - 1) / cols);
 
-            const x = startX + col * (buttonSize + spacing);
-            const y = startY + row * (buttonSize + spacing);
+            // Calculate center position for each button
+            // x = margin + (column * full_space) + half_button_size
+            const x = leftMargin + col * (buttonSize + spacing) + (buttonSize / 2);
+
+            // y = start_y + (row * full_space) + half_button_size (if origin is 0.5)
+            // But here buttons are added to container at x,y. 
+            // Let's keep y calculation simple relative to startY
+            const y = startY + row * (buttonSize + spacing) + (buttonSize / 2);
 
             const levelData = GameManager.getLevelData(i);
             const isUnlocked = i === 1 || (levelData?.isUnlocked ?? false);
@@ -80,6 +106,13 @@ export default class LevelSelectionScene extends Phaser.Scene {
             this.scrollContainer.add(button);
             this.levelButtons.push(button);
         }
+
+        // Add padding at bottom for scrolling
+        const totalRows = Math.ceil(totalLevels / cols);
+        const totalHeight = startY + totalRows * (buttonSize + spacing) + 100;
+
+        // Invisible graphic to define content height if needed, OR just handle in scroll logic
+        // For now, scroll logic handles bounds.
 
         this.add.existing(this.scrollContainer);
     }
