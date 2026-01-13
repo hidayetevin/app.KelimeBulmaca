@@ -151,7 +151,7 @@ export default class LetterPalette extends Phaser.GameObjects.Container {
         this.selectionLine.strokePath();
     }
 
-    private clearSelection() {
+    public clearSelection() {
         this.selectedNodes.forEach(node => node.deselect());
         this.selectedNodes = [];
         this.selectionLine.clear();

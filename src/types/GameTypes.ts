@@ -1,3 +1,6 @@
+import { Achievement } from './AchievementTypes';
+import { GridSize } from './CategoryTypes';
+
 /**
  * Oyunun ana state yapısını tanımlar.
  * Tüm oyun verileri bu interface üzerinde tutulur.
@@ -5,10 +8,22 @@
 export interface GameState {
     version: string;                    // "1.0.0" formatında versiyon
     user: UserData;                     // Kullanıcı istatistikleri
-    categories: Category[];         // Kategori ve seviye ilerlemeleri
+    levels: LevelProgressData;          // Seviye ilerlemeleri (level-based)
     achievements: Achievement[];        // Başarı rozetleri durumu
     settings: GameSettings;             // Oyun ayarları
     dailyReward: DailyRewardData;       // Günlük ödül durumu
+}
+
+/**
+ * Level-based progress tracking
+ */
+export interface LevelProgressData {
+    [levelNumber: number]: {
+        isUnlocked: boolean;
+        isCompleted: boolean;
+        stars: number;
+        bestTime: number;
+    };
 }
 
 // ==================== WORD CONNECT / CROSSWORD TYPES ====================

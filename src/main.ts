@@ -6,7 +6,7 @@ import MainMenuScene from './scenes/MainMenuScene';
 import DailyRewardScene from './scenes/DailyRewardScene';
 import SettingsScene from './scenes/SettingsScene';
 import AchievementScene from './scenes/AchievementScene';
-import CategorySelectionScene from './scenes/CategorySelectionScene';
+import LevelSelectionScene from './scenes/LevelSelectionScene';
 import GameScene from './scenes/GameScene';
 
 // Oyun instance'ını başlat
@@ -19,7 +19,7 @@ const game = new Phaser.Game({
         DailyRewardScene,
         SettingsScene,
         AchievementScene,
-        CategorySelectionScene,
+        LevelSelectionScene,
         GameScene
     ]
 });

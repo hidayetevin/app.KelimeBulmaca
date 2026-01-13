@@ -1,5 +1,5 @@
-import { GameState, CategoryData, LevelData, Achievement, AchievementCategory } from '@/types';
-import { STORAGE_KEY_GAME_STATE, GAME_VERSION, CATEGORY_UNLOCK_REQUIRED_STARS } from '@/utils/constants';
+import { GameState, LevelProgressData, Achievement, AchievementCategory } from '@/types';
+import { STORAGE_KEY_GAME_STATE, GAME_VERSION } from '@/utils/constants';
 
 /**
  * Storage Manager - Singleton
@@ -87,47 +87,17 @@ class StorageManager {
         const userId = this.generateUUID();
         const now = new Date().toISOString();
 
-        // Varsayılan kategoriler
-        const categories: CategoryData[] = [
-            {
-                id: 'animals',
-                name: { tr: 'Hayvanlar', en: 'Animals' },
-                icon: '🐾',
-                backgroundImage: 'assets/images/backgrounds/animals_bg.webp',
-                isLocked: false,
-                requiredStars: 0,
-                levels: this.createDefaultLevels(),
-                totalStars: 30, // 5 level * 6 ortalama kelime
-                earnedStars: 0,
-            },
-            {
-                id: 'fruits',
-                name: { tr: 'Meyveler', en: 'Fruits' },
-                icon: '🍎',
-                backgroundImage: 'assets/images/backgrounds/fruits_bg.webp',
-                isLocked: false,
-                requiredStars: 0,
-                levels: this.createDefaultLevels(),
-                totalStars: 30,
-                earnedStars: 0,
-            },
-            {
-                id: 'cities',
-                name: { tr: 'Şehirler', en: 'Cities' },
-                icon: '🏙️',
-                backgroundImage: 'assets/images/backgrounds/cities_bg.webp',
-                isLocked: true,
-                requiredStars: CATEGORY_UNLOCK_REQUIRED_STARS, // 20 yıldız
-                levels: this.createDefaultLevels(),
-                totalStars: 30,
-                earnedStars: 0,
-            },
-        ];
+        // Default level progress - Level 1 unlocked
+        const levels: LevelProgressData = {
+            1: {
+                isUnlocked: true,
+                isCompleted: false,
+                stars: 0,
+                bestTime: 0
+            }
+        };
 
-        // Varsayılan başarılar
-        const achievements: Achievement[] = this.createDefaultAchievements();
-
-        const defaultState: GameState = {
+        const state: GameState = {
             version: GAME_VERSION,
             user: {
                 userId,
@@ -135,64 +105,35 @@ class StorageManager {
                 totalWordsFound: 0,
                 gamesPlayed: 0,
                 lastPlayedDate: now,
-                streakDays: 0,
+                streakDays: 1,
                 totalPlayTime: 0,
                 wrongAttempts: 0,
                 hintsUsed: 0,
-                adsWatched: 0,
+                adsWatched: 0
             },
-            categories,
-            achievements,
+            levels,
+            achievements: this.getDefaultAchievements(),
             settings: {
                 language: 'tr',
-                darkMode: true,
+                darkMode: false,
                 soundEnabled: true,
                 soundVolume: 0.7,
                 vibrationEnabled: true,
-                showHints: true,
+                showHints: true
             },
             dailyReward: {
                 lastClaimedDate: null,
                 currentStreak: 0,
-                totalClaimed: 0,
+                totalClaimed: 0
             },
         };
-
-        return defaultState;
-    }
-
-    /**
-     * 5 boş seviye oluşturur
-     */
-    private createDefaultLevels(): LevelData[] {
-        const levels: LevelData[] = [];
-
-        // Her kategoride 5 seviye
-        const levelWordCounts = [4, 5, 6, 7, 8]; // Level 1-5
-
-        for (let i = 0; i < 5; i++) {
-            levels.push({
-                levelNumber: i + 1,
-                isCompleted: false,
-                foundWords: [],
-                totalWords: levelWordCounts[i],
-                earnedStars: 0,
-                maxStars: levelWordCounts[i],
-                bestTime: null,
-                playCount: 0,
-                wrongAttempts: 0,
-                hintsUsed: 0,
-                firstTryComplete: false,
-            });
-        }
-
-        return levels;
+        return state;
     }
 
     /**
      * Varsayılan başarıları oluşturur
      */
-    private createDefaultAchievements(): Achievement[] {
+    private getDefaultAchievements(): Achievement[] {
         return [
             // BEGINNER
             {

@@ -48,8 +48,9 @@ export default class CrosswordGrid extends Phaser.GameObjects.Container {
     private mapWords() {
         this.words.forEach(word => {
             const { startRow, startCol, direction, text, id } = word;
+            const chars = Array.from(text); // Properly handle Turkish characters
 
-            for (let i = 0; i < text.length; i++) {
+            for (let i = 0; i < chars.length; i++) {
                 const row = direction === 'vertical' ? startRow + i : startRow;
                 const col = direction === 'horizontal' ? startCol + i : startCol;
 
@@ -130,13 +131,14 @@ export default class CrosswordGrid extends Phaser.GameObjects.Container {
 
     public fillWord(word: CrosswordWord) {
         const { startRow, startCol, direction, text } = word;
+        const chars = Array.from(text); // Properly handle Turkish characters
 
-        for (let i = 0; i < text.length; i++) {
+        for (let i = 0; i < chars.length; i++) {
             const row = direction === 'vertical' ? startRow + i : startRow;
             const col = direction === 'horizontal' ? startCol + i : startCol;
 
             if (this.cells[row] && this.cells[row][col]) {
-                this.cells[row][col].letter = text[i];
+                this.cells[row][col].letter = chars[i];
                 this.updateCell(row, col);
             }
         }

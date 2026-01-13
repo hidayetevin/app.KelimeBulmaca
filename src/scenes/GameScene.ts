@@ -1,125 +1,102 @@
 import Phaser from 'phaser';
 import { SCENES, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY } from '@/utils/constants';
 import GameManager from '@/managers/GameManager';
-import LocalizationManager from '@/managers/LocalizationManager';
-import AudioManager from '@/managers/AudioManager';
-import HapticManager from '@/managers/HapticManager';
 import WordDataGenerator from '@/data/WordDataGenerator';
 import Button from '@/components/UI/Button';
-import Panel from '@/components/UI/Panel';
 import LetterPalette from '@/components/UI/LetterPalette';
 import CurrentWordDisplay from '@/components/UI/CurrentWordDisplay';
 import CrosswordGrid from '@/components/UI/CrosswordGrid';
 import { CrosswordWord } from '@/types/GameTypes';
 
 export default class GameScene extends Phaser.Scene {
-    private categoryId!: string;
-    private levelNumber: number = 1;
+    private levelNumber!: number;
+    private targetWords: CrosswordWord[] = [];
+    private palette: string[] = [];
 
-    // New components
+    // UI Components
     private crosswordGrid!: CrosswordGrid;
     private letterPalette!: LetterPalette;
     private currentWordDisplay!: CurrentWordDisplay;
-
-    // UI
     private scoreText!: Phaser.GameObjects.Text;
-    private levelText!: Phaser.GameObjects.Text;
-
-    // Game data
-    private targetWords: CrosswordWord[] = [];
-    private palette: string[] = [];
+    private score: number = 0;
 
     constructor() {
         super(SCENES.GAME);
     }
 
-    init(data: { categoryId: string }) {
-        this.categoryId = data.categoryId || 'animals';
-        this.levelNumber = GameManager.getCurrentLevel(this.categoryId);
-        console.log(`Initializing GameScene with Category: ${this.categoryId}, Level: ${this.levelNumber}`);
+    init(data: { level: number }) {
+        console.log(`🎮 Initializing Level ${data.level}`);
+        this.levelNumber = data.level || 1;
+        this.score = 0;
     }
 
-    create() {
-        const width = GAME_WIDTH;
-        const height = GAME_HEIGHT;
-
+    async create() {
         // Background
-        this.add.rectangle(0, 0, width, height, 0xF7FAFC).setOrigin(0);
+        this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0xF7FAFC).setOrigin(0);
 
-        // Load crossword data and build scene
-        this.loadCrosswordData();
+        // Load crossword data
+        await this.loadCrosswordData();
+
+        // Build UI
+        this.createHeader();
+        this.createCrosswordGrid();
+        this.createScoreDisplay();
+        this.createWordDisplay();
+        this.createLetterPalette();
     }
 
     private async loadCrosswordData() {
         try {
-            // Load category words first
-            await WordDataGenerator.loadCategoryWords(this.categoryId);
+            // Load all category words first
+            await WordDataGenerator.loadCategoryWords('animals');
+            await WordDataGenerator.loadCategoryWords('fruits');
+            await WordDataGenerator.loadCategoryWords('cities');
 
-            // Generate crossword dynamically
-            const config = WordDataGenerator.getCrosswordConfiguration(this.categoryId, this.levelNumber);
+            // Generate crossword for this level
+            const config = WordDataGenerator.getCrosswordConfiguration(this.levelNumber);
 
-            this.palette = config.palette;
             this.targetWords = config.words;
+            this.palette = config.palette;
 
-            console.log('✅ Generated crossword:', config);
-
-            this.buildScene();
+            console.log(`✅ Crossword generated:`, config);
         } catch (error) {
-            console.error('Failed to generate crossword:', error);
-            this.scene.start(SCENES.CATEGORY_SELECTION);
+            console.error('❌ Failed to generate crossword:', error);
+            // Fallback to level selection
+            this.scene.start(SCENES.LEVEL_SELECTION);
         }
     }
 
-    private buildScene() {
-        // UI Header
-        this.createHeader();
-
-        // Crossword Grid (Top)
-        this.createCrosswordGrid();
-
-        // Score Display
-        this.createScoreDisplay();
-
-        // Current Word Display (Middle)
-        this.createWordDisplay();
-
-        // Letter Palette (Bottom)
-        this.createLetterPalette();
-
-        // Footer removed - hint in header
-    }
-
     private createHeader() {
-        const headerH = 80;
-        this.add.rectangle(0, 0, GAME_WIDTH, headerH, 0xFFFFFF).setOrigin(0);
+        const headerHeight = 80;
+        this.add.rectangle(0, 0, GAME_WIDTH, headerHeight, 0xFFFFFF).setOrigin(0);
 
-        // Back Button
+        // Back button
         new Button({
             scene: this,
             x: 50,
-            y: headerH / 2,
+            y: headerHeight / 2,
             text: '<',
             width: 40,
             height: 40,
             style: 'secondary',
             onClick: () => {
-                this.scene.start(SCENES.CATEGORY_SELECTION);
+                this.scene.start(SCENES.LEVEL_SELECTION);
             }
         });
 
-        // Level Title
-        this.levelText = this.add.text(GAME_WIDTH / 2, headerH / 2, `SEVİYE ${this.levelNumber}`, {
+        // Level title
+        this.add.text(GAME_WIDTH / 2, headerHeight / 2, `SEVİYE ${this.levelNumber}`, {
             fontFamily: FONT_FAMILY_PRIMARY,
-            fontSize: '22px',
+            fontSize: '24px',
             color: '#2D3748',
             fontStyle: 'bold'
         }).setOrigin(0.5);
 
-        // Hint Button (Top Right)
+        // Hint button (top right)
         new Button({
             scene: this,
             x: GAME_WIDTH - 60,
-            y: headerH / 2,
+            y: headerHeight / 2,
             text: '💡',
             style: 'secondary',
             width: 45,
@@ -130,15 +107,29 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private createCrosswordGrid() {
-        const y = 200;
+        const y = 120;
+
+        // Calculate grid size from words
+        let maxRow = 0;
+        let maxCol = 0;
+        this.targetWords.forEach(w => {
+            const len = Array.from(w.text).length;
+            if (w.direction === 'horizontal') {
+                maxRow = Math.max(maxRow, w.startRow + 1);
+                maxCol = Math.max(maxCol, w.startCol + len);
+            } else {
+                maxRow = Math.max(maxRow, w.startRow + len);
+                maxCol = Math.max(maxCol, w.startCol + 1);
+            }
+        });
 
         this.crosswordGrid = new CrosswordGrid({
             scene: this,
-            x: GAME_WIDTH / 2 - (this.targetWords[0].text.length * 40) / 2,
+            x: GAME_WIDTH / 2 - (maxCol * 40) / 2,
             y: y,
             words: this.targetWords,
-            rows: 3,
-            cols: 5
+            rows: maxRow,
+            cols: maxCol
         });
     }
 
@@ -153,122 +144,100 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private createWordDisplay() {
-        const y = GAME_HEIGHT * 0.55;
+        const y = GAME_HEIGHT * 0.53;
 
         this.currentWordDisplay = new CurrentWordDisplay({
             scene: this,
             x: GAME_WIDTH / 2,
             y: y,
-            width: 300
+            width: GAME_WIDTH - 40
         });
     }
 
     private createLetterPalette() {
-        const y = GAME_HEIGHT - 150;
+        const y = GAME_HEIGHT - 200;
 
         this.letterPalette = new LetterPalette({
             scene: this,
             x: GAME_WIDTH / 2,
             y: y,
             letters: this.palette,
-            onWordSubmit: (word) => this.onWordSubmit(word)
+            onWordSubmit: (word: string) => this.onWordSubmit(word)
         });
     }
 
     private onWordSubmit(word: string) {
-        console.log('Word submitted:', word);
+        console.log(`Word submitted: ${word}`);
         this.currentWordDisplay.setWord(word);
 
-        // Check if word matches any target word
-        const matchingWord = this.targetWords.find(
-            (w: CrosswordWord) => w.text.toUpperCase() === word.toUpperCase() && !w.isFound
+        // Check if word is correct
+        const foundWord = this.targetWords.find(w =>
+            w.text.toUpperCase() === word.toUpperCase() && !w.isFound
         );
 
-        if (matchingWord) {
-            this.onWordFound(matchingWord);
+        if (foundWord) {
+            this.onWordFound(foundWord);
+            this.letterPalette.clearSelection();
+            this.currentWordDisplay.setWord('');
         } else {
-            AudioManager.playSfx('wrong');
-            this.time.delayedCall(500, () => {
-                this.currentWordDisplay.clear();
-            });
+            // Wrong word feedback
+            console.log('❌ Word not found');
         }
     }
 
     private onWordFound(word: CrosswordWord) {
-        console.log('✅ Word found:', word.text);
+        console.log(`✅ Word found: ${word.text}`);
 
-        AudioManager.playSfx('match');
-        HapticManager.medium();
-
-        // Fill in crossword
+        // Mark as found and fill in grid
+        word.isFound = true;
         this.crosswordGrid.fillWord(word);
 
-        // Add stars
-        const stars = 1;
-        GameManager.addStars(stars);
+        // Update score
+        this.score += word.text.length;
+        this.scoreText.setText(`${this.score} ⭐️`);
 
-        // Update score display
-        const totalStars = GameManager.getGameState()?.user.totalStars || 0;
-        this.scoreText.setText(`${totalStars} ⭐️`);
-
-        // Clear word display
-        this.time.delayedCall(1000, () => {
-            this.currentWordDisplay.clear();
-        });
-
-        // Check completion
+        // Check if level complete
         if (this.crosswordGrid.isComplete()) {
-            this.time.delayedCall(1500, () => this.onLevelComplete());
-        }
-    }
-
-    private useHint() {
-        const unfoundWord = this.targetWords.find(w => !w.isFound);
-        if (unfoundWord) {
-            this.currentWordDisplay.setWord(unfoundWord.text.charAt(0) + '...');
-            this.time.delayedCall(2000, () => {
-                this.currentWordDisplay.clear();
+            this.time.delayedCall(500, () => {
+                this.onLevelComplete();
             });
         }
     }
 
-    private onLevelComplete() {
-        const panel = new Panel({
-            scene: this,
-            x: GAME_WIDTH / 2,
-            y: GAME_HEIGHT / 2,
-            title: LocalizationManager.t('game.congrats', 'TEBRİKLER! 🎉'),
-            width: 300,
-            height: 300,
-            showCloseButton: false
-        });
+    private useHint() {
+        console.log('💡 Hint requested');
 
-        const stars = 3;
+        // Find first unfound word
+        const unFoundWord = this.targetWords.find(w => !w.isFound);
 
-        const msg = this.add.text(0, -50, `Seviye Tamamlandı!\n+${stars} Yıldız`, {
-            fontFamily: FONT_FAMILY_PRIMARY,
-            fontSize: '24px',
-            color: '#2D3748',
-            align: 'center'
-        }).setOrigin(0.5);
-        panel.add(msg);
+        if (unFoundWord) {
+            GameManager.useHint();
+            unFoundWord.isFound = true;
+            this.crosswordGrid.fillWord(unFoundWord);
 
-        const nextBtn = new Button({
-            scene: this,
-            x: 0,
-            y: 50,
-            text: 'DAHA FAZLA',
-            style: 'success',
-            onClick: () => {
-                this.scene.start(SCENES.CATEGORY_SELECTION);
+            // Check completion
+            if (this.crosswordGrid.isComplete()) {
+                this.time.delayedCall(500, () => {
+                    this.onLevelComplete();
+                });
             }
+        }
+    }
+
+    private onLevelComplete() {
+        console.log('🎉 Level Complete!');
+
+        // Calculate stars (simplified)
+        const stars = 3; // TODO: Calculate based on hints used, time, etc.
+        const time = 60; // TODO: Track actual time
+
+        // Save progress
+        GameManager.completeLevel(this.levelNumber, stars, time);
+        GameManager.addWordsFound(this.targetWords.length);
+
+        // Return to level selection
+        this.time.delayedCall(1500, () => {
+            this.scene.start(SCENES.LEVEL_SELECTION);
         });
-        panel.add(nextBtn);
-
-        panel.open();
-        AudioManager.playSfx('level_complete');
-        HapticManager.success();
-
-        GameManager.completeLevel(this.categoryId, this.levelNumber, stars, 60);
     }
 }

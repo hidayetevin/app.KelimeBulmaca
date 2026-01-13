@@ -4,6 +4,7 @@ import { LIGHT_COLORS } from '@/utils/colors';
 import GameManager from '@/managers/GameManager';
 import LocalizationManager from '@/managers/LocalizationManager';
 import AdManager from '@/managers/AdManager';
+import AudioManager from '@/managers/AudioManager';
 import { fadeIn } from '@/utils/animations';
 import Button from '@/components/UI/Button';
 import StarDisplay from '@/components/UI/StarDisplay';
@@ -88,8 +89,8 @@ export default class MainMenuScene extends Phaser.Scene {
             height: 70,
             fontSize: 28,
             onClick: () => {
-                // Next Step: Category Selection
-                this.scene.start(SCENES.CATEGORY_SELECTION);
+                AudioManager.playSfx('click');
+                this.scene.start(SCENES.LEVEL_SELECTION);
                 // console.log('Category Selection step coming soon...');
             }
         });
