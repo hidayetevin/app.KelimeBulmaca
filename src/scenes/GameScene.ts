@@ -8,6 +8,7 @@ import CurrentWordDisplay from '@/components/UI/CurrentWordDisplay';
 import CrosswordGrid from '@/components/UI/CrosswordGrid';
 import LevelCompleteModal from '@/components/UI/LevelCompleteModal';
 import { CrosswordWord } from '@/types/GameTypes';
+import AdManager from '@/managers/AdManager';
 
 export default class GameScene extends Phaser.Scene {
     private levelNumber!: number;
@@ -236,19 +237,34 @@ export default class GameScene extends Phaser.Scene {
         GameManager.addWordsFound(this.targetWords.length);
 
         // Show Completion Modal
+        const showNextLevel = () => {
+            const nextLevel = Math.min(this.levelNumber + 1, 100);
+            // Navigate
+            this.scene.start(SCENES.GAME, { level: nextLevel });
+        };
+
         new LevelCompleteModal({
             scene: this,
             stars: stars,
-            onDoubleReward: () => {
+            onDoubleReward: async () => {
                 console.log('📺 Watch Ad for x2 Reward clicked');
-                // TODO: Implement AdMob reward logic here
-                GameManager.addStars(stars); // Bonus stars
-                // Maybe disable button or show checkmark? 
-                // For now, let's just move on or give feedback
-                this.scene.start(SCENES.LEVEL_SELECTION);
+                const rewarded = await AdManager.showRewarded();
+                if (rewarded) {
+                    console.log('💰 Double reward earned!');
+                    GameManager.addStars(stars); // Add the stars AGAIN (doubling total for this level)
+                    showNextLevel();
+                } else {
+                    console.log('🚫 Ad canceled or failed');
+                    // Optional: Show message or just stay on modal?
+                    // Let's stay on modal so they can try "continue"
+                }
             },
-            onContinue: () => {
-                this.scene.start(SCENES.LEVEL_SELECTION);
+            onContinue: async () => {
+                console.log('📺 Continue clicked, showing interstitial');
+                // Show Interstitial
+                await AdManager.showInterstitial();
+                // Navigate regardless of ad result
+                showNextLevel();
             }
         });
     }

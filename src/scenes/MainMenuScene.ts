@@ -15,6 +15,9 @@ export default class MainMenuScene extends Phaser.Scene {
     }
 
     create() {
+        // Show Banner Ad (Bottom)
+        AdManager.showBanner();
+
         const width = GAME_WIDTH;
         const height = GAME_HEIGHT;
         const centerX = width / 2;
@@ -108,7 +111,7 @@ export default class MainMenuScene extends Phaser.Scene {
         });
 
         // 5. Banner Ad
-        AdManager.showBanner('bottom');
+        AdManager.showBanner();
 
         // 6. Fade In
         fadeIn(this, logoText, 800);

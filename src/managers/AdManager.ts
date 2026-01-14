@@ -1,25 +1,34 @@
-import { AD_IDS, REWARDED_AD_REWARD_STARS, AD_COOLDOWN_SECONDS } from '@/utils/constants';
+import { REWARDED_AD_REWARD_STARS, AD_COOLDOWN_SECONDS } from '@/utils/constants';
 import GameManager from './GameManager';
 import LocalizationManager from './LocalizationManager';
 
-/**
- * Ad Manager - Singleton
- * Capacitor AdMob plugin wrapper.
- * Reklam gösterimi ve ödülleri yönetir.
- */
+// Google AdMob Test IDs
+const TEST_ADS = {
+    ANDROID: {
+        BANNER: 'ca-app-pub-3940256099942544/6300978111',
+        INTERSTITIAL: 'ca-app-pub-3940256099942544/1033173712',
+        REWARDED: 'ca-app-pub-3940256099942544/5224354917'
+    },
+    IOS: {
+        BANNER: 'ca-app-pub-3940256099942544/2934735716',
+        INTERSTITIAL: 'ca-app-pub-3940256099942544/4411468910',
+        REWARDED: 'ca-app-pub-3940256099942544/1712485313'
+    }
+};
+
 class AdManager {
     private static instance: AdManager;
     private isAdMobAvailable: boolean = false;
     private isTestMode: boolean = true;
     private lastInterstitialTime: number = 0;
 
-    // Placeholder for Capacitor AdMob
+    // Capacitor AdMob References
     private AdMob: any = null;
     private BannerAdSize: any = null;
     private BannerAdPosition: any = null;
 
     private constructor() {
-        this.checkAdMobAvailability();
+        this.init();
     }
 
     public static getInstance(): AdManager {
@@ -29,9 +38,6 @@ class AdManager {
         return AdManager.instance;
     }
 
-    /**
-     * AdMob plugin kontrolü ve başlatma
-     */
     public async init(): Promise<void> {
         try {
             // @ts-ignore
@@ -44,7 +50,7 @@ class AdManager {
 
                 await this.AdMob.initialize({
                     requestTrackingAuthorization: true,
-                    testingDevices: ['2077ef9a63d2b398840261c8221a0c9b'], // Test cihaz ID'leri eklenebilir
+                    testingDevices: ['2077ef9a63d2b398840261c8221a0c9b'],
                     initializeForTesting: true,
                 });
 
@@ -59,19 +65,20 @@ class AdManager {
         }
     }
 
-    // --- BANNER REKLAMLAR ---
+    // --- BANNER ---
 
-    public async showBanner(position: 'top' | 'bottom' = 'bottom'): Promise<void> {
+    public async showBanner(): Promise<void> {
         if (!this.isAdMobAvailable) {
-            console.log(`📺 [MOCK] Showing Banner Ad at ${position}`);
+            console.log('📺 [MOCK] Showing Banner Ad (Bottom)');
             return;
         }
 
         try {
+            const adId = TEST_ADS.ANDROID.BANNER; // TODO: Detect Platform
             const options = {
-                adId: AD_IDS.BANNER,
+                adId: adId,
                 adSize: this.BannerAdSize.BANNER,
-                position: position === 'top' ? this.BannerAdPosition.TOP_CENTER : this.BannerAdPosition.BOTTOM_CENTER,
+                position: this.BannerAdPosition.BOTTOM_CENTER,
                 margin: 0,
                 isTesting: this.isTestMode
             };
@@ -83,107 +90,62 @@ class AdManager {
     }
 
     public async hideBanner(): Promise<void> {
-        if (!this.isAdMobAvailable) {
-            console.log('📺 [MOCK] Hiding Banner Ad');
-            return;
-        }
-
-        try {
-            await this.AdMob.hideBanner();
-            // Veya removeBanner
-        } catch (error) {
-            console.error('❌ Failed to hide banner:', error);
-        }
-    }
-
-    public async removeBanner(): Promise<void> {
         if (!this.isAdMobAvailable) return;
         try {
-            await this.AdMob.removeBanner();
+            await this.AdMob.hideBanner();
         } catch (error) { /* ignore */ }
     }
 
-    // --- INTERSTITIAL (TAM EKRAN) REKLAMLAR ---
+    // --- INTERSTITIAL ---
 
-    /**
-     * Tam ekran reklam yükler
-     */
-    public async loadInterstitial(): Promise<void> {
-        if (!this.isAdMobAvailable) return;
-
-        try {
-            const options = {
-                adId: AD_IDS.INTERSTITIAL,
-                isTesting: this.isTestMode
-            };
-            await this.AdMob.prepareInterstitial(options);
-        } catch (error) {
-            console.error('❌ Failed to load interstitial:', error);
-        }
-    }
-
-    /**
-     * Tam ekran reklam gösterir (Cooldown kontrolü ile)
-     * @returns Reklam gösterildi mi?
-     */
     public async showInterstitial(): Promise<boolean> {
-        const now = Date.now();
-
-        // Cooldown kontrolü (2 dakika)
-        if (now - this.lastInterstitialTime < AD_COOLDOWN_SECONDS * 1000) {
-            console.log('⏳ Ad cooldown active, skipping interstitial');
-            return false;
-        }
-
         if (!this.isAdMobAvailable) {
             console.log('📺 [MOCK] Showing Interstitial Ad');
-            this.lastInterstitialTime = now;
-            return true;
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    console.log('📺 [MOCK] Interstitial Closed');
+                    resolve(true); // Closed
+                }, 1000);
+            });
         }
 
-        try {
-            await this.AdMob.showInterstitial();
-            this.lastInterstitialTime = now;
-            return true;
-        } catch (error) {
-            console.error('❌ Failed to show interstitial:', error);
-            // Yüklenmemiş olabilir, tekrar yüklemeyi dene
-            this.loadInterstitial();
-            return false;
-        }
+        return new Promise(async (resolve) => {
+            try {
+                const adId = TEST_ADS.ANDROID.INTERSTITIAL;
+
+                // Add Listeners
+                // @ts-ignore
+                const dismissHandler = this.AdMob.addListener('onInterstitialAdDismissed', () => {
+                    dismissHandler.remove();
+                    resolve(true);
+                });
+
+                // @ts-ignore
+                const failHandler = this.AdMob.addListener('onInterstitialAdFailedToLoad', (err) => {
+                    failHandler.remove();
+                    console.error('Interstitial failed to load', err);
+                    resolve(false);
+                });
+
+                // Prepare and Show
+                await this.AdMob.prepareInterstitial({ adId, isTesting: this.isTestMode });
+                await this.AdMob.showInterstitial();
+
+            } catch (error) {
+                console.error('❌ Failed to show interstitial:', error);
+                resolve(false);
+            }
+        });
     }
 
-    // --- REWARDED (ÖDÜLLÜ) REKLAMLAR ---
+    // --- REWARDED ---
 
-    /**
-     * Ödüllü reklam yükler
-     */
-    public async loadRewarded(): Promise<void> {
-        if (!this.isAdMobAvailable) return;
-
-        try {
-            const options = {
-                adId: AD_IDS.REWARDED,
-                isTesting: this.isTestMode
-            };
-            await this.AdMob.prepareRewardVideoAd(options);
-        } catch (error) {
-            console.error('❌ Failed to load rewarded video:', error);
-        }
-    }
-
-    /**
-     * Ödüllü reklam gösterir
-     * @returns Ödül kazanıldı mı?
-     */
     public async showRewarded(): Promise<boolean> {
         if (!this.isAdMobAvailable) {
             console.log('📺 [MOCK] Showing Rewarded Ad');
-            // Web modunda direkt ödülü ver
             return new Promise(resolve => {
-                const confirmed = window.confirm(LocalizationManager.t('hints.watchAd')); // Mock confirm
+                const confirmed = window.confirm("Mock Ad: Watch video to double reward?");
                 if (confirmed) {
-                    this.grantReward();
                     resolve(true);
                 } else {
                     resolve(false);
@@ -192,48 +154,31 @@ class AdManager {
         }
 
         return new Promise(async (resolve) => {
+            let earnedReward = false;
             try {
-                // Ödül listener'ı ekle
-                // Not: Capacitor AdMob API sürümüne göre değişebilir, basit implementasyon.
+                const adId = TEST_ADS.ANDROID.REWARDED;
+
                 // @ts-ignore
-                const handler = this.AdMob.addListener('onRewardVideoReward', (reward: any) => {
-                    this.grantReward();
-                    resolve(true);
+                const rewardHandler = this.AdMob.addListener('onRewardVideoReward', (reward) => {
+                    console.log('🎁 Reward earned:', reward);
+                    earnedReward = true;
                 });
 
-                // Kapatılma listener'ı (ödül almadan kapattıysa)
                 // @ts-ignore
-                const closeHandler = this.AdMob.addListener('onRewardVideoAdDismissed', () => {
-                    // Listener'ları temizle
-                    handler.remove();
-                    closeHandler.remove();
-                    // Resolve edilmediyse false dön (timeout veya logic ile)
-                    // Basitlik için burada resolve etmiyoruz, reward event gelirse true döner.
-                    // Aslında bir flag ile kontrol edilebilir.
+                const dismissHandler = this.AdMob.addListener('onRewardVideoAdDismissed', () => {
+                    rewardHandler.remove();
+                    dismissHandler.remove();
+                    resolve(earnedReward);
                 });
 
+                await this.AdMob.prepareRewardVideoAd({ adId, isTesting: this.isTestMode });
                 await this.AdMob.showRewardVideoAd();
+
             } catch (error) {
                 console.error('❌ Failed to show rewarded video:', error);
-                this.loadRewarded(); // Reload
                 resolve(false);
             }
         });
-    }
-
-    /**
-     * Ödülü verir (Merkezi method)
-     */
-    private grantReward(): void {
-        GameManager.addStars(REWARDED_AD_REWARD_STARS);
-        console.log(`🎁 Ad Reward Granted: +${REWARDED_AD_REWARD_STARS} stars`);
-    }
-
-    /**
-     * Capacitor kontrolü
-     */
-    private checkAdMobAvailability(): void {
-        // Init içinde yapılıyor
     }
 }
 
