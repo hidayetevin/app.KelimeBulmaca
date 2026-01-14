@@ -113,15 +113,21 @@ class AdManager {
 
                 // Add Listeners
                 // @ts-ignore
-                const dismissHandler = this.AdMob.addListener('onInterstitialAdDismissed', () => {
+                const dismissHandler = this.AdMob.addListener('interstitialAdDismissed', () => {
                     dismissHandler.remove();
                     resolve(true);
                 });
 
                 // @ts-ignore
-                const failHandler = this.AdMob.addListener('onInterstitialAdFailedToLoad', (err) => {
+                const failHandler = this.AdMob.addListener('interstitialAdFailedToLoad', async (err) => {
                     failHandler.remove();
                     console.error('Interstitial failed to load', err);
+                    // @ts-ignore
+                    const { Toast } = await import('@capacitor/toast');
+                    await Toast.show({
+                        text: `Reklam Yüklenemedi: ${JSON.stringify(err)}`,
+                        duration: 'long'
+                    });
                     resolve(false);
                 });
 
@@ -131,6 +137,12 @@ class AdManager {
 
             } catch (error) {
                 console.error('❌ Failed to show interstitial:', error);
+                // @ts-ignore
+                const { Toast } = await import('@capacitor/toast');
+                await Toast.show({
+                    text: 'Reklam Hatası',
+                    duration: 'short'
+                });
                 resolve(false);
             }
         });
@@ -157,13 +169,13 @@ class AdManager {
                 const adId = TEST_ADS.ANDROID.REWARDED;
 
                 // @ts-ignore
-                const rewardHandler = this.AdMob.addListener('onRewardVideoReward', (reward) => {
+                const rewardHandler = this.AdMob.addListener('onRewardedVideoAdReward', (reward) => {
                     console.log('🎁 Reward earned:', reward);
                     earnedReward = true;
                 });
 
                 // @ts-ignore
-                const dismissHandler = this.AdMob.addListener('onRewardVideoAdDismissed', () => {
+                const dismissHandler = this.AdMob.addListener('onRewardedVideoAdDismissed', () => {
                     rewardHandler.remove();
                     dismissHandler.remove();
                     resolve(earnedReward);
