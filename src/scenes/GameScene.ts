@@ -6,6 +6,7 @@ import Button from '@/components/UI/Button';
 import LetterPalette from '@/components/UI/LetterPalette';
 import CurrentWordDisplay from '@/components/UI/CurrentWordDisplay';
 import CrosswordGrid from '@/components/UI/CrosswordGrid';
+import LevelCompleteModal from '@/components/UI/LevelCompleteModal';
 import { CrosswordWord } from '@/types/GameTypes';
 
 export default class GameScene extends Phaser.Scene {
@@ -222,6 +223,7 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
+
     private onLevelComplete() {
         console.log('🎉 Level Complete!');
 
@@ -233,9 +235,21 @@ export default class GameScene extends Phaser.Scene {
         GameManager.completeLevel(this.levelNumber, stars, time);
         GameManager.addWordsFound(this.targetWords.length);
 
-        // Return to level selection
-        this.time.delayedCall(1500, () => {
-            this.scene.start(SCENES.LEVEL_SELECTION);
+        // Show Completion Modal
+        new LevelCompleteModal({
+            scene: this,
+            stars: stars,
+            onDoubleReward: () => {
+                console.log('📺 Watch Ad for x2 Reward clicked');
+                // TODO: Implement AdMob reward logic here
+                GameManager.addStars(stars); // Bonus stars
+                // Maybe disable button or show checkmark? 
+                // For now, let's just move on or give feedback
+                this.scene.start(SCENES.LEVEL_SELECTION);
+            },
+            onContinue: () => {
+                this.scene.start(SCENES.LEVEL_SELECTION);
+            }
         });
     }
 }

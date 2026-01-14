@@ -116,6 +116,18 @@ export default class LevelSelectionScene extends Phaser.Scene {
         // For now, scroll logic handles bounds.
 
         this.add.existing(this.scrollContainer);
+
+        // Auto-scroll to current level
+        const currentRow = Math.floor((currentLevel - 1) / cols);
+        const targetY = -(currentRow * (buttonSize + spacing));
+
+        // Center it vertically if possible (screen height / 2)
+        const centeredY = targetY + (GAME_HEIGHT / 2) - startY;
+
+        // Clamp to bounds
+        const maxScroll = Math.max(0, Math.ceil(totalLevels / cols) * (buttonSize + spacing) - GAME_HEIGHT + 200);
+        this.scrollY = Phaser.Math.Clamp(centeredY, -maxScroll, 0);
+        this.scrollContainer.y = this.scrollY;
     }
 
     private createLevelButton(
