@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { FONT_FAMILY_PRIMARY } from '@/utils/constants';
+import { FONT_FAMILY_PRIMARY, GAME_WIDTH } from '@/utils/constants';
 import { CrosswordWord, CrosswordCellData } from '@/types/GameTypes';
 
 export interface CrosswordGridConfig {
@@ -23,11 +23,23 @@ export default class CrosswordGrid extends Phaser.GameObjects.Container {
 
         this.words = config.words;
 
+        // Dynamic cell size calculation
+        this.cellSize = this.calculateCellSize(config.cols);
+
         this.initializeCells(config.rows, config.cols);
         this.mapWords();
         this.createVisuals();
 
         this.scene.add.existing(this);
+    }
+
+    private calculateCellSize(cols: number): number {
+        const padding = 20;
+        const maxCellSize = 40;
+
+        // Ensure grid fits within GAME_WIDTH with some padding
+        const generatedSize = Math.floor((GAME_WIDTH - padding) / cols);
+        return Math.min(generatedSize, maxCellSize);
     }
 
     private initializeCells(rows: number, cols: number) {
@@ -64,7 +76,7 @@ export default class CrosswordGrid extends Phaser.GameObjects.Container {
 
     private createVisuals() {
         this.cells.forEach((row, r) => {
-            row.forEach((cell, c) => {
+            row.forEach((_, c) => {
                 const x = c * this.cellSize;
                 const y = r * this.cellSize;
                 const key = `${r}-${c}`;
