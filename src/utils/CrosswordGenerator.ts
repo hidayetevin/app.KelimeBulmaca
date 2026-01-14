@@ -15,23 +15,53 @@ export class CrosswordGenerator {
      * 3. Extract palette from selected words
      */
     public static generate(wordList: string[], wordCount: number): CrosswordGeneratorResult {
-        // Step 1: Select words with maximum letter overlap
-        // We pass ALL words as candidates, logic inside will pick the best 'wordCount' number of words.
-        const selectedWords = this.selectWordsWithOverlap(wordList, wordCount);
+        let bestResult: CrosswordGeneratorResult | null = null;
+        const attempts = 50;
 
-        if (selectedWords.length === 0) {
-            console.error('No words found!');
-            return { words: [], gridSize: { rows: 0, cols: 0 }, palette: [] };
+        for (let i = 0; i < attempts; i++) {
+            const result = this.generateInternal(wordList, wordCount);
+
+            // If we found a fully formed crossword with desired word count
+            if (result && result.words.length === wordCount) {
+                return result;
+            }
+
+            // Keep track of the best partial result just in case (optional, but good for fallback)
+            if (result && (!bestResult || result.words.length > bestResult.words.length)) {
+                bestResult = result;
+            }
         }
 
-        // Step 2: Extract palette from selected words
-        const palette = this.extractMinimalPalette(selectedWords);
+        // If we failed to find a perfect one, return best partial or empty
+        if (bestResult) {
+            console.warn(`Could not generate full crossword. Returning best partial (${bestResult.words.length}/${wordCount})`);
+            return bestResult;
+        }
 
-        console.log(`✅ Selected ${selectedWords.length} words: [${selectedWords.join(', ')}]`);
-        console.log(`✅ Palette (${palette.length} letters): [${palette.join(', ')}]`);
+        console.error('Failed to generate any valid crossword');
+        return { words: [], gridSize: { rows: 0, cols: 0 }, palette: [] };
+    }
 
-        // Step 3: Place words on grid
+    private static generateInternal(wordList: string[], wordCount: number): CrosswordGeneratorResult | null {
+        // Step 1: Select words with maximum letter overlap
+        const selectedWords = this.selectWordsWithOverlap(wordList, wordCount);
+
+        if (selectedWords.length === 0) return null;
+
+        // Step 2: Place words on grid
         const placedWords = this.placeWords(selectedWords);
+
+        // If not all words could be placed connectedly, fail this attempt
+        if (placedWords.length !== selectedWords.length) {
+            return {
+                words: placedWords,
+                gridSize: { rows: 0, cols: 0 }, // temp
+                palette: []
+            };
+        }
+
+        // Step 3: Extract palette from PLACED words only
+        const palette = this.extractMinimalPalette(placedWords.map(w => w.text));
 
         // Step 4: Calculate grid size
         const gridSize = this.calculateGridSize(placedWords);
@@ -195,21 +225,9 @@ export class CrosswordGenerator {
                     direction: placement.direction,
                     isFound: false
                 });
-            } else {
-                // Fallback: place below
-                const maxRow = Math.max(...placed.map(w => {
-                    const len = Array.from(w.text).length;
-                    return w.direction === 'vertical' ? w.startRow + len : w.startRow;
-                }));
-                placed.push({
-                    id: i,
-                    text: word,
-                    startRow: maxRow + 2,
-                    startCol: 0,
-                    direction: 'horizontal',
-                    isFound: false
-                });
             }
+            // FALLBACK REMOVED: If placement is null, we simply DO NOT add the word.
+            // This ensures we never have disconnected islands.
         }
 
         return placed;
@@ -239,9 +257,101 @@ export class CrosswordGenerator {
                         }
 
                         if (newRow >= 0 && newCol >= 0) {
-                            return { row: newRow, col: newCol, direction: newDirection };
+                            // Check if this placement is valid (no illegal touches)
+                            // Pass 'existingWords' instead of 'placed'
+                            if (this.canPlaceWord(word, newRow, newCol, newDirection, existingWords)) {
+                                return { row: newRow, col: newCol, direction: newDirection };
+                            }
                         }
                     }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Checks if a word can be placed at the specified position without violating crossword rules.
+     * Rule: A word cannot touch other words except at intersection points.
+     */
+    private static canPlaceWord(
+        word: string,
+        startRow: number,
+        startCol: number,
+        direction: 'horizontal' | 'vertical',
+        placedWords: CrosswordWord[]
+    ): boolean {
+        const wordLen = word.length;
+
+        // 1. Identify which cells this word will occupy
+        // and which of those are intersections (already occupied)
+        const myCells: { r: number, c: number, char: string }[] = [];
+        const intersections: { r: number, c: number }[] = [];
+
+        for (let i = 0; i < wordLen; i++) {
+            const r = direction === 'vertical' ? startRow + i : startRow;
+            const c = direction === 'horizontal' ? startCol + i : startCol;
+            myCells.push({ r, c, char: word[i] });
+
+            if (this.isCellOccupied(r, c, placedWords)) {
+                intersections.push({ r, c });
+                // Validation 1: Intersection must match char
+                const existingChar = this.getCharAt(r, c, placedWords);
+                if (existingChar !== word[i]) return false;
+            }
+        }
+
+        // 2. Check each cell's neighbors
+        for (const cell of myCells) {
+            // If this cell is an intersection, we've already validated it matches.
+            // We don't need to check its neighbors (they are occupied by the crossing word, which is fine).
+            const isIntersection = intersections.some(int => int.r === cell.r && int.c === cell.c);
+
+            if (!isIntersection) {
+                // This cell is empty. Its neighbors must NOT be occupied, 
+                // UNLESS the occupied neighbor is one of our intersection points.
+                const neighbors = [
+                    { r: cell.r - 1, c: cell.c },
+                    { r: cell.r + 1, c: cell.c },
+                    { r: cell.r, c: cell.c - 1 },
+                    { r: cell.r, c: cell.c + 1 }
+                ];
+
+                for (const n of neighbors) {
+                    if (this.isCellOccupied(n.r, n.c, placedWords)) {
+                        // Neighbor is occupied. Is it a valid intersection point of ours?
+                        const isNeighborIntersection = intersections.some(int => int.r === n.r && int.c === n.c);
+                        if (!isNeighborIntersection) {
+                            // It touches a word cell that we are NOT crossing.
+                            // This creates an illegal 2-letter word (connected island).
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private static isCellOccupied(row: number, col: number, placedWords: CrosswordWord[]): boolean {
+        return placedWords.some(w => {
+            if (w.direction === 'horizontal') {
+                return row === w.startRow && col >= w.startCol && col < w.startCol + w.text.length;
+            } else {
+                return col === w.startCol && row >= w.startRow && row < w.startRow + w.text.length;
+            }
+        });
+    }
+
+    private static getCharAt(row: number, col: number, placedWords: CrosswordWord[]): string | null {
+        for (const w of placedWords) {
+            if (w.direction === 'horizontal') {
+                if (row === w.startRow && col >= w.startCol && col < w.startCol + w.text.length) {
+                    return w.text[col - w.startCol];
+                }
+            } else {
+                if (col === w.startCol && row >= w.startRow && row < w.startRow + w.text.length) {
+                    return w.text[row - w.startRow];
                 }
             }
         }
