@@ -36,10 +36,9 @@ AdMob reklamları (Banner + Interstitial + Rewarded)
 - **Gelecek:** İngilizce ve diğer diller (altyapı hazır olacak)
 
 ### 📊 İlk Sürüm Kapsamı
-- 3 kategori
-- Her kategoride 5 seviye
-- Toplam 15 seviye
-- ~90 kelime içeriği
+- 6 Zorluk Seviyesi (Başlangıç - Dahi)
+- Toplam 100 Seviye
+- Binlerce kelime içeriği
 
 ---
 
@@ -199,29 +198,25 @@ ESLint + Prettier
 - Seviye 5 bitince kategori tamamlanır
 ```
 
-#### Kategori Sistemi
+#### Seviye İlerlemesi
 ```
-İlk Durum:
-- Kategori 1: AÇIK
-- Kategori 2: AÇIK  
-- Kategori 3: KİTLİ (20 yıldız gerekli)
-
-Kilit Açma:
-- Kategori 1 veya 2'den toplam 20 yıldız topla
-- Kategori 3 otomatik açılır
+- Seviyeler 1'den 100'e kadar lineer ilerler
+- Her seviye tamamlandığında bir sonraki seviye kilidi açılır
+- Zorluk seviyesi kümülatif olarak artar
 ```
 
-### 4.2 Seviye Yapısı
+### 4.2 Seviye Yapısı ve Zorluk Kademeleri
 
-| Seviye | Kelime Sayısı | Harf Sayısı | Grid Boyutu | Maksimum Yıldız |
-|--------|---------------|-------------|-------------|-----------------|
-| 1      | 4             | 4           | 3x3         | 4               |
-| 2      | 5             | 5           | 3x4         | 5               |
-| 3      | 6             | 6           | 4x4         | 6               |
-| 4      | 7             | 7           | 4x5         | 7               |
-| 5      | 8             | 8           | 5x5         | 8               |
+| Seviye Aralığı | Kademe Adı  | Kelime Sayısı | Harf Uzunluğu | Zorluk Artışı |
+|----------------|-------------|---------------|---------------|---------------|
+| 1-10           | Başlangıç   | 3             | 3-4           | Temel         |
+| 11-20          | Orta        | 3             | 3-5           | +10%          |
+| 21-40          | Deneyimli   | 4             | 3-5           | +20%          |
+| 41-60          | Uzman       | 4             | 4-6           | +30%          |
+| 61-80          | Bilgin      | 5             | 3-6           | +40%          |
+| 81-100         | Dahi        | 5             | 4-7           | +50%          |
 
-**Toplam yıldız/kategori:** 30 yıldız
+**Toplam Seviye:** 100
 
 ### 4.3 Kelime Yerleştirme Kuralları
 
@@ -497,9 +492,13 @@ word-master/
 │   │   └── AnalyticsManager.ts
 │   ├── data/
 │   │   ├── categories/
-│   │   │   ├── animals.json
-│   │   │   ├── fruits.json
-│   │   │   └── cities.json
+│   │   ├── categories/
+│   │   │   ├── baslangic.json
+│   │   │   ├── orta.json
+│   │   │   ├── deneyimli.json
+│   │   │   ├── uzman.json
+│   │   │   ├── bilgin.json
+│   │   │   └── dahi.json
 │   │   ├── achievements.json
 │   │   ├── dailyRewards.json
 │   │   └── wordGenerator.ts
@@ -697,50 +696,12 @@ interface GridCell {
 ### 6.3 Kategori Veri Örneği
 
 ```json
-// data/categories/animals.json
-{
-  "id": "animals",
-  "name": {
-    "tr": "Hayvanlar",
-    "en": "Animals"
-  },
-  "icon": "🐾",
-  "backgroundImage": "animals_bg.webp",
-  "requiredStars": 0,
-  "levels": [
-    {
-      "levelNumber": 1,
-      "gridSize": { "rows": 3, "cols": 3 },
-      "words": [
-        {
-          "text": "KEDI",
-          "direction": "horizontal",
-          "startPos": { "row": 0, "col": 0 },
-          "endPos": { "row": 0, "col": 3 }
-        },
-        {
-          "text": "KÖPEK",
-          "direction": "vertical",
-          "startPos": { "row": 0, "col": 0 },
-          "endPos": { "row": 4, "col": 0 }
-        },
-        {
-          "text": "KUŞ",
-          "direction": "diagonal_down",
-          "startPos": { "row": 0, "col": 0 },
-          "endPos": { "row": 2, "col": 2 }
-        },
-        {
-          "text": "BALIK",
-          "direction": "horizontal",
-          "startPos": { "row": 2, "col": 0 },
-          "endPos": { "row": 2, "col": 4 }
-        }
-      ],
-      "letters": ["K", "E", "D", "İ", "Ö", "P", "U", "Ş", "B", "A", "L", "I"]
-    }
-  ]
-}
+// data/categories/baslangic.json
+[
+  "ABA", "ACI", "ADA", "AĞA", "AHU", "AİLE", "AKIL", "ALAN", 
+  "ALET", "ALEV", "ALGI", "ALIÇ", "ALIM", "ALIN", "ALIŞ", 
+  "ALTI", "AMAÇ", "AMCA", "ANNE", "ANIT"
+]
 ```
 
 ---

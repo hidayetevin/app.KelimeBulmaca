@@ -22,10 +22,9 @@ export class WordDataGenerator {
      * Tüm kategorilerin kelimelerini yükler
      */
     public async loadAllWords(): Promise<void> {
-        // Zaten yüklendiyse tekrar yükleme
         if (this.wordPools.size > 0) return;
 
-        const categories = ['animals', 'fruits', 'cities']; // Genişletilebilir
+        const categories = ['baslangic', 'orta', 'deneyimli', 'uzman', 'bilgin', 'dahi'];
 
         const loadPromises = categories.map(async (cat) => {
             try {
@@ -40,57 +39,55 @@ export class WordDataGenerator {
         });
 
         await Promise.all(loadPromises);
-        console.log(`✅ Loaded words from ${this.wordPools.size} categories`);
+        console.log(`✅ Loaded words from ${this.wordPools.size} tiers`);
     }
-
-
 
     /**
      * Generate crossword configuration for a level
      */
-    /**
-     * Generate crossword configuration for a level with difficulty scaling (every 20 levels)
-     */
     public getCrosswordConfiguration(levelNumber: number) {
-        // Determine difficulty tier based on level (0 = Easy, 1 = Medium, 2 = Hard)
-        const difficulty = this.getDifficultyLevel(levelNumber);
-        // Get all words from all categories
-        const allWords: string[] = [];
-        this.wordPools.forEach(words => {
-            allWords.push(...words);
-        });
-        // Filter words according to difficulty
-        const filteredWords = this.filterWordsByDifficulty(allWords, difficulty);
-        // Generate crossword using filtered pool and level number
-        return CrosswordGenerator.generate(filteredWords, levelNumber);
-    }
+        let categoryId = 'baslangic';
+        let wordCount = 3;
 
-    /**
-     * Compute difficulty tier (0 = Easy, 1 = Medium, 2 = Hard) based on level.
-     * Every 20 levels increase difficulty.
-     */
-    private getDifficultyLevel(level: number): number {
-        return Math.floor((level - 1) / 20);
-    }
-
-    /**
-     * Filter word pool by difficulty tier.
-     * Easy: length 3-5, Medium: 5-7, Hard: 7+.
-     */
-    private filterWordsByDifficulty(pool: string[], difficulty: number): string[] {
-        let minLen = 3;
-        let maxLen = 10;
-        if (difficulty === 0) { // Easy
-            minLen = 3;
-            maxLen = 5;
-        } else if (difficulty === 1) { // Medium
-            minLen = 5;
-            maxLen = 7;
-        } else { // Hard or higher
-            minLen = 7;
-            maxLen = 12;
+        // Tier Logic
+        if (levelNumber <= 10) {
+            categoryId = 'baslangic';
+            wordCount = 3;
+        } else if (levelNumber <= 20) {
+            categoryId = 'orta';
+            wordCount = 3;
+        } else if (levelNumber <= 40) {
+            categoryId = 'deneyimli';
+            wordCount = 4;
+        } else if (levelNumber <= 60) {
+            categoryId = 'uzman';
+            wordCount = 4;
+        } else if (levelNumber <= 80) {
+            categoryId = 'bilgin';
+            wordCount = 5;
+        } else {
+            categoryId = 'dahi';
+            wordCount = 5;
         }
-        return pool.filter(word => word.length >= minLen && word.length <= maxLen);
+
+        const pool = this.wordPools.get(categoryId) || [];
+
+        // Jeneratöre daha fazla aday kelime gönderelim ki (örn: 15 tane)
+        // içlerinden birbirine en uygun (harf paylaşan) 'wordCount' tanesini seçebilsin.
+        const candidatePoolSize = 15;
+        const candidates = this.selectWords(pool, candidatePoolSize);
+
+        return CrosswordGenerator.generate(candidates, wordCount);
+    }
+
+    private selectWords(pool: string[], count: number): string[] {
+        // Yeni bir kopya oluştur ve karıştır
+        const shuffled = [...pool];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled.slice(0, count);
     }
 }
 

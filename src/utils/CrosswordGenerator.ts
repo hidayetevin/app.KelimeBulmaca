@@ -10,17 +10,14 @@ export interface CrosswordGeneratorResult {
 export class CrosswordGenerator {
     /**
      * SMART WORD SELECTION APPROACH:
-     * 1. Select words of target length
+     * 1. Select words of desired count from the provided list
      * 2. Choose words that share many letters (minimize palette size)
      * 3. Extract palette from selected words
      */
-    public static generate(wordList: string[], level: number): CrosswordGeneratorResult {
-        const wordCount = level + 3; // Level 1: 4 words
-        const wordLength = level + 2; // Level 1: 3 letters
-        const maxPaletteSize = level + 3; // Level 1: max 4 letters (but can be more if needed)
-
+    public static generate(wordList: string[], wordCount: number): CrosswordGeneratorResult {
         // Step 1: Select words with maximum letter overlap
-        const selectedWords = this.selectWordsWithOverlap(wordList, wordCount, wordLength);
+        // We pass ALL words as candidates, logic inside will pick the best 'wordCount' number of words.
+        const selectedWords = this.selectWordsWithOverlap(wordList, wordCount);
 
         if (selectedWords.length === 0) {
             console.error('No words found!');
@@ -51,21 +48,19 @@ export class CrosswordGenerator {
      */
     private static selectWordsWithOverlap(
         wordList: string[],
-        targetCount: number,
-        targetLength: number
+        targetCount: number
     ): string[] {
-        // Filter by length (exact or ±1)
-        const candidates = wordList.filter(w =>
-            Math.abs(w.length - targetLength) <= 1
-        );
+        // Since we trust the input list is already from a specific Tier (length-filtered),
+        // we don't need strict length filtering here.
+        const candidates = wordList;
 
         if (candidates.length === 0) {
-            console.warn(`No words of length ~${targetLength} found`);
+            console.warn(`No candidate words provided`);
             return [];
         }
 
         if (candidates.length <= targetCount) {
-            return candidates.slice(0, targetCount);
+            return candidates;
         }
 
         // Greedy selection: pick words that share letters with already selected ones
