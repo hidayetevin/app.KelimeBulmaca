@@ -124,16 +124,47 @@ export class CrosswordGenerator {
     }
 
     /**
-     * Extract minimal palette from words
+     * Extract minimal palette needed to form all words
+     * Handles duplicate letters correctly (e.g., ARMA requires 2 A's)
      */
     private static extractMinimalPalette(words: string[]): string[] {
-        const letters = new Set<string>();
+        const globalMaxCounts = new Map<string, number>();
 
+        // Her kelime için harf ihtiyacını hesapla
         words.forEach(word => {
-            word.toUpperCase().split('').forEach(letter => letters.add(letter));
+            const wordCounts = new Map<string, number>();
+            const letters = Array.from(word.toLocaleUpperCase('tr-TR'));
+
+            letters.forEach(letter => {
+                wordCounts.set(letter, (wordCounts.get(letter) || 0) + 1);
+            });
+
+            // Global ihtiyacı güncelle: Her harf için max ihtiyacı sakla
+            wordCounts.forEach((count, letter) => {
+                const currentMax = globalMaxCounts.get(letter) || 0;
+                if (count > currentMax) {
+                    globalMaxCounts.set(letter, count);
+                }
+            });
         });
 
-        return Array.from(letters);
+        // Map'ten palette array oluştur
+        const palette: string[] = [];
+        globalMaxCounts.forEach((count, letter) => {
+            for (let i = 0; i < count; i++) {
+                palette.push(letter);
+            }
+        });
+
+        return this.shuffleArray(palette);
+    }
+
+    private static shuffleArray(array: any[]): any[] {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
     }
 
     private static placeWords(words: string[]): CrosswordWord[] {
