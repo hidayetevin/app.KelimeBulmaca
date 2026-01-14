@@ -47,10 +47,8 @@ export default class GameScene extends Phaser.Scene {
 
     private async loadCrosswordData() {
         try {
-            // Load all category words first
-            await WordDataGenerator.loadCategoryWords('animals');
-            await WordDataGenerator.loadCategoryWords('fruits');
-            await WordDataGenerator.loadCategoryWords('cities');
+            // Load all words
+            await WordDataGenerator.loadAllWords();
 
             // Generate crossword for this level
             const config = WordDataGenerator.getCrosswordConfiguration(this.levelNumber);

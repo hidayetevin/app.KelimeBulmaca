@@ -1,4 +1,3 @@
-import { GridSize, Difficulty } from '@/types';
 import { CrosswordGenerator } from '@/utils/CrosswordGenerator';
 
 /**
@@ -20,110 +19,31 @@ export class WordDataGenerator {
     }
 
     /**
-     * Kategori kelimelerini yükler (Local fetch)
+     * Tüm kategorilerin kelimelerini yükler
      */
-    public async loadCategoryWords(categoryId: string): Promise<void> {
-        if (this.wordPools.has(categoryId)) return;
+    public async loadAllWords(): Promise<void> {
+        // Zaten yüklendiyse tekrar yükleme
+        if (this.wordPools.size > 0) return;
 
-        try {
-            const response = await fetch(`/data/categories/${categoryId}.json`);
-            if (!response.ok) throw new Error(`Category not found: ${categoryId}`);
-            const words: string[] = await response.json();
-            // Normalize to Turkish uppercase immediately
-            const normalizedWords = words.map(w => w.toLocaleUpperCase('tr-TR'));
-            this.wordPools.set(categoryId, normalizedWords);
-            console.log(`✅ Loaded ${words.length} words for category: ${categoryId}`);
-        } catch (error) {
-            console.error(`❌ Failed to load words for category ${categoryId}:`, error);
-            // Fallback
-            this.wordPools.set(categoryId, ['TEST', 'DATA', 'ERROR']);
-        }
-    }
+        const categories = ['animals', 'fruits', 'cities']; // Genişletilebilir
 
-    /**
-     * Seviye için kelime listesi ve grid boyutu üretir
-     * @param categoryId - Kategori ID
-     * @param levelNumber - Seviye Numarası (1-5)
-     */
-    public getLevelConfiguration(categoryId: string, levelNumber: number): { words: string[], gridSize: GridSize } {
-        const allWords = this.wordPools.get(categoryId) || [];
-
-        // Seviye konfigürasyonu
-        // Level 1: 4 kelime, 3x3 (min kelime boyu 3)
-        // Level 2: 5 kelime, 3x4 (min kelime boyu 3-4)
-        // Level 3: 6 kelime, 4x4 (min kelime boyu 4-5)
-        // Level 4: 7 kelime, 4x5 (min kelime boyu 4-6)
-        // Level 5: 8 kelime, 5x5 (min kelime boyu 5-7)
-
-        let wordCount = 4;
-        let rows = 3;
-        let cols = 3;
-        let minLength = 3;
-        let maxLength = 10; // Daha esnek
-
-        switch (levelNumber) {
-            case 1: wordCount = 4; rows = 6; cols = 6; minLength = 3; maxLength = 6; break;
-            case 2: wordCount = 5; rows = 7; cols = 7; minLength = 3; maxLength = 7; break;
-            case 3: wordCount = 6; rows = 8; cols = 8; minLength = 4; maxLength = 8; break;
-            case 4: wordCount = 7; rows = 9; cols = 9; minLength = 4; maxLength = 9; break;
-            case 5: wordCount = 8; rows = 10; cols = 10; minLength = 5; maxLength = 10; break;
-            default: wordCount = 8; rows = 10; cols = 10; minLength = 5; maxLength = 10; break; // Level 5+ -> max
-        }
-
-        // Grid boyutunu biraz daha büyük verelim ki rahat yerleşsin
-        // 3x3 çok dar olabilir, özellikle çapraz kelimeler için.
-        // Başlangıç için biraz daha geniş gridler:
-
-        const gridSize: GridSize = { rows, cols };
-
-        // Kelime seçimi
-        const selectedWords = this.selectWords(allWords, wordCount, minLength, maxLength);
-
-        return {
-            words: selectedWords,
-            gridSize
-        };
-    }
-
-    /**
-     * Kelime havuzundan rastgele kelimeler seçer
-     */
-    private selectWords(pool: string[], count: number, minLen: number, maxLen: number): string[] {
-        // Uzunluk filtresi
-        const filteredPool = pool.filter(w => w.length >= minLen && w.length <= maxLen);
-
-        // Karıştır
-        this.shuffleArray(filteredPool);
-
-        // Seç
-        const selected: string[] = [];
-        for (const word of filteredPool) {
-            if (selected.length >= count) break;
-            // Aynı kelimeyi tekrar ekleme (zaten shuffle ettik basic check)
-            if (!selected.includes(word)) {
-                selected.push(word);
+        const loadPromises = categories.map(async (cat) => {
+            try {
+                const response = await fetch(`/data/categories/${cat}.json`);
+                if (!response.ok) return;
+                const words: string[] = await response.json();
+                const normalized = words.map(w => w.toLocaleUpperCase('tr-TR'));
+                this.wordPools.set(cat, normalized);
+            } catch (err) {
+                console.warn(`Failed to load category: ${cat}`, err);
             }
-        }
+        });
 
-        // Eğer yeterli kelime yoksa havuzdan ne varsa doldur
-        if (selected.length < count) {
-            const remaining = count - selected.length;
-            const extras = pool.filter(w => !selected.includes(w)).slice(0, remaining);
-            selected.push(...extras);
-        }
-
-        return selected;
+        await Promise.all(loadPromises);
+        console.log(`✅ Loaded words from ${this.wordPools.size} categories`);
     }
 
-    /**
-     * Helper: Shuffle array
-     */
-    private shuffleArray(array: any[]): void {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-    }
+
 
     /**
      * Generate crossword configuration for a level

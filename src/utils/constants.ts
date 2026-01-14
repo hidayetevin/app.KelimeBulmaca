@@ -164,7 +164,6 @@ export const SCENES = {
     BOOT: 'BootScene',
     PRELOADER: 'PreloaderScene',
     MAIN_MENU: 'MainMenuScene',
-    CATEGORY_SELECTION: 'CategorySelectionScene',
     LEVEL_SELECTION: 'LevelSelectionScene',
     GAME: 'GameScene',
     LEVEL_COMPLETE: 'LevelCompleteScene',
