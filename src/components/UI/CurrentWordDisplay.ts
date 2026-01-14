@@ -9,14 +9,14 @@ export interface CurrentWordDisplayConfig {
 }
 
 export default class CurrentWordDisplay extends Phaser.GameObjects.Container {
-    private background: Phaser.GameObjects.Graphics;
-    private wordText: Phaser.GameObjects.Text;
-    private width: number;
+    private background!: Phaser.GameObjects.Graphics;
+    private wordText!: Phaser.GameObjects.Text;
+    private bgWidth: number;
 
     constructor(config: CurrentWordDisplayConfig) {
         super(config.scene, config.x, config.y);
 
-        this.width = config.width || 300;
+        this.bgWidth = config.width || 300;
 
         this.createVisuals();
         this.scene.add.existing(this);
@@ -41,9 +41,9 @@ export default class CurrentWordDisplay extends Phaser.GameObjects.Container {
     private updateBackground() {
         this.background.clear();
         this.background.fillStyle(0xFDE047, 1); // Yellow
-        this.background.fillRoundedRect(-this.width / 2, -25, this.width, 50, 10);
+        this.background.fillRoundedRect(-this.bgWidth / 2, -25, this.bgWidth, 50, 10);
         this.background.lineStyle(2, 0xFACC15);
-        this.background.strokeRoundedRect(-this.width / 2, -25, this.width, 50, 10);
+        this.background.strokeRoundedRect(-this.bgWidth / 2, -25, this.bgWidth, 50, 10);
     }
 
     public setWord(word: string) {

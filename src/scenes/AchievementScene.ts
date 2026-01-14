@@ -10,6 +10,7 @@ export default class AchievementScene extends Phaser.Scene {
     private panel!: Panel;
     private scrollContainer!: Phaser.GameObjects.Container;
     private minScrollY = 0;
+    private maxScrollY = 0;
     private isDragging = false;
     private lastY = 0;
 
@@ -149,9 +150,9 @@ export default class AchievementScene extends Phaser.Scene {
 
                 this.scrollContainer.y += dy;
 
-                // Clamp? Or Elastic?
-                // Simple clamp for now
-                // Bounds are tricky with relative coords.
+                // Clamp
+                if (this.scrollContainer.y > this.maxScrollY) this.scrollContainer.y = this.maxScrollY;
+                if (this.scrollContainer.y < this.minScrollY) this.scrollContainer.y = this.minScrollY;
             }
         });
 

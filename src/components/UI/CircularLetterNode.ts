@@ -16,8 +16,8 @@ export default class CircularLetterNode extends Phaser.GameObjects.Container {
     public isSelected: boolean = false;
     public isUsed: boolean = false;
 
-    private circle: Phaser.GameObjects.Graphics;
-    private letterText: Phaser.GameObjects.Text;
+    private circle!: Phaser.GameObjects.Graphics;
+    private letterText!: Phaser.GameObjects.Text;
     private radius: number;
     private onSelectCallback?: () => void;
     private onDeselectCallback?: () => void;

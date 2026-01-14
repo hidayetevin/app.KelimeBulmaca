@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
 import CircularLetterNode from './CircularLetterNode';
-import { GAME_WIDTH, GAME_HEIGHT } from '@/utils/constants';
 
 export interface LetterPaletteConfig {
     scene: Phaser.Scene;
@@ -34,7 +33,7 @@ export default class LetterPalette extends Phaser.GameObjects.Container {
 
     private createNodes(letters: string[]) {
         const radius = 35;
-        const spacing = 90;
+        // const spacing = 90;
 
         // Arrange in circular pattern
         //const centerX = 0;
@@ -68,9 +67,7 @@ export default class LetterPalette extends Phaser.GameObjects.Container {
 
     private onPointerDown(pointer: Phaser.Input.Pointer) {
         const worldPoint = this.scene.cameras.main.getWorldPoint(pointer.x, pointer.y);
-        const localPoint = this.parentContainer
-            ? this.parentToLocal(worldPoint.x, worldPoint.y)
-            : { x: worldPoint.x - this.x, y: worldPoint.y - this.y };
+        const localPoint = this.pointToContainer(worldPoint);
 
         const node = this.getNodeAtPosition(localPoint.x, localPoint.y);
         if (node && !node.isUsed) {
@@ -85,9 +82,7 @@ export default class LetterPalette extends Phaser.GameObjects.Container {
         if (!this.isDragging) return;
 
         const worldPoint = this.scene.cameras.main.getWorldPoint(pointer.x, pointer.y);
-        const localPoint = this.parentContainer
-            ? this.parentToLocal(worldPoint.x, worldPoint.y)
-            : { x: worldPoint.x - this.x, y: worldPoint.y - this.y };
+        const localPoint = this.pointToContainer(worldPoint);
 
         const node = this.getNodeAtPosition(localPoint.x, localPoint.y);
 

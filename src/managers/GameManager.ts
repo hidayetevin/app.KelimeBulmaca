@@ -210,7 +210,12 @@ class GameManager {
 
         return totalReward;
     }
+    public resetGame(): void {
+        console.log('🔄 Resetting game...');
+        this.gameState = StorageManager.getDefaultGameState();
+        this.saveGame();
+    }
 }
 
-const gameManager = new GameManager();
+const gameManager = GameManager.getInstance();
 export default gameManager;

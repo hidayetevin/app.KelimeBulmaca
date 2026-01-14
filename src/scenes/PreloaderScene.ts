@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { SCENES, IMAGE_PATHS, AUDIO_PATHS, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY, DEFAULT_LANGUAGE } from '@/utils/constants';
+import { SCENES, IMAGE_PATHS, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY, DEFAULT_LANGUAGE } from '@/utils/constants';
 import { LIGHT_COLORS } from '@/utils/colors';
 import GameManager from '@/managers/GameManager';
 import LocalizationManager from '@/managers/LocalizationManager';

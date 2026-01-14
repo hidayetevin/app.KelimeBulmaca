@@ -109,8 +109,7 @@ export default class LevelSelectionScene extends Phaser.Scene {
         }
 
         // Add padding at bottom for scrolling
-        const totalRows = Math.ceil(totalLevels / cols);
-        // const totalHeight = startY + totalRows * (buttonSize + spacing) + 100;
+        // const totalRows = Math.ceil(totalLevels / cols);
 
         // Invisible graphic to define content height if needed, OR just handle in scroll logic
         // For now, scroll logic handles bounds.
@@ -205,7 +204,7 @@ export default class LevelSelectionScene extends Phaser.Scene {
     }
 
     private setupScrolling() {
-        this.input.on('wheel', (pointer: any, gameObjects: any, deltaX: number, deltaY: number) => {
+        this.input.on('wheel', (_pointer: any, _gameObjects: any, _deltaX: number, deltaY: number) => {
             this.scrollY -= deltaY * 0.5;
 
             // Clamp scroll

@@ -43,7 +43,7 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
         // Modal Background
         const modalWidth = GAME_WIDTH * 0.85;
         const modalHeight = GAME_HEIGHT * 0.5;
-        const modalBg = this.sceneRef.add.rectangle(0, 0, modalWidth, modalHeight, 0xFFFFFF)
+        this.sceneRef.add.rectangle(0, 0, modalWidth, modalHeight, 0xFFFFFF)
             .setStrokeStyle(4, 0x3182CE);
         // .setRounded(16) // Phaser rectangle doesn't support rounded corners native easily without graphics, using rect for simplicity or graphics if needed
 

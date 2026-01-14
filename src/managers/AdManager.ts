@@ -1,6 +1,5 @@
-import { REWARDED_AD_REWARD_STARS, AD_COOLDOWN_SECONDS } from '@/utils/constants';
-import GameManager from './GameManager';
-import LocalizationManager from './LocalizationManager';
+
+
 
 // Google AdMob Test IDs
 const TEST_ADS = {
@@ -20,7 +19,6 @@ class AdManager {
     private static instance: AdManager;
     private isAdMobAvailable: boolean = false;
     private isTestMode: boolean = true;
-    private lastInterstitialTime: number = 0;
 
     // Capacitor AdMob References
     private AdMob: any = null;

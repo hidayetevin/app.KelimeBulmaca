@@ -21,7 +21,6 @@ export default class MainMenuScene extends Phaser.Scene {
         const width = GAME_WIDTH;
         const height = GAME_HEIGHT;
         const centerX = width / 2;
-        const centerY = height / 2;
         const colors = LIGHT_COLORS;
 
         // 1. Background (Gradient)
