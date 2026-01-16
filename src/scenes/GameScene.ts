@@ -140,21 +140,21 @@ export default class GameScene extends Phaser.Scene {
             }
         });
 
-        // Level title
-        this.add.text(GAME_WIDTH / 2, headerHeight / 2, `SEVİYE ${this.levelNumber}`, {
+        // Level title - Stacked Top
+        this.add.text(GAME_WIDTH / 2, 28, `SEVİYE ${this.levelNumber}`, {
             fontFamily: FONT_FAMILY_PRIMARY,
-            fontSize: '24px',
+            fontSize: '22px',
             color: '#2D3748',
             fontStyle: 'bold'
         }).setOrigin(0.5);
 
-        // Timer (top right, before hint button)
-        this.timerText = this.add.text(GAME_WIDTH - 120, headerHeight / 2, '⏱️ 00:00', {
+        // Timer - Stacked Bottom
+        this.timerText = this.add.text(GAME_WIDTH / 2, 52, '⏱️ 00:00', {
             fontFamily: FONT_FAMILY_PRIMARY,
-            fontSize: '18px',
-            color: '#2D3748',
+            fontSize: '16px',
+            color: '#4A5568',
             fontStyle: 'bold'
-        }).setOrigin(1, 0.5);
+        }).setOrigin(0.5);
 
         // Hint button (top right)
         new Button({
