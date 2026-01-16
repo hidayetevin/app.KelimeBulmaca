@@ -4,7 +4,7 @@ import StorageManager from './StorageManager';
 /**
  * Game Manager - Level-Based System
  */
-class GameManager {
+export class GameManager {
     private static instance: GameManager;
     private gameState: GameState | null = null;
     private readonly ONE_DAY_MS = 24 * 60 * 60 * 1000;

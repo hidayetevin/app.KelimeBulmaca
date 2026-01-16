@@ -1,11 +1,12 @@
 import Phaser from 'phaser';
-import { SCENES, IMAGE_PATHS, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY, DEFAULT_LANGUAGE } from '@/utils/constants';
+import { SCENES, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY, DEFAULT_LANGUAGE } from '@/utils/constants';
 import { LIGHT_COLORS } from '@/utils/colors';
 import GameManager from '@/managers/GameManager';
 import LocalizationManager from '@/managers/LocalizationManager';
 import AudioManager from '@/managers/AudioManager';
 import AdManager from '@/managers/AdManager';
 import ProgressBar from '@/components/UI/ProgressBar';
+import WordDataGenerator from '@/data/WordDataGenerator';
 
 export default class PreloaderScene extends Phaser.Scene {
     constructor() {
@@ -58,16 +59,14 @@ export default class PreloaderScene extends Phaser.Scene {
         */
 
         // --- DATA ---
-        // Kategori JSON'larını WordDataGenerator zaten fetch ile çekiyor, 
-        // burada preload etmeye gerek yok ama cache'e almak istersen:
-        this.load.json('baslangic_data', '/data/categories/baslangic.json');
-        this.load.json('orta_data', '/data/categories/orta.json');
-        this.load.json('deneyimli_data', '/data/categories/deneyimli.json');
-        this.load.json('uzman_data', '/data/categories/uzman.json');
-        this.load.json('bilgin_data', '/data/categories/bilgin.json');
-        this.load.json('dahi_data', '/data/categories/dahi.json');
-        this.load.json('genel_data', '/data/categories/genel.json');
-        this.load.json('kavramlar_data', '/data/categories/kavramlar.json');
+        this.load.json('baslangic_data', 'data/categories/baslangic.json');
+        this.load.json('orta_data', 'data/categories/orta.json');
+        this.load.json('deneyimli_data', 'data/categories/deneyimli.json');
+        this.load.json('uzman_data', 'data/categories/uzman.json');
+        this.load.json('bilgin_data', 'data/categories/bilgin.json');
+        this.load.json('dahi_data', 'data/categories/dahi.json');
+        this.load.json('genel_data', 'data/categories/genel.json');
+        this.load.json('kavramlar_data', 'data/categories/kavramlar.json');
 
         // Font (Google Fonts - index.html'de yüklendi ama burada emin olmak için WebFont loader kullanılabilir)
         // Şimdilik index.html yeterli.
@@ -89,6 +88,10 @@ export default class PreloaderScene extends Phaser.Scene {
             console.log('⏳ Initializing Game Manager...');
             await GameManager.init(); // State load & streak check
             console.log('✅ Game Manager initialized');
+
+            // Word Data Pool Initialize
+            WordDataGenerator.initFromCache(this);
+            console.log('✅ WordDataGenerator initialized from cache');
 
             // Audio (Scene context gerekli olabilir)
             AudioManager.init(this); // Scene play için referans veriyoruz (opsiyonel)

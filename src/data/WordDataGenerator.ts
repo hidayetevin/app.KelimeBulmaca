@@ -1,4 +1,5 @@
 import { CrosswordGenerator } from '@/utils/CrosswordGenerator';
+import { GameManager } from '@/managers/GameManager';
 
 /**
  * Kelime verisi ve seviye oluşturucu
@@ -19,27 +20,55 @@ export class WordDataGenerator {
     }
 
     /**
+     * Phaser Cache'den kelimeleri yükler (Daha güvenli ve hızlı)
+     */
+    public initFromCache(scene: Phaser.Scene): void {
+        const categories = ['baslangic', 'orta', 'deneyimli', 'uzman', 'bilgin', 'dahi', 'genel', 'kavramlar'];
+        console.log('📦 WordDataGenerator: Initializing from Phaser cache...');
+
+        categories.forEach(cat => {
+            try {
+                const data = scene.cache.json.get(`${cat}_data`);
+                if (data && Array.isArray(data)) {
+                    const normalized = data.map(w => w.toLocaleUpperCase('tr-TR'));
+                    this.wordPools.set(cat, normalized);
+                    console.log(`✅ Category initialized from cache: ${cat}`);
+                }
+            } catch (err) {
+                console.warn(`⚠️ Could not init ${cat} from cache, will fallback to fetch`);
+            }
+        });
+    }
+
+    /**
      * Tüm kategorilerin kelimelerini yükler
      */
     public async loadAllWords(): Promise<void> {
-        if (this.wordPools.size > 0) return;
-
+        // Eğer zaten yüklüyse veya cache'den geldiyse bekleme
         const categories = ['baslangic', 'orta', 'deneyimli', 'uzman', 'bilgin', 'dahi', 'genel', 'kavramlar'];
-        console.log('📚 WordDataGenerator: Loading categories...', categories);
+        if (this.wordPools.size >= categories.length) return;
+
+        console.log('📚 WordDataGenerator: Loading missing categories via fetch...', categories.filter(c => !this.wordPools.has(c)));
 
         const loadPromises = categories.map(async (cat) => {
+            if (this.wordPools.has(cat)) return;
+
             try {
-                const url = `/data/categories/${cat}.json`;
+                const url = `data/categories/${cat}.json`;
                 const response = await fetch(url);
 
                 if (!response.ok) {
-                    console.error(`❌ Failed to load category ${cat}: Status ${response.status}`);
+                    const errorMsg = `❌ Failed to load category ${cat}: Status ${response.status}`;
+                    console.error(errorMsg);
+                    GameManager.showToast(errorMsg, 'error');
                     return;
                 }
 
                 const contentType = response.headers.get('Content-Type');
                 if (!contentType || !contentType.includes('application/json')) {
-                    console.error(`❌ Category ${cat} returned non-JSON content: ${contentType}`);
+                    const errorMsg = `❌ Category ${cat} returned non-JSON content: ${contentType}`;
+                    console.error(errorMsg);
+                    GameManager.showToast(errorMsg, 'warning');
                     return;
                 }
 
@@ -48,7 +77,9 @@ export class WordDataGenerator {
                 this.wordPools.set(cat, normalized);
                 console.log(`✅ Category loaded: ${cat} (${words.length} words)`);
             } catch (err) {
-                console.error(`❌ Error fetching category ${cat}:`, err);
+                const errorMsg = `❌ Error fetching category ${cat}: ${err instanceof Error ? err.message : String(err)}`;
+                console.error(errorMsg);
+                GameManager.showToast(errorMsg, 'error');
             }
         });
 

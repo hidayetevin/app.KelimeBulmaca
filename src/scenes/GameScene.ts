@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { SCENES, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY } from '@/utils/constants';
-import GameManager from '@/managers/GameManager';
+import GameManager, { GameManager as GameManagerClass } from '@/managers/GameManager';
 import WordDataGenerator from '@/data/WordDataGenerator';
 import Button from '@/components/UI/Button';
 import LetterPalette from '@/components/UI/LetterPalette';
@@ -41,6 +41,7 @@ export default class GameScene extends Phaser.Scene {
 
     create() {
         console.log('🎬 GameScene: Starting create()');
+        GameManagerClass.setToastScene(this);
 
         // Background - SYNC
         this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0xF7FAFC).setOrigin(0);
