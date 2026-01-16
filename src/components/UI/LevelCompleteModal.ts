@@ -44,7 +44,7 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
     private createContent(stars: number, time?: number, hintsUsed?: number) {
         // Modal Background
         const modalWidth = GAME_WIDTH * 0.85;
-        const modalHeight = GAME_HEIGHT * 0.5;
+        const modalHeight = GAME_HEIGHT * 0.6;
         this.sceneRef.add.rectangle(0, 0, modalWidth, modalHeight, 0xFFFFFF)
             .setStrokeStyle(4, 0x3182CE);
         // .setRounded(16) // Phaser rectangle doesn't support rounded corners native easily without graphics, using rect for simplicity or graphics if needed
@@ -67,12 +67,12 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
         this.contentContainer.add(titleText);
 
         // Stars
-        const starText = this.sceneRef.add.text(0, -50, '⭐'.repeat(stars), {
+        const starText = this.sceneRef.add.text(0, -modalHeight * 0.15, '⭐'.repeat(stars), {
             fontSize: '48px'
         }).setOrigin(0.5);
         this.contentContainer.add(starText);
 
-        const scoreLabel = this.sceneRef.add.text(0, 10, `${stars} Yıldız Kazandın`, {
+        const scoreLabel = this.sceneRef.add.text(0, -modalHeight * 0.15 + 60, `${stars} Yıldız Kazandın`, {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '20px',
             color: '#718096'
@@ -80,7 +80,7 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
         this.contentContainer.add(scoreLabel);
 
         // Performance info
-        let yOffset = 40;
+        let yOffset = -modalHeight * 0.15 + 90;
 
         if (time !== undefined) {
             const minutes = Math.floor(time / 60);
@@ -115,7 +115,7 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
         this.contentContainer.add(performanceText);
 
         // Buttons
-        const buttonYUserInfo = yOffset + 40;
+        const buttonYUserInfo = modalHeight / 2 - 120;
 
         // x2 Button (Full Width inside modal padding)
         this.doubleRewardButton = new Button({
@@ -135,7 +135,7 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
         this.continueButton = new Button({
             scene: this.sceneRef,
             x: 0,
-            y: buttonYUserInfo + 80,
+            y: buttonYUserInfo + 75,
             text: 'Devam Et',
             width: modalWidth - 60,
             height: 60,
@@ -164,7 +164,7 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
             this.sceneRef.tweens.add({
                 targets: this.continueButton,
                 alpha: 1,
-                y: this.doubleRewardButton.y + 80, // Ensure strictly positioned
+                y: this.doubleRewardButton.y + 75, // Ensure strictly positioned
                 duration: 500
             });
         });
