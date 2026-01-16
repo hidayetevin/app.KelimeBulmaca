@@ -112,9 +112,9 @@ export default class SettingsScene extends Phaser.Scene {
         this.createLabel(-140, yPos, LocalizationManager.t('settings.volume', 'Ses Seviyesi'));
         const volumeSlider = new Slider({
             scene: this,
-            x: 50,
+            x: 55, // Adjusted from 50
             y: yPos + 35,
-            width: 250,
+            width: 150, // Reduced from 250
             value: settings.soundVolume,
             onValueChange: (val) => {
                 const current = GameManager.getSettings();
