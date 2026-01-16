@@ -5,6 +5,7 @@ import GameManager from '@/managers/GameManager';
 import LocalizationManager from '@/managers/LocalizationManager';
 import AudioManager from '@/managers/AudioManager';
 import AdManager from '@/managers/AdManager';
+import ProgressBar from '@/components/UI/ProgressBar';
 
 export default class PreloaderScene extends Phaser.Scene {
     constructor() {
@@ -121,53 +122,37 @@ export default class PreloaderScene extends Phaser.Scene {
         this.add.text(centerX, centerY - 100, 'KELİME\nUSTASI', {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '48px',
-            color: '#FFFFFF',
+            color: '#6C63FF',
             align: 'center',
             fontStyle: 'bold'
         }).setOrigin(0.5);
 
-        // Progress Box
-        const progressBoxWidth = 280;
-        const progressBoxHeight = 20;
-
-        const progressBox = this.add.graphics();
-        progressBox.fillStyle(0x000000, 0.2);
-        progressBox.fillRoundedRect(centerX - progressBoxWidth / 2, centerY + 50, progressBoxWidth, progressBoxHeight, 10);
-
-        // Progress Bar (Dolum)
-        const progressBar = this.add.graphics();
+        // Use ProgressBar component (circular mode)
+        const progressBar = new ProgressBar({
+            scene: this,
+            x: centerX,
+            y: centerY + 50,
+            mode: 'circular',
+            radius: 50,
+            showPercentage: true,
+            color: LIGHT_COLORS.ACCENT
+        });
 
         // Yükleniyor Yazısı
-        const loadingText = this.add.text(centerX, centerY + 100, 'Yükleniyor...', {
+        const loadingText = this.add.text(centerX, centerY + 140, 'Yükleniyor...', {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '16px',
             color: '#666666'
         }).setOrigin(0.5);
 
-        // Percent Text
-        const percentText = this.add.text(centerX, centerY + 50 + 10 + 25, '0%', {
-            fontFamily: FONT_FAMILY_PRIMARY,
-            fontSize: '14px',
-            color: '#888888',
-            fontStyle: 'bold'
-        }).setOrigin(0.5);
-
         // Events
         this.load.on('progress', (value: number) => {
-            percentText.setText(Math.floor(value * 100) + '%');
-            progressBar.clear();
-            progressBar.fillStyle(0xFF9F1C, 1); // Turuncu (Primary Color)
-
-            // Rounded rect progress
-            const w = (progressBoxWidth - 4) * value;
-            if (w > 0) {
-                progressBar.fillRoundedRect(centerX - progressBoxWidth / 2 + 2, centerY + 50 + 2, w, progressBoxHeight - 4, 8);
-            }
+            progressBar.setValue(value, false);
         });
 
         this.load.on('complete', () => {
             loadingText.setText('Hazır!');
-            // destroy işlemleri create içinde otomatik temizlenecek scene değişince
+            progressBar.complete();
         });
     }
 }

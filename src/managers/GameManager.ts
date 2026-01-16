@@ -152,6 +152,31 @@ class GameManager {
         this.saveGame();
     }
 
+    /**
+     * Static toast reference for showing notifications
+     */
+    private static toastScene: Phaser.Scene | null = null;
+
+    public static setToastScene(scene: Phaser.Scene) {
+        GameManager.toastScene = scene;
+    }
+
+    public static showToast(message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') {
+        if (!GameManager.toastScene) {
+            console.warn('Toast scene not set');
+            return;
+        }
+
+        // Dynamic import to avoid circular dependency
+        import('@/components/UI/Toast').then(({ default: Toast }) => {
+            const toast = Toast.getInstance();
+            if (!toast['scene']) {
+                toast.init(GameManager.toastScene!);
+            }
+            toast.show({ message, type });
+        });
+    }
+
     public getTotalStars(): number {
         return this.gameState?.user.totalStars || 0;
     }
