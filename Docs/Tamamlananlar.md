@@ -463,10 +463,51 @@
   - `Docs/Android_Emulator_Test.md` oluşturuldu (Test rehberi)
   - Walkthrough.md artifact'ı ile test adımları belgelendi
 
+## ✅ ADIM 24: Oyun Mekanikleri ve Reklam İyileştirmeleri
+**Tamamlanma Tarihi:** 16.01.2026
 
+- **Süre Takip Sistemi:**
+  - `GameScene.ts` içinde timer mekanizması eklendi
+  - `startTime`, `elapsedTime` değişkenleri ile süre takibi
+  - `update()` metodu ile her frame timer güncelleniyor
+  - Sağ üst köşede `⏱️ MM:SS` formatında süre gösterimi
+  - Timer UI komponenti header'a eklendi
 
+- **Performans Bazlı Yıldız Hesaplama:**
+  - `GameManager.ts`'e `calculateStars()` metodu eklendi
+  - **Hedef Süreler:**
+    - Level 1-20: 60 saniye
+    - Level 21-40: 90 saniye
+    - Level 41-60: 120 saniye
+    - Level 61-80: 150 saniye
+    - Level 81-100: 180 saniye
+  - **Yıldız Kriterleri:**
+    - 3 Yıldız: Hedef sürede + İpucu kullanılmadı
+    - 2 Yıldız: Hedef sürenin %150'sinde VEYA 1 ipucu kullanıldı
+    - 1 Yıldız: Seviye tamamlandı (her zaman minimum)
 
+- **LevelCompleteModal Güncellemesi:**
+  - Constructor'a `time` ve `hintsUsed` parametreleri eklendi
+  - Modal içinde performans bilgileri gösterimi:
+    - Tamamlanma süresi: `⏱️ MM:SS`
+    - Kullanılan ipucu sayısı: `💡 İpucu: X`
+    - Performans mesajı:
+      - "Mükemmel!" (3 yıldız - yeşil renk)
+      - "İyi iş!" (2 yıldız - turuncu renk)
+      - "Tamamlandı!" (1 yıldız - gri renk)
 
+- **Banner Reklam Optimizasyonu:**
+  - `AdManager.ts` içinde banner boyutu güncellendi
+  - `BannerAdSize.BANNER` → `BannerAdSize.ADAPTIVE_BANNER`
+  - Adaptif banner tam ekran genişliğinde görünüyor
+  - Ekranın en altına yapışık (margin: 0)
+  - Tüm cihaz boyutlarına otomatik uyum
+
+- **Oyun Deneyimi İyileştirmeleri:**
+  - Tekrar oynanabilirlik arttı (3 yıldız hedefi)
+  - Strateji unsuru eklendi (hız vs ipucu dengesi)
+  - Oyuncu performansı daha net görülebilir
+  - Motivasyon artırıcı geri bildirim sistemi
 
 
 

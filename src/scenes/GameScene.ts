@@ -20,7 +20,13 @@ export default class GameScene extends Phaser.Scene {
     private letterPalette!: LetterPalette;
     private currentWordDisplay!: CurrentWordDisplay;
     private scoreText!: Phaser.GameObjects.Text;
+    private timerText!: Phaser.GameObjects.Text;
     private score: number = 0;
+
+    // Timer
+    private startTime: number = 0;
+    private elapsedTime: number = 0;
+    private hintsUsedCount: number = 0;
 
     constructor() {
         super(SCENES.GAME);
@@ -30,6 +36,7 @@ export default class GameScene extends Phaser.Scene {
         console.log(`🎮 Initializing Level ${data.level}`);
         this.levelNumber = data.level || 1;
         this.score = 0;
+        this.hintsUsedCount = 0;
     }
 
     async create() {
@@ -45,6 +52,10 @@ export default class GameScene extends Phaser.Scene {
         this.createScoreDisplay();
         this.createWordDisplay();
         this.createLetterPalette();
+
+        // Start timer
+        this.startTime = this.time.now;
+        this.elapsedTime = 0;
     }
 
     private async loadCrosswordData() {
@@ -91,6 +102,14 @@ export default class GameScene extends Phaser.Scene {
             color: '#2D3748',
             fontStyle: 'bold'
         }).setOrigin(0.5);
+
+        // Timer (top right, before hint button)
+        this.timerText = this.add.text(GAME_WIDTH - 120, headerHeight / 2, '⏱️ 00:00', {
+            fontFamily: FONT_FAMILY_PRIMARY,
+            fontSize: '18px',
+            color: '#2D3748',
+            fontStyle: 'bold'
+        }).setOrigin(1, 0.5);
 
         // Hint button (top right)
         new Button({
@@ -204,6 +223,16 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
+    update(_time: number, _delta: number) {
+        // Update timer
+        this.elapsedTime = (this.time.now - this.startTime) / 1000; // Convert to seconds
+
+        // Update timer display
+        const minutes = Math.floor(this.elapsedTime / 60);
+        const seconds = Math.floor(this.elapsedTime % 60);
+        this.timerText.setText(`⏱️ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+    }
+
     private useHint() {
         console.log('💡 Hint requested');
 
@@ -211,6 +240,7 @@ export default class GameScene extends Phaser.Scene {
         const unFoundWord = this.targetWords.find(w => !w.isFound);
 
         if (unFoundWord) {
+            this.hintsUsedCount++;
             GameManager.useHint();
             unFoundWord.isFound = true;
             this.crosswordGrid.fillWord(unFoundWord);
@@ -228,12 +258,12 @@ export default class GameScene extends Phaser.Scene {
     private onLevelComplete() {
         console.log('🎉 Level Complete!');
 
-        // Calculate stars (simplified)
-        const stars = 3; // TODO: Calculate based on hints used, time, etc.
-        const time = 60; // TODO: Track actual time
+        // Calculate stars based on performance
+        const finalTime = Math.floor(this.elapsedTime);
+        const stars = GameManager.calculateStars(this.levelNumber, finalTime, this.hintsUsedCount);
 
         // Save progress
-        GameManager.completeLevel(this.levelNumber, stars, time);
+        GameManager.completeLevel(this.levelNumber, stars, finalTime);
         GameManager.addWordsFound(this.targetWords.length);
 
         // Show Completion Modal
@@ -246,6 +276,8 @@ export default class GameScene extends Phaser.Scene {
         new LevelCompleteModal({
             scene: this,
             stars: stars,
+            time: finalTime,
+            hintsUsed: this.hintsUsedCount,
             onDoubleReward: async () => {
                 console.log('📺 Watch Ad for x2 Reward clicked');
                 const rewarded = await AdManager.showRewarded();

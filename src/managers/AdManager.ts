@@ -75,7 +75,7 @@ class AdManager {
             const adId = TEST_ADS.ANDROID.BANNER; // TODO: Detect Platform
             const options = {
                 adId: adId,
-                adSize: this.BannerAdSize.BANNER,
+                adSize: this.BannerAdSize.ADAPTIVE_BANNER, // Full width adaptive banner
                 position: this.BannerAdPosition.BOTTOM_CENTER,
                 margin: 0,
                 isTesting: this.isTestMode

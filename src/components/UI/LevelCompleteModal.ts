@@ -15,6 +15,8 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
     constructor(data: {
         scene: Phaser.Scene,
         stars: number,
+        time?: number,
+        hintsUsed?: number,
         onContinue: () => void,
         onDoubleReward: () => void
     }) {
@@ -35,11 +37,11 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
         this.add(this.background);
         this.add(this.contentContainer);
 
-        this.createContent(data.stars);
+        this.createContent(data.stars, data.time, data.hintsUsed);
         this.startAnimations();
     }
 
-    private createContent(stars: number) {
+    private createContent(stars: number, time?: number, hintsUsed?: number) {
         // Modal Background
         const modalWidth = GAME_WIDTH * 0.85;
         const modalHeight = GAME_HEIGHT * 0.5;
@@ -77,8 +79,43 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
         }).setOrigin(0.5);
         this.contentContainer.add(scoreLabel);
 
+        // Performance info
+        let yOffset = 40;
+
+        if (time !== undefined) {
+            const minutes = Math.floor(time / 60);
+            const seconds = time % 60;
+            const timeText = this.sceneRef.add.text(0, yOffset, `⏱️ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`, {
+                fontFamily: FONT_FAMILY_PRIMARY,
+                fontSize: '16px',
+                color: '#4A5568'
+            }).setOrigin(0.5);
+            this.contentContainer.add(timeText);
+            yOffset += 25;
+        }
+
+        if (hintsUsed !== undefined) {
+            const hintsText = this.sceneRef.add.text(0, yOffset, `💡 İpucu: ${hintsUsed}`, {
+                fontFamily: FONT_FAMILY_PRIMARY,
+                fontSize: '16px',
+                color: '#4A5568'
+            }).setOrigin(0.5);
+            this.contentContainer.add(hintsText);
+            yOffset += 25;
+        }
+
+        // Performance message
+        const performanceMsg = stars === 3 ? 'Mükemmel!' : stars === 2 ? 'İyi iş!' : 'Tamamlandı!';
+        const performanceText = this.sceneRef.add.text(0, yOffset, performanceMsg, {
+            fontFamily: FONT_FAMILY_PRIMARY,
+            fontSize: '18px',
+            color: stars === 3 ? '#48BB78' : stars === 2 ? '#F6AD55' : '#718096',
+            fontStyle: 'bold'
+        }).setOrigin(0.5);
+        this.contentContainer.add(performanceText);
+
         // Buttons
-        const buttonYUserInfo = 80;
+        const buttonYUserInfo = yOffset + 40;
 
         // x2 Button (Full Width inside modal padding)
         this.doubleRewardButton = new Button({

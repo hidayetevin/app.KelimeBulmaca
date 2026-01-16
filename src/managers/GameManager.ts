@@ -96,6 +96,42 @@ class GameManager {
     }
 
     /**
+     * Calculate stars based on performance
+     * @param levelNumber - Level number (1-100)
+     * @param completionTime - Time taken in seconds
+     * @param hintsUsed - Number of hints used
+     * @returns Number of stars (1-3)
+     */
+    public calculateStars(levelNumber: number, completionTime: number, hintsUsed: number): number {
+        // Determine target time based on level
+        let targetTime = 60; // Default for levels 1-20
+
+        if (levelNumber > 80) {
+            targetTime = 180;
+        } else if (levelNumber > 60) {
+            targetTime = 150;
+        } else if (levelNumber > 40) {
+            targetTime = 120;
+        } else if (levelNumber > 20) {
+            targetTime = 90;
+        }
+
+        // 3 Stars: Complete within target time AND no hints used
+        if (completionTime <= targetTime && hintsUsed === 0) {
+            return 3;
+        }
+
+        // 2 Stars: Complete within 150% of target time OR only 1 hint used
+        const extendedTime = targetTime * 1.5;
+        if (completionTime <= extendedTime || hintsUsed === 1) {
+            return 2;
+        }
+
+        // 1 Star: Level completed (always get at least 1 star)
+        return 1;
+    }
+
+    /**
      * Complete a level
      */
     public completeLevel(level: number, stars: number, time: number): void {
