@@ -300,4 +300,24 @@ export default class GameScene extends Phaser.Scene {
             }
         });
     }
+
+    /**
+     * Cleanup when scene is destroyed
+     */
+    destroy() {
+        // Remove all event listeners
+        this.input.keyboard?.off('keydown-ESC');
+
+        // Clean up palette if it has listeners
+        if (this.letterPalette) {
+            this.letterPalette.destroy();
+        }
+
+        // Clean up grid
+        if (this.crosswordGrid) {
+            this.crosswordGrid.destroy();
+        }
+
+        console.log('🧹 GameScene cleaned up');
+    }
 }

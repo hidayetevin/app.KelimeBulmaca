@@ -175,4 +175,12 @@ export default class SettingsScene extends Phaser.Scene {
         }).setOrigin(0, 0.5);
         this.panel.add(label);
     }
+
+    /**
+     * Cleanup
+     */
+    destroy() {
+        this.input.keyboard?.off('keydown-ESC');
+        console.log('🧹 SettingsScene cleaned up');
+    }
 }

@@ -52,13 +52,10 @@ export default class AchievementScene extends Phaser.Scene {
     }
 
     private createScrollableList() {
-        // List area dimensions
-        const listW = this.panel.width - 40; // Approx? Panel width logic needed.
-        // Panel width in config was width-40.
-        // Let's assume passed config width is accessible or we hardcode.
-        // Panel logic stores config separately.
-        // Visual estimation: width = GAME_WIDTH - 40.
-        const cardW = GAME_WIDTH - 80;
+        // List area dimensions - use full panel width minus padding
+        const panelWidth = GAME_WIDTH - 40; // Same as panel config
+        const listW = panelWidth - 40; // 20px padding on each side
+        const cardW = listW - 20; // Card slightly smaller for visual padding
         const cardH = 100;
         const gap = 15;
 
@@ -179,5 +176,15 @@ export default class AchievementScene extends Phaser.Scene {
             color: '#' + LIGHT_COLORS.TEXT_LIGHT.toString(16).padStart(6, '0') // Converted
         }).setOrigin(0.5);
         this.panel.add(text);
+    }
+
+    /**
+     * Cleanup
+     */
+    destroy() {
+        this.input.keyboard?.off('keydown-ESC');
+        this.input.off('pointermove');
+        this.input.off('pointerup');
+        console.log('🧹 AchievementScene cleaned up');
     }
 }
