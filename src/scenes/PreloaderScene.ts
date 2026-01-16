@@ -21,12 +21,15 @@ export default class PreloaderScene extends Phaser.Scene {
         });
 
         // --- IMAGES ---
-        // Backgrounds
+        // Backgrounds - Removed as they are missing in the current repo
+        /*
         this.load.image('animals_bg', IMAGE_PATHS.ANIMALS_BG);
         this.load.image('fruits_bg', IMAGE_PATHS.FRUITS_BG);
         this.load.image('cities_bg', IMAGE_PATHS.CITIES_BG);
+        */
 
-        // UI
+        // UI - Components use Graphics, no need for images unless using textures
+        /*
         this.load.image('button_light', IMAGE_PATHS.BUTTON_LIGHT);
         this.load.image('button_dark', IMAGE_PATHS.BUTTON_DARK);
         this.load.image('panel_light', IMAGE_PATHS.PANEL_LIGHT);
@@ -34,12 +37,15 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.image('star_filled', IMAGE_PATHS.STAR_FILLED);
         this.load.image('star_empty', IMAGE_PATHS.STAR_EMPTY);
         this.load.image('lock_icon', IMAGE_PATHS.LOCK_ICON);
+        */
 
-        // Icons
+        // Icons - Are now mostly handled with emojis or Text icons in components
+        /*
         this.load.image('settings_icon', IMAGE_PATHS.SETTINGS);
         this.load.image('achievement_icon', IMAGE_PATHS.ACHIEVEMENT);
         this.load.image('hint_icon', IMAGE_PATHS.HINT);
         this.load.image('close_icon', IMAGE_PATHS.CLOSE);
+        */
 
         // --- AUDIO ---
         // --- AUDIO ---
@@ -54,9 +60,14 @@ export default class PreloaderScene extends Phaser.Scene {
         // --- DATA ---
         // Kategori JSON'larını WordDataGenerator zaten fetch ile çekiyor, 
         // burada preload etmeye gerek yok ama cache'e almak istersen:
-        this.load.json('animals_data', '/data/categories/animals.json');
-        this.load.json('fruits_data', '/data/categories/fruits.json');
-        this.load.json('cities_data', '/data/categories/cities.json');
+        this.load.json('baslangic_data', '/data/categories/baslangic.json');
+        this.load.json('orta_data', '/data/categories/orta.json');
+        this.load.json('deneyimli_data', '/data/categories/deneyimli.json');
+        this.load.json('uzman_data', '/data/categories/uzman.json');
+        this.load.json('bilgin_data', '/data/categories/bilgin.json');
+        this.load.json('dahi_data', '/data/categories/dahi.json');
+        this.load.json('genel_data', '/data/categories/genel.json');
+        this.load.json('kavramlar_data', '/data/categories/kavramlar.json');
 
         // Font (Google Fonts - index.html'de yüklendi ama burada emin olmak için WebFont loader kullanılabilir)
         // Şimdilik index.html yeterli.
@@ -75,7 +86,9 @@ export default class PreloaderScene extends Phaser.Scene {
             await AdManager.init();
 
             // Game Manager
-            GameManager.init(); // State load & streak check
+            console.log('⏳ Initializing Game Manager...');
+            await GameManager.init(); // State load & streak check
+            console.log('✅ Game Manager initialized');
 
             // Audio (Scene context gerekli olabilir)
             AudioManager.init(this); // Scene play için referans veriyoruz (opsiyonel)

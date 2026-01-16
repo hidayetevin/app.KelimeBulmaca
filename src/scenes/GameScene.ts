@@ -39,23 +39,69 @@ export default class GameScene extends Phaser.Scene {
         this.hintsUsedCount = 0;
     }
 
-    async create() {
-        // Background
+    create() {
+        console.log('🎬 GameScene: Starting create()');
+
+        // Background - SYNC
         this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0xF7FAFC).setOrigin(0);
+        console.log('✅ Background created');
 
-        // Load crossword data
-        await this.loadCrosswordData();
+        // Load crossword data - ASYNC
+        this.loadCrosswordData().then(() => {
+            console.log('✅ Data loaded, words count:', this.targetWords ? this.targetWords.length : 0);
 
-        // Build UI
-        this.createHeader();
-        this.createCrosswordGrid();
-        this.createScoreDisplay();
-        this.createWordDisplay();
-        this.createLetterPalette();
+            if (!this.targetWords || this.targetWords.length === 0) {
+                console.error('❌ No words generated for this level!');
+                this.scene.start(SCENES.LEVEL_SELECTION);
+                return;
+            }
 
-        // Start timer
-        this.startTime = this.time.now;
-        this.elapsedTime = 0;
+            // Build UI
+            console.log('🛠 Building UI components...');
+
+            try {
+                this.createHeader();
+                console.log('✅ Header created');
+            } catch (e) {
+                console.error('❌ Error in createHeader:', e);
+            }
+
+            try {
+                this.createCrosswordGrid();
+                console.log('✅ Grid created');
+            } catch (e) {
+                console.error('❌ Error in createCrosswordGrid:', e);
+            }
+
+            try {
+                this.createScoreDisplay();
+                console.log('✅ Score display created');
+            } catch (e) {
+                console.error('❌ Error in createScoreDisplay:', e);
+            }
+
+            try {
+                this.createWordDisplay();
+                console.log('✅ Word display created');
+            } catch (e) {
+                console.error('❌ Error in createWordDisplay:', e);
+            }
+
+            try {
+                this.createLetterPalette();
+                console.log('✅ Letter palette created');
+            } catch (e) {
+                console.error('❌ Error in createLetterPalette:', e);
+            }
+
+            // Start timer
+            this.startTime = this.time.now;
+            this.elapsedTime = 0;
+            console.log('🎮 GameScene: Create sequence finished');
+        }).catch(error => {
+            console.error('❌ CRITICAL Error in loadCrosswordData:', error);
+            this.scene.start(SCENES.LEVEL_SELECTION);
+        });
     }
 
     private async loadCrosswordData() {
@@ -72,8 +118,7 @@ export default class GameScene extends Phaser.Scene {
             console.log(`✅ Crossword generated:`, config);
         } catch (error) {
             console.error('❌ Failed to generate crossword:', error);
-            // Fallback to level selection
-            this.scene.start(SCENES.LEVEL_SELECTION);
+            throw error;
         }
     }
 
@@ -225,12 +270,14 @@ export default class GameScene extends Phaser.Scene {
 
     update(_time: number, _delta: number) {
         // Update timer
-        this.elapsedTime = (this.time.now - this.startTime) / 1000; // Convert to seconds
-
-        // Update timer display
-        const minutes = Math.floor(this.elapsedTime / 60);
-        const seconds = Math.floor(this.elapsedTime % 60);
-        this.timerText.setText(`⏱️ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+        if (this.startTime > 0) {
+            this.elapsedTime = (this.time.now - this.startTime) / 1000;
+            const minutes = Math.floor(this.elapsedTime / 60);
+            const seconds = Math.floor(this.elapsedTime % 60);
+            if (this.timerText) {
+                this.timerText.setText(`⏱️ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+            }
+        }
     }
 
     private useHint() {
@@ -283,41 +330,21 @@ export default class GameScene extends Phaser.Scene {
                 const rewarded = await AdManager.showRewarded();
                 if (rewarded) {
                     console.log('💰 Double reward earned!');
-                    GameManager.addStars(stars); // Add the stars AGAIN (doubling total for this level)
+                    GameManager.addStars(stars);
                     showNextLevel();
-                } else {
-                    console.log('🚫 Ad canceled or failed');
-                    // Optional: Show message or just stay on modal?
-                    // Let's stay on modal so they can try "continue"
                 }
             },
             onContinue: async () => {
                 console.log('📺 Continue clicked, showing interstitial');
-                // Show Interstitial
                 await AdManager.showInterstitial();
-                // Navigate regardless of ad result
                 showNextLevel();
             }
         });
     }
 
-    /**
-     * Cleanup when scene is destroyed
-     */
     destroy() {
-        // Remove all event listeners
-        this.input.keyboard?.off('keydown-ESC');
-
-        // Clean up palette if it has listeners
-        if (this.letterPalette) {
-            this.letterPalette.destroy();
-        }
-
-        // Clean up grid
-        if (this.crosswordGrid) {
-            this.crosswordGrid.destroy();
-        }
-
+        if (this.letterPalette) this.letterPalette.destroy();
+        if (this.crosswordGrid) this.crosswordGrid.destroy();
         console.log('🧹 GameScene cleaned up');
     }
 }

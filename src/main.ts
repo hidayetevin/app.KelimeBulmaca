@@ -24,4 +24,7 @@ const game = new Phaser.Game({
     ]
 });
 
+// For debugging
+(window as any).game = game;
+
 export default game;

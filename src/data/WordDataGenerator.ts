@@ -24,22 +24,36 @@ export class WordDataGenerator {
     public async loadAllWords(): Promise<void> {
         if (this.wordPools.size > 0) return;
 
-        const categories = ['baslangic', 'orta', 'deneyimli', 'uzman', 'bilgin', 'dahi'];
+        const categories = ['baslangic', 'orta', 'deneyimli', 'uzman', 'bilgin', 'dahi', 'genel', 'kavramlar'];
+        console.log('📚 WordDataGenerator: Loading categories...', categories);
 
         const loadPromises = categories.map(async (cat) => {
             try {
-                const response = await fetch(`/data/categories/${cat}.json`);
-                if (!response.ok) return;
+                const url = `/data/categories/${cat}.json`;
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    console.error(`❌ Failed to load category ${cat}: Status ${response.status}`);
+                    return;
+                }
+
+                const contentType = response.headers.get('Content-Type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    console.error(`❌ Category ${cat} returned non-JSON content: ${contentType}`);
+                    return;
+                }
+
                 const words: string[] = await response.json();
                 const normalized = words.map(w => w.toLocaleUpperCase('tr-TR'));
                 this.wordPools.set(cat, normalized);
+                console.log(`✅ Category loaded: ${cat} (${words.length} words)`);
             } catch (err) {
-                console.warn(`Failed to load category: ${cat}`, err);
+                console.error(`❌ Error fetching category ${cat}:`, err);
             }
         });
 
         await Promise.all(loadPromises);
-        console.log(`✅ Loaded words from ${this.wordPools.size} tiers`);
+        console.log(`📊 WordDataGenerator: Loaded ${this.wordPools.size}/${categories.length} categories`);
     }
 
     /**

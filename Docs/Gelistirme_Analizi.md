@@ -55,7 +55,19 @@ Cihaz değişikliğinde veri kaybını önlemek ve çoklu cihaz desteği sağlam
 
 ---
 
+## ✅ Tamamlanan Hata Düzeltmeleri ve Stabilizasyon (Ocak 2026)
+
+Oyunun yayın öncesi kritik çalışma zamanı (runtime) hataları giderilmiş ve stabilite artırılmıştır:
+
+- **Varlık (Asset) Yönetimi:** Eksik olan `panel_light.png`, `star_filled.png` gibi görsel dosyaları için `Graphics` ve `Emoji` tabanlı fallback mekanizmaları kuruldu. Oyun artık bu dosyalar eksik olsa bile hata vermeden çalışmaktadır.
+- **Veri Yolu Düzeltmeleri:** `WordDataGenerator` ve `PreloaderScene` içindeki hatalı kategori JSON yolları (`baslangic`, `orta`, `genel` vb.) düzeltildi.
+- **Sahne Geçiş Sorunu:** `GameScene` içindeki `async create()` metodundan kaynaklanan ve seviye geçişlerinde ekranın takılmasına (hang) neden olan sorun, senkron yapıya geçilerek ve veri yükleme işlemleri promise zincirine bağlanarak çözüldü.
+- **Manager Başlatma:** `GameManager` ve `AdManager` gibi kritik bileşenlerin başlatılma sıraları ve `await` mekanizmaları optimize edildi.
+
+---
+
 ## 📌 Faz 2 Öncelikli Yol Haritası (Öneri)
+
 
 1. **Firebase Entegrasyonu:** Veri güvenliği için ilk adım.
 2. **Günlük Meydan Okuma:** Kullanıcı tutundurma için en hızlı çözüm.
