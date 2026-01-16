@@ -63,6 +63,9 @@ Oyunun yayın öncesi kritik çalışma zamanı (runtime) hataları giderilmiş 
 - **Veri Yolu Düzeltmeleri:** `WordDataGenerator` ve `PreloaderScene` içindeki hatalı kategori JSON yolları (`baslangic`, `orta`, `genel` vb.) düzeltildi.
 - **Sahne Geçiş Sorunu:** `GameScene` içindeki `async create()` metodundan kaynaklanan ve seviye geçişlerinde ekranın takılmasına (hang) neden olan sorun, senkron yapıya geçilerek ve veri yükleme işlemleri promise zincirine bağlanarak çözüldü.
 - **Manager Başlatma:** `GameManager` ve `AdManager` gibi kritik bileşenlerin başlatılma sıraları ve `await` mekanizmaları optimize edildi.
+- **UI Optimizasyonları:**
+    - **Header:** Dar ekranlarda seviye başlığı ve zamanlayıcının çakışması, dikey istifleme (vertical stacking) yöntemiyle çözüldü.
+    - **Ayarlar:** Kullanıcı deneyimini sadeleştirmek adına ses seviyesi çubuğu (slider) kaldırıldı, sadece ses açma/kapama (toggle) fonksiyonu bırakıldı.
 
 ---
 

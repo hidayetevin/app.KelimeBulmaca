@@ -7,9 +7,8 @@ import AudioManager from '@/managers/AudioManager';
 import HapticManager from '@/managers/HapticManager';
 import Panel from '@/components/UI/Panel';
 import Toggle from '@/components/UI/Toggle';
-import Slider from '@/components/UI/Slider';
 import Button from '@/components/UI/Button';
-import { GameSettings } from '@/types/GameTypes'; // Specific import
+import { GameSettings } from '@/types/GameTypes';
 
 export default class SettingsScene extends Phaser.Scene {
     private panel!: Panel;
@@ -53,7 +52,7 @@ export default class SettingsScene extends Phaser.Scene {
 
     private createSettingsContent() {
         const startY = -120;
-        const gap = 60;
+        const gap = 80; // Increased gap for better look
         let yPos = startY;
 
         const gameState = GameManager.getGameState();
@@ -108,27 +107,7 @@ export default class SettingsScene extends Phaser.Scene {
 
         yPos += gap;
 
-        // 3. Volume Slider
-        this.createLabel(-140, yPos, LocalizationManager.t('settings.volume', 'Ses Seviyesi'));
-        const volumeSlider = new Slider({
-            scene: this,
-            x: 55, // Adjusted from 50
-            y: yPos + 35,
-            width: 150, // Reduced from 250
-            value: settings.soundVolume,
-            onValueChange: (val) => {
-                const current = GameManager.getSettings();
-                const newSettings = { ...current, soundVolume: val };
-                // Debounce save? For now direct update.
-                GameManager.updateSettings(newSettings);
-                AudioManager.setVolume(val);
-            }
-        });
-        this.panel.add(volumeSlider);
-
-        yPos += gap + 20;
-
-        // 4. Haptic Toggle
+        // 3. Haptic Toggle
         this.createLabel(-140, yPos, LocalizationManager.t('settings.haptic', 'Titreşim'));
         const hapticToggle = new Toggle({
             scene: this,
@@ -146,7 +125,7 @@ export default class SettingsScene extends Phaser.Scene {
 
         yPos += gap + 20;
 
-        // 5. Reset Progress Button
+        // 4. Reset Progress Button
         const resetBtn = new Button({
             scene: this,
             x: 0,
@@ -176,9 +155,6 @@ export default class SettingsScene extends Phaser.Scene {
         this.panel.add(label);
     }
 
-    /**
-     * Cleanup
-     */
     destroy() {
         this.input.keyboard?.off('keydown-ESC');
         console.log('🧹 SettingsScene cleaned up');
