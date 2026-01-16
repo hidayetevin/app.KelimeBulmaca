@@ -11,6 +11,7 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
 
     private onContinue: () => void;
     private onDoubleReward: () => void;
+    private isProcessing: boolean = false;
 
     constructor(data: {
         scene: Phaser.Scene,
@@ -126,7 +127,11 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
             width: modalWidth - 60,
             height: 60,
             style: 'primary', // Maybe a special style for ads?
-            onClick: () => this.onDoubleReward()
+            onClick: () => {
+                if (this.isProcessing) return;
+                this.disableButtons();
+                this.onDoubleReward();
+            }
         });
         // Add icon to button if possible, doing text for now
         this.contentContainer.add(this.doubleRewardButton);
@@ -140,7 +145,11 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
             width: modalWidth - 60,
             height: 60,
             style: 'secondary',
-            onClick: () => this.onContinue()
+            onClick: () => {
+                if (this.isProcessing) return;
+                this.disableButtons();
+                this.onContinue();
+            }
         });
         this.continueButton.setVisible(false);
         this.contentContainer.add(this.continueButton);
@@ -168,5 +177,11 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
                 duration: 500
             });
         });
+    }
+
+    private disableButtons() {
+        this.isProcessing = true;
+        this.continueButton.setEnabled(false);
+        this.doubleRewardButton.setEnabled(false);
     }
 }
