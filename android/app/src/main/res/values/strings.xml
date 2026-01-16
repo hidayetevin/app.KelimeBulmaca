@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">KelimeUstasi</string>
-    <string name="title_activity_main">KelimeUstasi</string>
+    <string name="app_name">Kelime Ustası</string>
+    <string name="title_activity_main">Kelime Ustası</string>
     <string name="package_name">com.kelime.ustasi</string>
     <string name="custom_url_scheme">com.kelime.ustasi</string>
 </resources>
