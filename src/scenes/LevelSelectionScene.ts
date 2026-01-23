@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { SCENES, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY } from '@/utils/constants';
-import GameManager from '@/managers/GameManager';
+import GameManager, { GameManager as GameManagerClass } from '@/managers/GameManager';
 import Button from '@/components/UI/Button';
 
 export default class LevelSelectionScene extends Phaser.Scene {
@@ -13,6 +13,9 @@ export default class LevelSelectionScene extends Phaser.Scene {
     }
 
     create() {
+        // Ensure toast notifications can show in this scene
+        GameManagerClass.setToastScene(this);
+
         const width = GAME_WIDTH;
         const height = GAME_HEIGHT;
 

@@ -341,14 +341,9 @@ export default class GameScene extends Phaser.Scene {
             time: finalTime,
             hintsUsed: this.hintsUsedCount,
             onDoubleReward: () => {
-                console.log('📺 Watch Ad for x2 Reward clicked');
-                // Don't await, just trigger and leave
-                AdManager.showRewarded().then(rewarded => {
-                    if (rewarded) {
-                        console.log('💰 Double reward earned in background!');
-                        GameManager.addStars(stars);
-                    }
-                });
+                console.log('📺 Watch Ad for x2 Reward clicked', stars);
+                // Trigger ad with reward amount - AdManager will handle the doubling
+                AdManager.showRewarded(stars);
                 goBackToLevels();
             },
             onContinue: () => {
