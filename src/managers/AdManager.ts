@@ -54,12 +54,28 @@ class AdManager {
 
                 this.isAdMobAvailable = true;
                 console.log('✅ AdMob initialized');
+
+                // Preload ads immediately after init
+                this.preloadAds();
             } else {
                 console.log('ℹ️ AdMob running in web mode (Mock)');
             }
         } catch (error) {
             console.error('❌ AdMob initialization failed:', error);
             this.isAdMobAvailable = false;
+        }
+    }
+
+    public async preloadAds(): Promise<void> {
+        if (!this.isAdMobAvailable) return;
+
+        try {
+            console.log('⏳ Preloading Interstitial and Rewarded ads...');
+            await this.AdMob.prepareInterstitial({ adId: TEST_ADS.ANDROID.INTERSTITIAL, isTesting: this.isTestMode });
+            await this.AdMob.prepareRewardVideoAd({ adId: TEST_ADS.ANDROID.REWARDED, isTesting: this.isTestMode });
+            console.log('✅ Ads preloaded and ready');
+        } catch (error) {
+            console.warn('⚠️ Ad preloading failed:', error);
         }
     }
 
@@ -109,7 +125,6 @@ class AdManager {
 
         return new Promise(async (resolve) => {
             try {
-                const adId = TEST_ADS.ANDROID.INTERSTITIAL;
                 // @ts-ignore
                 const { Toast } = await import('@capacitor/toast');
 
@@ -140,8 +155,11 @@ class AdManager {
                     resolve(false);
                 });
 
-                await this.AdMob.prepareInterstitial({ adId, isTesting: this.isTestMode });
+                // Show immediately (already prepared by preload)
                 await this.AdMob.showInterstitial();
+
+                // Immediately prepare the NEXT one for later
+                this.preloadAds();
 
             } catch (error) {
                 console.error('❌ Failed to show interstitial:', error);
@@ -168,7 +186,6 @@ class AdManager {
         return new Promise(async (resolve) => {
             let earnedReward = false;
             try {
-                const adId = TEST_ADS.ANDROID.REWARDED;
                 // @ts-ignore
                 const { Toast } = await import('@capacitor/toast');
 
@@ -213,8 +230,11 @@ class AdManager {
                 // @ts-ignore
                 const dismissHandlerLegacy = this.AdMob.addListener('rewardVideoAdDismissed', () => { cleanup(); resolve(earnedReward); });
 
-                await this.AdMob.prepareRewardVideoAd({ adId, isTesting: this.isTestMode });
+                // Show immediately (already prepared by preload)
                 await this.AdMob.showRewardVideoAd();
+
+                // Immediately prepare the NEXT one
+                this.preloadAds();
 
             } catch (error) {
                 console.error('❌ Failed to show rewarded video:', error);
