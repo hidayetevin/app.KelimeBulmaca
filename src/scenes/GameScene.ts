@@ -215,7 +215,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private createLetterPalette() {
-        const y = GAME_HEIGHT - 170; // Adjusted for banner ad space
+        const y = GAME_HEIGHT - 185; // Moved up slightly as requested
 
         this.letterPalette = new LetterPalette({
             scene: this,
