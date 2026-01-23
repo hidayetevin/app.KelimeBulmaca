@@ -11,7 +11,6 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
 
     private onContinue: () => void;
     private onDoubleReward: () => void;
-    private isProcessing: boolean = false;
 
     constructor(data: {
         scene: Phaser.Scene,
@@ -46,9 +45,6 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
         // Modal Background
         const modalWidth = GAME_WIDTH * 0.85;
         const modalHeight = GAME_HEIGHT * 0.6;
-        this.sceneRef.add.rectangle(0, 0, modalWidth, modalHeight, 0xFFFFFF)
-            .setStrokeStyle(4, 0x3182CE);
-        // .setRounded(16) // Phaser rectangle doesn't support rounded corners native easily without graphics, using rect for simplicity or graphics if needed
 
         const modalGraphics = this.sceneRef.add.graphics();
         modalGraphics.fillStyle(0xFFFFFF, 1);
@@ -128,8 +124,6 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
             height: 60,
             style: 'primary', // Maybe a special style for ads?
             onClick: () => {
-                if (this.isProcessing) return;
-                this.disableButtons();
                 this.onDoubleReward();
             }
         });
@@ -146,8 +140,6 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
             height: 60,
             style: 'secondary',
             onClick: () => {
-                if (this.isProcessing) return;
-                this.disableButtons();
                 this.onContinue();
             }
         });
@@ -179,9 +171,4 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
         });
     }
 
-    private disableButtons() {
-        this.isProcessing = true;
-        this.continueButton.setEnabled(false);
-        this.doubleRewardButton.setEnabled(false);
-    }
 }

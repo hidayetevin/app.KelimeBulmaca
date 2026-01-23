@@ -27,6 +27,7 @@ export default class GameScene extends Phaser.Scene {
     private startTime: number = 0;
     private elapsedTime: number = 0;
     private hintsUsedCount: number = 0;
+    private isGameReady: boolean = false;
 
     constructor() {
         super(SCENES.GAME);
@@ -37,10 +38,21 @@ export default class GameScene extends Phaser.Scene {
         this.levelNumber = data.level || 1;
         this.score = 0;
         this.hintsUsedCount = 0;
+        this.startTime = 0;
+        this.elapsedTime = 0;
+        this.isGameReady = false;
+
+        // Reset UI references to ensure no leftovers from previous levels
+        this.timerText = null as any;
+        this.scoreText = null as any;
+        this.currentWordDisplay = null as any;
+        this.letterPalette = null as any;
+        this.crosswordGrid = null as any;
     }
 
     create() {
         console.log('🎬 GameScene: Starting create()');
+        this.isGameReady = false;
         GameManagerClass.setToastScene(this);
 
         // Background - SYNC
@@ -98,6 +110,7 @@ export default class GameScene extends Phaser.Scene {
             // Start timer
             this.startTime = this.time.now;
             this.elapsedTime = 0;
+            this.isGameReady = true;
             console.log('🎮 GameScene: Create sequence finished');
         }).catch(error => {
             console.error('❌ CRITICAL Error in loadCrosswordData:', error);
@@ -270,6 +283,8 @@ export default class GameScene extends Phaser.Scene {
     }
 
     update(_time: number, _delta: number) {
+        if (!this.isGameReady) return;
+
         // Update timer
         if (this.startTime > 0) {
             this.elapsedTime = (this.time.now - this.startTime) / 1000;
@@ -315,10 +330,9 @@ export default class GameScene extends Phaser.Scene {
         GameManager.addWordsFound(this.targetWords.length);
 
         // Show Completion Modal
-        const showNextLevel = () => {
-            const nextLevel = Math.min(this.levelNumber + 1, 100);
-            // Navigate
-            this.scene.start(SCENES.GAME, { level: nextLevel });
+        const goBackToLevels = () => {
+            // Navigate back to selection
+            this.scene.start(SCENES.LEVEL_SELECTION);
         };
 
         new LevelCompleteModal({
@@ -326,19 +340,22 @@ export default class GameScene extends Phaser.Scene {
             stars: stars,
             time: finalTime,
             hintsUsed: this.hintsUsedCount,
-            onDoubleReward: async () => {
+            onDoubleReward: () => {
                 console.log('📺 Watch Ad for x2 Reward clicked');
-                const rewarded = await AdManager.showRewarded();
-                if (rewarded) {
-                    console.log('💰 Double reward earned!');
-                    GameManager.addStars(stars);
-                    showNextLevel();
-                }
+                // Don't await, just trigger and leave
+                AdManager.showRewarded().then(rewarded => {
+                    if (rewarded) {
+                        console.log('💰 Double reward earned in background!');
+                        GameManager.addStars(stars);
+                    }
+                });
+                goBackToLevels();
             },
-            onContinue: async () => {
+            onContinue: () => {
                 console.log('📺 Continue clicked, showing interstitial');
-                await AdManager.showInterstitial();
-                showNextLevel();
+                // Don't await, just trigger and leave
+                AdManager.showInterstitial();
+                goBackToLevels();
             }
         });
     }
