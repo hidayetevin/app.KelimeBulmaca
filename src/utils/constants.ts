@@ -3,8 +3,9 @@
  */
 
 // ==================== OYUN BOYUTLARI ====================
+export const BANNER_AD_HEIGHT = 50; // AdMob banner height
 export const GAME_WIDTH = 375;
-export const GAME_HEIGHT = 812;
+export const GAME_HEIGHT = 762; // 812 - 50 (banner height)
 
 // ==================== GRID AYARLARI ====================
 export const GRID_CELL_SIZE = 60;

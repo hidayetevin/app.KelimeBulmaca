@@ -6,23 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kelime Ustası</title>
     <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
       body {
         margin: 0;
         padding: 0;
         background-color: #000;
         overflow: hidden;
-      }
-      #app {
         width: 100vw;
         height: 100vh;
+      }
+      
+      /* Game container - excludes banner area */
+      #app {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: calc(100vh - 50px); /* Reserve 50px for banner */
         display: flex;
         justify-content: center;
         align-items: center;
+      }
+      
+      /* Banner ad container - fixed at bottom */
+      #banner-ad-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        height: 50px;
+        background-color: #1a1a1a;
+        z-index: 1000;
       }
     </style>
   </head>
   <body>
     <div id="app"></div>
+    <div id="banner-ad-container"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

@@ -19,9 +19,7 @@ export default class GameScene extends Phaser.Scene {
     private crosswordGrid!: CrosswordGrid;
     private letterPalette!: LetterPalette;
     private currentWordDisplay!: CurrentWordDisplay;
-    private scoreText!: Phaser.GameObjects.Text;
     private timerText!: Phaser.GameObjects.Text;
-    private score: number = 0;
 
     // Timer
     private startTime: number = 0;
@@ -36,7 +34,6 @@ export default class GameScene extends Phaser.Scene {
     init(data: { level: number }) {
         console.log(`🎮 Initializing Level ${data.level}`);
         this.levelNumber = data.level || 1;
-        this.score = 0;
         this.hintsUsedCount = 0;
         this.startTime = 0;
         this.elapsedTime = 0;
@@ -44,7 +41,6 @@ export default class GameScene extends Phaser.Scene {
 
         // Reset UI references to ensure no leftovers from previous levels
         this.timerText = null as any;
-        this.scoreText = null as any;
         this.currentWordDisplay = null as any;
         this.letterPalette = null as any;
         this.crosswordGrid = null as any;
@@ -86,12 +82,6 @@ export default class GameScene extends Phaser.Scene {
                 console.error('❌ Error in createCrosswordGrid:', e);
             }
 
-            try {
-                this.createScoreDisplay();
-                console.log('✅ Score display created');
-            } catch (e) {
-                console.error('❌ Error in createScoreDisplay:', e);
-            }
 
             try {
                 this.createWordDisplay();
@@ -211,18 +201,10 @@ export default class GameScene extends Phaser.Scene {
         });
     }
 
-    private createScoreDisplay() {
-        const y = GAME_HEIGHT * 0.45;
-        this.scoreText = this.add.text(GAME_WIDTH / 2, y, '0 ⭐️', {
-            fontFamily: FONT_FAMILY_PRIMARY,
-            fontSize: '22px',
-            color: '#F6AD55',
-            fontStyle: 'bold'
-        }).setOrigin(0.5);
-    }
+
 
     private createWordDisplay() {
-        const y = GAME_HEIGHT * 0.53;
+        const y = GAME_HEIGHT * 0.48; // Moved up to avoid overlap with letters
 
         this.currentWordDisplay = new CurrentWordDisplay({
             scene: this,
@@ -233,7 +215,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private createLetterPalette() {
-        const y = GAME_HEIGHT - 200;
+        const y = GAME_HEIGHT - 170; // Adjusted for banner ad space
 
         this.letterPalette = new LetterPalette({
             scene: this,
@@ -270,9 +252,6 @@ export default class GameScene extends Phaser.Scene {
         word.isFound = true;
         this.crosswordGrid.fillWord(word);
 
-        // Update score
-        this.score += word.text.length;
-        this.scoreText.setText(`${this.score} ⭐️`);
 
         // Check if level complete
         if (this.crosswordGrid.isComplete()) {

@@ -1,11 +1,12 @@
 import Phaser from 'phaser';
+import { GAME_WIDTH, GAME_HEIGHT } from './utils/constants';
 
 export const GameConfig: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
-    width: 375,
-    height: 812, // iPhone X boyutları referans
+    width: GAME_WIDTH,
+    height: GAME_HEIGHT,
     parent: 'app',
-    backgroundColor: '#F5F7FA', // Light mode background
+    backgroundColor: '#F5F7FA',
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
@@ -13,9 +14,8 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { x: 0, y: 0 }, // dikey yerine nesne olarak x, y verilmeli
+            gravity: { x: 0, y: 0 },
             debug: false
         }
     },
-    // Scene'ler main.ts içinde eklenecek
 };
