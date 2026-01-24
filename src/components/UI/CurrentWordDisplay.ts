@@ -34,7 +34,7 @@ export default class CurrentWordDisplay extends Phaser.GameObjects.Container {
             fontSize: '32px',
             color: '#1F2937',
             fontStyle: 'bold'
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
         this.add(this.wordText);
     }
 

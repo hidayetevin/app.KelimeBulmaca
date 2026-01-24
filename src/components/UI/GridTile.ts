@@ -54,7 +54,7 @@ export default class GridTile extends Phaser.GameObjects.Container {
             fontSize: `${s * 0.6}px`,
             color: '#' + this.colors.TEXT_DARK.toString(16).padStart(6, '0'),
             fontStyle: 'bold'
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
         this.add(this.text);
     }
 

@@ -57,7 +57,7 @@ export default class Button extends Phaser.GameObjects.Container {
             color: '#FFFFFF',
             fontStyle: 'bold',
             align: 'center'
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
         this.add(this.btnText);
 
         // Hit Area

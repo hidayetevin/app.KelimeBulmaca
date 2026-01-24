@@ -45,7 +45,7 @@ export default class CircularLetterNode extends Phaser.GameObjects.Container {
             fontSize: `${this.radius}px`,
             color: '#1F2937',
             fontStyle: 'bold'
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
         this.add(this.letterText);
 
         // Now update circle (which modifies letterText color)

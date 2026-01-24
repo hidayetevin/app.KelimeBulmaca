@@ -11,6 +11,16 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
+
+
+    render: {
+        // Pikselli görüntü yerine yumuşak kenarlar
+        antialias: true,
+        // Pixel art olmadığı için false
+        pixelArt: false,
+        // Akıcı animasyonlar için false
+        roundPixels: false
+    },
     physics: {
         default: 'arcade',
         arcade: {

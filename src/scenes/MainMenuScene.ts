@@ -42,7 +42,7 @@ export default class MainMenuScene extends Phaser.Scene {
                 stroke: true,
                 fill: true
             }
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
 
         // Logo Pulse Animation
         this.add.tween({
