@@ -87,43 +87,28 @@ export default class AchievementScene extends Phaser.Scene {
         const totalContentHeight = currentY;
 
         // Scroll Logic
-        this.minScrollY = -totalContentHeight + listHeight;
-        if (this.minScrollY > 0) this.minScrollY = 0;
-        this.maxScrollY = 0;
+        const contentStartY = - (GAME_HEIGHT - 100) / 2 + 80;
+        const initialY = contentStartY + cardH / 2;
+
+        this.scrollContainer.y = initialY;
+
+        // Scroll Logic
+        // totalContentHeight is the bottom Y of the last card + gap
+        // We want to scroll until the bottom of the last card is visible.
+        // Add extra padding at the bottom so it clears the panel edge comfortably
+        const bottomPadding = 100;
+        const scrollableDistance = Math.max(0, totalContentHeight + bottomPadding - listHeight);
+
+        this.maxScrollY = initialY;
+        this.minScrollY = initialY - scrollableDistance;
 
         // Mask
-        // Mask should be relative to panel center?
-        // Panel adds content to itself.
-        // If we add scrollContainer to panel, mask must be relative to panel?
-        // Phaser masks are world space usually with BitmapMask or GeometryMask.
-        // Let's keep it simple: Add everything to panel.
-
-        // Mask Rect (World Coordinates roughly)
-        // Panel is at centerX, centerY.
-        // List top is roughly centerY - listHeight/2
-        // Mask Rect
-        // const maskX = (GAME_WIDTH - listW) / 2; // ?
         const maskY = (GAME_HEIGHT - listHeight) / 2 + 20; // Offset for title
-
         const maskShape = this.make.graphics({});
         maskShape.fillStyle(0xffffff);
         maskShape.fillRect((GAME_WIDTH - listW) / 2, maskY, listW, listHeight);
-
         const mask = maskShape.createGeometryMask();
         this.scrollContainer.setMask(mask);
-
-        // Positioning container
-        // Container 0,0 corresponds to center of first card?
-        // No, we placed cards at y=currentY starting 0.
-        // So container should start at top of visible area.
-        this.scrollContainer.setPosition(0, -listHeight / 2 + cardH / 2 + 10);
-        // A bit tricky relative to panel center.
-        // Panel coords: 0,0 is center.
-        // Top is -h/2. Title area ~60px.
-        // Content starts ~ -h/2 + 80.
-
-        const contentStartY = - (GAME_HEIGHT - 100) / 2 + 80;
-        this.scrollContainer.y = contentStartY + cardH / 2; // Adjust for card origin 0.5? Card origin is container default 0,0 but usually we treat x,y as center? 
         // AchievementCard calls super(x,y) -> Container.
         // Container doesn't have origin. Elements inside are relative to 0,0.
         // In card: Rect drawn at -w/2, -h/2. So 0,0 is center. Perfect.
