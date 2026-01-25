@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from './utils/constants';
 
-export const GameConfig: Phaser.Types.Core.GameConfig = {
+export const GameConfig: any = {
     type: Phaser.AUTO,
     width: GAME_WIDTH,
     height: GAME_HEIGHT,
@@ -19,8 +19,10 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
         // Pixel art olmadığı için false
         pixelArt: false,
         // Akıcı animasyonlar için false
-        roundPixels: false
+        roundPixels: true
     },
+    // Yüksek çözünürlük desteği
+    resolution: window.devicePixelRatio,
     physics: {
         default: 'arcade',
         arcade: {
