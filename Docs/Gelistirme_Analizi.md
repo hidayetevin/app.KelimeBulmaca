@@ -76,3 +76,37 @@ Oyunun yayın öncesi kritik çalışma zamanı (runtime) hataları giderilmiş 
 2. **Günlük Meydan Okuma:** Kullanıcı tutundurma için en hızlı çözüm.
 3. **Temalar:** Görsel çeşitlilik ve ödül harcama noktası.
 4. **Lig Sistemi:** Topluluk ve rekabet hissi.
+
+---
+
+## 🛠️ Son Geliştirmeler ve İyileştirmeler (25 Ocak 2026)
+
+Kullanıcı geri bildirimleri ve kalite standartları doğrultusunda yapılan kritik iyileştirmeler:
+
+### 1. 🏆 Başarı Sistemi (Achievement Fixes)
+- **Tetikleme Mekanizması:** Seviye bitirme, kelime bulma ve yıldız kazanma olaylarına `AchievementManager.checkAchievements` tetikleyicisi eklendi.
+- **Geçmişe Dönük Kontrol:** Oyun açılışında (`init`) hak edilmiş ama alınmamış başarıların (özellikle "İlk Adım" gibi) otomatik kontrolü sağlandı.
+- **Streak Senkronizasyonu:** Günlük ödüller ile başarı sistemi arasındaki veri kopukluğu giderildi.
+- **UI Düzeltmesi:** Başarı listesinin kaydırma (scroll) hesaplaması düzeltildi, listenin en altındaki ödüllerin görünmeme sorunu (padding) çözüldü.
+
+### 2. 👁️ Görsel Kalite (Visual Refinement)
+- **High DPI (Retina) Desteği:** `resolution` ayarı cihazın piksel yoğunluğuna (minimum 3x) sabitlendi. Artık oyun tüm cihazlarda "cam gibi" net.
+- **Keskin Kenarlar:** Canvas için CSS tarafında `crisp-edges` ve `optimize-contrast` kuralları eklendi.
+- **Kilit İkonu:** Seviye seçim ekranındaki kilit ikonlarının üstten kesilme sorunu, metin alanına `padding` verilerek çözüldü.
+
+### 3. ⚡ Performans ve Reklam (Ad System)
+- **Reklam Ön Yükleme (Preloading):** Reklamlar artık oyun açılışında ve bir önceki reklam kapandığında otomatik olarak arka planda yükleniyor. "İzle" butonuna basıldığında bekleme süresi **sıfıra** indirildi.
+- **Error Handling:** Ücretsiz ipucu gibi `rewardAmount: 0` olan durumlarda sistemin "hata" olarak algılaması düzeltildi.
+
+### 4. 💡 İpucu Sistemi (Hint 2.0)
+- **Yeni Modal UI:** Basit bir ipucu kullanımı yerine, kullanıcıya seçenek sunan şık bir Modal (Pencere) tasarlandı.
+- **Seçenekler:**
+  - **İzle ve Kazan:** Öncelikli buton. Reklam izleyerek ücretsiz ipucu verir.
+  - **Yıldız Harca:** 1.5 saniye gecikmeli açılan buton. 50 yıldız (veya config değeri) karşılığında ipucu verir.
+
+### 5. 🎨 Marka ve İkon
+- **Yeni Uygulama İkonu:** Modern, derin mor arkaplanlı ve altın/turuncu "Büyüteç & K" temalı ikon tasarlandı.
+- **Entegrasyon:**
+  - Android `mipmap` kaynaklarına (hdpi, xhdpi vb.) yeni ikonlar işlendi.
+  - Preloader (Açılış) ekranına yazı yerine yeni logo eklendi.
+  - `build.gradle` düzenlenerek çıktı APK ismi `Kelime-Ustasi.apk` olarak ayarlandı.
