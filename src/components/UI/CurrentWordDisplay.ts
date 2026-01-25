@@ -65,4 +65,30 @@ export default class CurrentWordDisplay extends Phaser.GameObjects.Container {
     public clear() {
         this.wordText.setText('');
     }
+
+    public showError() {
+        // Kırmızı arkaplan göster
+        this.background.clear();
+        this.background.fillStyle(0xEF4444, 1); // Red
+        this.background.fillRoundedRect(-this.bgWidth / 2, -25, this.bgWidth, 50, 10);
+        this.background.lineStyle(2, 0xDC2626);
+        this.background.strokeRoundedRect(-this.bgWidth / 2, -25, this.bgWidth, 50, 10);
+
+        // Sallama animasyonu (shake)
+        this.scene.tweens.add({
+            targets: this,
+            x: this.x + 10,
+            duration: 50,
+            yoyo: true,
+            repeat: 5,
+            ease: 'Sine.easeInOut',
+            onComplete: () => {
+                // 1 saniye sonra normale dön
+                this.scene.time.delayedCall(1000, () => {
+                    this.updateBackground();
+                    this.wordText.setText('');
+                });
+            }
+        });
+    }
 }

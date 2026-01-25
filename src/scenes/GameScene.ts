@@ -9,6 +9,8 @@ import CrosswordGrid from '@/components/UI/CrosswordGrid';
 import LevelCompleteModal from '@/components/UI/LevelCompleteModal';
 import { CrosswordWord } from '@/types/GameTypes';
 import AdManager from '@/managers/AdManager';
+import SoundGenerator from '@/utils/soundGenerator';
+import HapticManager from '@/managers/HapticManager';
 
 export default class GameScene extends Phaser.Scene {
     private levelNumber!: number;
@@ -242,6 +244,20 @@ export default class GameScene extends Phaser.Scene {
         } else {
             // Wrong word feedback
             console.log('❌ Word not found');
+
+            // Yanlış ses efekti çal
+            SoundGenerator.playWrongSound();
+
+            // Titreşim feedback
+            HapticManager.onWordWrong();
+
+            // Hata animasyonu göster
+            this.currentWordDisplay.showError();
+
+            // Harf seçimini temizle (1 saniye sonra)
+            this.time.delayedCall(1000, () => {
+                this.letterPalette.clearSelection();
+            });
         }
     }
 
@@ -251,6 +267,12 @@ export default class GameScene extends Phaser.Scene {
         // Mark as found and fill in grid
         word.isFound = true;
         this.crosswordGrid.fillWord(word);
+
+        // Doğru ses efekti çal
+        SoundGenerator.playCorrectSound();
+
+        // Titreşim feedback
+        HapticManager.onWordCorrect();
 
 
         // Check if level complete

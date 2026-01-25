@@ -9,6 +9,7 @@ import Panel from '@/components/UI/Panel';
 import Toggle from '@/components/UI/Toggle';
 import Button from '@/components/UI/Button';
 import { GameSettings } from '@/types/GameTypes';
+import SoundGenerator from '@/utils/soundGenerator';
 
 export default class SettingsScene extends Phaser.Scene {
     private panel!: Panel;
@@ -100,7 +101,15 @@ export default class SettingsScene extends Phaser.Scene {
                 const current = GameManager.getSettings();
                 const newSettings = { ...current, soundEnabled: val };
                 GameManager.updateSettings(newSettings);
-                if (val) AudioManager.enableSound(); else AudioManager.disableSound();
+
+                // Hem AudioManager hem de SoundGenerator'ı kontrol et
+                if (val) {
+                    AudioManager.enableSound();
+                    SoundGenerator.enable();
+                } else {
+                    AudioManager.disableSound();
+                    SoundGenerator.disable();
+                }
             }
         });
         this.panel.add(soundToggle);
@@ -118,7 +127,14 @@ export default class SettingsScene extends Phaser.Scene {
                 const current = GameManager.getSettings();
                 const newSettings = { ...current, vibrationEnabled: val };
                 GameManager.updateSettings(newSettings);
-                if (val) HapticManager.light();
+
+                // HapticManager'ı kontrol et
+                if (val) {
+                    HapticManager.enable();
+                    HapticManager.light(); // Test titreşimi
+                } else {
+                    HapticManager.disable();
+                }
             }
         });
         this.panel.add(hapticToggle);

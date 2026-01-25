@@ -7,6 +7,8 @@ import AudioManager from '@/managers/AudioManager';
 import AdManager from '@/managers/AdManager';
 import ProgressBar from '@/components/UI/ProgressBar';
 import WordDataGenerator from '@/data/WordDataGenerator';
+import SoundGenerator from '@/utils/soundGenerator';
+import HapticManager from '@/managers/HapticManager';
 
 export default class PreloaderScene extends Phaser.Scene {
     constructor() {
@@ -95,6 +97,26 @@ export default class PreloaderScene extends Phaser.Scene {
 
             // Audio (Scene context gerekli olabilir)
             AudioManager.init(this); // Scene play için referans veriyoruz (opsiyonel)
+
+            // Kullanıcı ayarlarına göre ses ve titreşim durumlarını ayarla
+            const settings = GameManager.getSettings();
+            if (settings) {
+                // Ses ayarı
+                if (settings.soundEnabled) {
+                    AudioManager.enableSound();
+                    SoundGenerator.enable();
+                } else {
+                    AudioManager.disableSound();
+                    SoundGenerator.disable();
+                }
+
+                // Titreşim ayarı
+                if (settings.vibrationEnabled) {
+                    HapticManager.enable();
+                } else {
+                    HapticManager.disable();
+                }
+            }
 
             // Bekleme (Estetik)
             await new Promise(resolve => setTimeout(resolve, 500));
