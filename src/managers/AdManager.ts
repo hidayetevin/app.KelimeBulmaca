@@ -202,8 +202,10 @@ class AdManager {
         if (!this.isAdMobAvailable) {
             return new Promise(resolve => {
                 const confirmed = window.confirm("Mock Ad: Watch video to double reward?");
-                if (confirmed && rewardAmount > 0) {
-                    GameManager.addStars(rewardAmount);
+                if (confirmed) {
+                    if (rewardAmount > 0) {
+                        GameManager.addStars(rewardAmount);
+                    }
                     resolve(true);
                 } else {
                     resolve(false);
@@ -230,13 +232,15 @@ class AdManager {
                 dismissHandler.remove();
                 rewardHandler.remove();
 
-                if (rewardEarned && rewardAmount > 0) {
-                    GameManager.addStars(rewardAmount);
-                    // @ts-ignore
-                    import('@capacitor/toast').then(m => m.Toast.show({
-                        text: `🌟 +${rewardAmount} Yıldız!`,
-                        duration: 'long'
-                    }));
+                if (rewardEarned) {
+                    if (rewardAmount > 0) {
+                        GameManager.addStars(rewardAmount);
+                        // @ts-ignore
+                        import('@capacitor/toast').then(m => m.Toast.show({
+                            text: `🌟 +${rewardAmount} Yıldız!`,
+                            duration: 'long'
+                        }));
+                    }
                     resolve(true);
                 } else {
                     resolve(false);

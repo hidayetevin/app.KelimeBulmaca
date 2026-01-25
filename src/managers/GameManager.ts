@@ -207,6 +207,16 @@ export class GameManager {
         this.saveGame();
     }
 
+    public spendStars(amount: number): boolean {
+        if (!this.gameState || this.gameState.user.totalStars < amount) {
+            return false;
+        }
+
+        this.gameState.user.totalStars -= amount;
+        this.saveGame();
+        return true;
+    }
+
     /**
      * Static toast reference for showing notifications
      */

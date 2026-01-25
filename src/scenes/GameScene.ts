@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { SCENES, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY } from '@/utils/constants';
+import { SCENES, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY, HINT_COST_STARS } from '@/utils/constants';
 import GameManager, { GameManager as GameManagerClass } from '@/managers/GameManager';
 import WordDataGenerator from '@/data/WordDataGenerator';
 import Button from '@/components/UI/Button';
@@ -11,6 +11,7 @@ import { CrosswordWord } from '@/types/GameTypes';
 import AdManager from '@/managers/AdManager';
 import SoundGenerator from '@/utils/soundGenerator';
 import HapticManager from '@/managers/HapticManager';
+import HintModal from '@/components/UI/HintModal';
 
 export default class GameScene extends Phaser.Scene {
     private levelNumber!: number;
@@ -300,6 +301,38 @@ export default class GameScene extends Phaser.Scene {
     private useHint() {
         console.log('💡 Hint requested');
 
+        // Check if there are any words left to find
+        const unFoundWord = this.targetWords.find(w => !w.isFound);
+        if (!unFoundWord) return;
+
+        new HintModal({
+            scene: this,
+            currentStars: GameManager.getTotalStars(),
+            hintCost: HINT_COST_STARS,
+            onWatchAd: () => {
+                console.log('📺 Watch Ad for Hint');
+                AdManager.showRewarded(0).then(success => {
+                    if (success) {
+                        this.applyHint();
+                    } else {
+                        GameManagerClass.showToast('Reklam yüklenemedi, lütfen tekrar dene.', 'warning');
+                    }
+                });
+            },
+            onUseStars: () => {
+                if (GameManager.spendStars(HINT_COST_STARS)) {
+                    this.applyHint();
+                } else {
+                    GameManagerClass.showToast('Yetersiz Yıldız!', 'error');
+                }
+            },
+            onClose: () => {
+                // Resume or handle UI state if needed
+            }
+        }).show();
+    }
+
+    private applyHint() {
         // Find first unfound word
         const unFoundWord = this.targetWords.find(w => !w.isFound);
 
@@ -308,6 +341,10 @@ export default class GameScene extends Phaser.Scene {
             GameManager.useHint();
             unFoundWord.isFound = true;
             this.crosswordGrid.fillWord(unFoundWord);
+
+            // Sound & Haptic
+            SoundGenerator.playHintSound();
+            HapticManager.onHintShow();
 
             // Check completion
             if (this.crosswordGrid.isComplete()) {

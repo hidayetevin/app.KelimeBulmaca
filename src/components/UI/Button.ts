@@ -12,6 +12,7 @@ interface ButtonConfig {
     text: string;
     onClick?: () => void;
     style?: ButtonStyle;
+    backgroundColor?: number;
     width?: number;
     height?: number;
     fontSize?: number;
@@ -109,6 +110,12 @@ export default class Button extends Phaser.GameObjects.Container {
             default:
                 bgColor = this.colors.PRIMARY;
                 textColor = '#1A202C';
+        }
+
+        // Override if custom color provided
+        if (this.config.backgroundColor !== undefined) {
+            bgColor = this.config.backgroundColor;
+            textColor = '#FFFFFF'; // Assume light text for custom dark bg usually
         }
 
         // Draw Shadow

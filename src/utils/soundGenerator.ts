@@ -108,6 +108,12 @@ class SimpleSoundGenerator {
             this.playTone(783.99, 0.2, 'sine'); // G5
         }, 200);
     }
+
+    public playHintSound(): void {
+        // Magical sound
+        this.playTone(600, 0.1, 'sine');
+        setTimeout(() => this.playTone(800, 0.2, 'sine'), 100);
+    }
 }
 
 // Export singleton
