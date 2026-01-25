@@ -21,12 +21,12 @@ export default class LetterPalette extends Phaser.GameObjects.Container {
 
         this.onWordSubmitCallback = config.onWordSubmit;
 
-        this.createNodes(config.letters);
-        this.setupInteraction();
-
-        // Selection line
+        // Selection line (Create BEFORE nodes to be behind them)
         this.selectionLine = this.scene.add.graphics();
         this.add(this.selectionLine);
+
+        this.createNodes(config.letters);
+        this.setupInteraction();
 
         this.scene.add.existing(this);
     }
