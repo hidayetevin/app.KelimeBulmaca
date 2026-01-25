@@ -62,7 +62,7 @@ export default class HintModal {
         this.panel.addContent(starContainer);
 
         // info text
-        const infoText = this.scene.add.text(0, -40, 'Bir harf açmak için:', {
+        const infoText = this.scene.add.text(0, -40, 'Bir kelime açmak için:', {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '16px',
             color: '#64748B'
