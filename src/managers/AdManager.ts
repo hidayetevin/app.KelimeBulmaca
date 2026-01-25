@@ -24,8 +24,12 @@ class AdManager {
     private BannerAdSize: any = null;
     private BannerAdPosition: any = null;
 
+    // Ad Status Flags
+    private isInterstitialReady: boolean = false;
+    private isRewardedReady: boolean = false;
+
     private constructor() {
-        this.init();
+        // init called externally
     }
 
     public static getInstance(): AdManager {
@@ -53,6 +57,11 @@ class AdManager {
 
                 this.isAdMobAvailable = true;
                 console.log('✅ AdMob initialized');
+
+                // Preload ads immediately
+                this.registerGlobalListeners();
+                this.preloadInterstitial();
+                this.preloadRewarded();
             } else {
                 console.log('ℹ️ AdMob running in web mode (Mock)');
             }
@@ -60,6 +69,48 @@ class AdManager {
             console.error('❌ AdMob initialization failed:', error);
             this.isAdMobAvailable = false;
         }
+    }
+
+    private registerGlobalListeners() {
+        if (!this.AdMob) return;
+
+        // Interstitial Listeners
+        this.AdMob.addListener('onInterstitialAdLoaded', () => {
+            console.log('📦 Interstitial Ad READY');
+            this.isInterstitialReady = true;
+        });
+
+        this.AdMob.addListener('onInterstitialAdDismissed', () => {
+            console.log('📺 Interstitial Dismissed');
+            this.isInterstitialReady = false;
+            // Preload next one
+            this.preloadInterstitial();
+        });
+
+        this.AdMob.addListener('onInterstitialAdFailedToShow', (err: any) => {
+            console.error('❌ Interstitial failed to show:', err);
+            this.isInterstitialReady = false;
+            this.preloadInterstitial();
+        });
+
+        // Rewarded Listeners
+        this.AdMob.addListener('onRewardedVideoAdLoaded', () => {
+            console.log('📦 Rewarded Ad READY');
+            this.isRewardedReady = true;
+        });
+
+        this.AdMob.addListener('onRewardedVideoAdDismissed', () => {
+            console.log('📺 Rewarded Dismissed');
+            this.isRewardedReady = false;
+            // Preload next one
+            this.preloadRewarded();
+        });
+
+        this.AdMob.addListener('onRewardedVideoAdFailedToShow', (err: any) => {
+            console.error('❌ Rewarded failed to show:', err);
+            this.isRewardedReady = false;
+            this.preloadRewarded();
+        });
     }
 
     // --- BANNER ---
@@ -95,55 +146,60 @@ class AdManager {
 
     // --- INTERSTITIAL ---
 
+    private async preloadInterstitial() {
+        if (!this.isAdMobAvailable) return;
+        try {
+            console.log('↻ Preloading Interstitial...');
+            await this.AdMob.prepareInterstitial({
+                adId: TEST_ADS.ANDROID.INTERSTITIAL,
+                isTesting: this.isTestMode
+            });
+        } catch (e) {
+            console.error('Preload Interstitial error:', e);
+        }
+    }
+
     public async showInterstitial(): Promise<boolean> {
         if (!this.isAdMobAvailable) {
             console.log('📺 [MOCK] Showing Interstitial Ad');
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    console.log('📺 [MOCK] Interstitial Closed');
-                    resolve(true);
-                }, 1000);
-            });
+            return new Promise(resolve => setTimeout(resolve, 1000));
         }
 
-        return new Promise(async (resolve) => {
+        if (this.isInterstitialReady) {
+            console.log('🚀 Showing Preloaded Interstitial');
+            await this.AdMob.showInterstitial();
+            return true;
+        } else {
+            console.log('⚠️ Interstitial not ready, trying JIT load...');
+            // Fallback: try to load and show
             try {
-                const adId = TEST_ADS.ANDROID.INTERSTITIAL;
-
-                const cleanup = () => {
-                    dismissHandler.remove();
-                    failHandler.remove();
-                };
-
-                // @ts-ignore
-                const dismissHandler = this.AdMob.addListener('onInterstitialAdDismissed', () => {
-                    console.log('📺 Interstitial Dismissed');
-                    cleanup();
-                    resolve(true);
-                });
-
-                // @ts-ignore
-                const failHandler = this.AdMob.addListener('onInterstitialAdFailedToShow', (err) => {
-                    console.error('❌ Interstitial failed:', err);
-                    cleanup();
-                    resolve(false);
-                });
-
-                await this.AdMob.prepareInterstitial({ adId, isTesting: this.isTestMode });
+                await this.preloadInterstitial();
                 await this.AdMob.showInterstitial();
-
-            } catch (error) {
-                console.error('❌ Failed to show interstitial:', error);
-                resolve(false);
+                return true;
+            } catch (e) {
+                console.error('Failed JIT Interstitial:', e);
+                return false;
             }
-        });
+        }
     }
 
     // --- REWARDED ---
 
+    private async preloadRewarded() {
+        if (!this.isAdMobAvailable) return;
+        try {
+            console.log('↻ Preloading Rewarded...');
+            await this.AdMob.prepareRewardVideoAd({
+                adId: TEST_ADS.ANDROID.REWARDED,
+                isTesting: this.isTestMode
+            });
+        } catch (e) {
+            console.error('Preload Rewarded error:', e);
+        }
+    }
+
     public async showRewarded(rewardAmount: number = 0): Promise<boolean> {
         if (!this.isAdMobAvailable) {
-            console.log('📺 [MOCK] Showing Rewarded Ad');
             return new Promise(resolve => {
                 const confirmed = window.confirm("Mock Ad: Watch video to double reward?");
                 if (confirmed && rewardAmount > 0) {
@@ -156,78 +212,51 @@ class AdManager {
         }
 
         return new Promise(async (resolve) => {
-            let adWasShown = false;
-            let adFailed = false;
+            // Setup temporary one-time reward listener for this specific show instance
+            // Global listener handles loading, but we need to capture reward for this specific call
+            let rewardEarned = false;
+
+            const onReward = (item: any) => {
+                console.log('🎁 Reward Captured:', item);
+                rewardEarned = true;
+            };
+
+            // We attach a temporary listener for reward
+            const rewardHandler = this.AdMob.addListener('onRewardedVideoAdReward', onReward);
+
+            // We listen for dismiss to resolve the promise
+            // Note: The global dismiss listener will ALSO fire and trigger preload.
+            const dismissHandler = this.AdMob.addListener('onRewardedVideoAdDismissed', async () => {
+                dismissHandler.remove();
+                rewardHandler.remove();
+
+                if (rewardEarned && rewardAmount > 0) {
+                    GameManager.addStars(rewardAmount);
+                    // @ts-ignore
+                    import('@capacitor/toast').then(m => m.Toast.show({
+                        text: `🌟 +${rewardAmount} Yıldız!`,
+                        duration: 'long'
+                    }));
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }
+            });
 
             try {
-                const adId = TEST_ADS.ANDROID.REWARDED;
-
-                const timeout = setTimeout(() => {
-                    console.warn('🕒 Rewarded ad timeout');
-                    cleanup();
-                    resolve(false);
-                }, 30000);
-
-                const cleanup = () => {
-                    clearTimeout(timeout);
-                    loadedHandler.remove();
-                    showHandler.remove();
-                    rewardHandler.remove();
-                    dismissHandler.remove();
-                    failHandler.remove();
-                };
-
-                // Rewarded Video Events
-                // @ts-ignore
-                const loadedHandler = this.AdMob.addListener('onRewardedVideoAdLoaded', () => {
-                    console.log('📥 Rewarded ad loaded');
-                });
-
-                // @ts-ignore
-                const showHandler = this.AdMob.addListener('onRewardedVideoAdShowed', () => {
-                    console.log('📺 Rewarded ad showed');
-                    adWasShown = true;
-                });
-
-                // @ts-ignore
-                const rewardHandler = this.AdMob.addListener('onRewardedVideoAdReward', (reward) => {
-                    console.log('🎁 Reward earned!', reward);
-                });
-
-                // @ts-ignore
-                const dismissHandler = this.AdMob.addListener('onRewardedVideoAdDismissed', () => {
-                    console.log('📺 Rewarded ad dismissed');
-
-                    if (adWasShown && !adFailed && rewardAmount > 0) {
-                        GameManager.addStars(rewardAmount);
-                        // @ts-ignore
-                        import('@capacitor/toast').then(m => m.Toast.show({
-                            text: `🌟 +${rewardAmount} Yıldız!`,
-                            duration: 'long'
-                        }));
-                        console.log(`✅ Rewarded ${rewardAmount} stars`);
-                        resolve(true);
-                    } else {
-                        console.warn(`No reward: shown=${adWasShown}, failed=${adFailed}`);
-                        resolve(false);
-                    }
-                    cleanup();
-                });
-
-                // @ts-ignore
-                const failHandler = this.AdMob.addListener('onRewardedVideoAdFailedToShow', (err) => {
-                    console.error('❌ Rewarded ad failed:', err);
-                    adFailed = true;
-                    cleanup();
-                    resolve(false);
-                });
-
-                // Prepare and show
-                await this.AdMob.prepareRewardVideoAd({ adId, isTesting: this.isTestMode });
-                await this.AdMob.showRewardVideoAd();
-
+                if (this.isRewardedReady) {
+                    console.log('🚀 Showing Preloaded Rewarded');
+                    await this.AdMob.showRewardVideoAd();
+                } else {
+                    console.log('⚠️ Rewarded not ready, trying JIT load...');
+                    await this.preloadRewarded();
+                    await this.AdMob.showRewardVideoAd();
+                }
             } catch (error) {
                 console.error('❌ Failed to show rewarded ad:', error);
+                // Clean up listeners if fail
+                dismissHandler.remove();
+                rewardHandler.remove();
                 resolve(false);
             }
         });
