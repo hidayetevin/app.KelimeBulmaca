@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { SCENES, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY, DEFAULT_LANGUAGE } from '@/utils/constants';
+import { SCENES, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY, DEFAULT_LANGUAGE, IMAGE_PATHS } from '@/utils/constants';
 import { LIGHT_COLORS } from '@/utils/colors';
 import GameManager from '@/managers/GameManager';
 import LocalizationManager from '@/managers/LocalizationManager';
@@ -72,6 +72,9 @@ export default class PreloaderScene extends Phaser.Scene {
 
         // Font (Google Fonts - index.html'de yüklendi ama burada emin olmak için WebFont loader kullanılabilir)
         // Şimdilik index.html yeterli.
+
+        // --- LOGO ---
+        this.load.image('app_icon', IMAGE_PATHS.APP_ICON);
     }
 
     async create() {
@@ -160,14 +163,12 @@ export default class PreloaderScene extends Phaser.Scene {
         // Arkaplan rengi
         this.cameras.main.setBackgroundColor(LIGHT_COLORS.BACKGROUND);
 
-        // Logo Text (Asset yoksa diye)
-        this.add.text(centerX, centerY - 100, 'KELİME\nUSTASI', {
-            fontFamily: FONT_FAMILY_PRIMARY,
-            fontSize: '48px',
-            color: '#6C63FF',
-            align: 'center',
-            fontStyle: 'bold'
-        }).setOrigin(0.5);
+        // Logo Image
+        const logo = this.add.image(centerX, centerY - 100, 'app_icon');
+        logo.setScale(0.5); // Adjust scale based on original size (512 or 1024)
+
+        // Fallback text if image fails (actually image failure will show Placeholder but let's keep it simple)
+        // this.add.text(...)
 
         // Use ProgressBar component (circular mode)
         const progressBar = new ProgressBar({

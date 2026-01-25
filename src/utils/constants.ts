@@ -76,6 +76,7 @@ export const IMAGE_PATHS = {
     ACHIEVEMENT: 'assets/images/icons/achievement.png',
     HINT: 'assets/images/icons/hint.png',
     CLOSE: 'assets/images/icons/close.png',
+    APP_ICON: 'assets/images/app_icon.png',
 } as const;
 
 // ==================== FONT AYARLARI ====================
