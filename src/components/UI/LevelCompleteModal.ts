@@ -60,20 +60,21 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
             fontSize: '32px',
             color: '#2D3748',
             fontStyle: 'bold'
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
         this.contentContainer.add(titleText);
 
         // Stars
         const starText = this.sceneRef.add.text(0, -modalHeight * 0.15, '⭐'.repeat(stars), {
-            fontSize: '48px'
-        }).setOrigin(0.5);
+            fontSize: '48px',
+            padding: { top: 10, bottom: 10 }
+        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
         this.contentContainer.add(starText);
 
         const scoreLabel = this.sceneRef.add.text(0, -modalHeight * 0.15 + 60, `${stars} Yıldız Kazandın`, {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '20px',
             color: '#718096'
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
         this.contentContainer.add(scoreLabel);
 
         // Performance info
@@ -86,7 +87,7 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
                 fontFamily: FONT_FAMILY_PRIMARY,
                 fontSize: '16px',
                 color: '#4A5568'
-            }).setOrigin(0.5);
+            }).setOrigin(0.5).setResolution(window.devicePixelRatio);
             this.contentContainer.add(timeText);
             yOffset += 25;
         }
@@ -96,7 +97,7 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
                 fontFamily: FONT_FAMILY_PRIMARY,
                 fontSize: '16px',
                 color: '#4A5568'
-            }).setOrigin(0.5);
+            }).setOrigin(0.5).setResolution(window.devicePixelRatio);
             this.contentContainer.add(hintsText);
             yOffset += 25;
         }
@@ -107,8 +108,9 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '18px',
             color: stars === 3 ? '#48BB78' : stars === 2 ? '#F6AD55' : '#718096',
-            fontStyle: 'bold'
-        }).setOrigin(0.5);
+            fontStyle: 'bold',
+            padding: { bottom: 5 }
+        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
         this.contentContainer.add(performanceText);
 
         // Buttons

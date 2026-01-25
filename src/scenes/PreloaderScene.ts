@@ -98,6 +98,10 @@ export default class PreloaderScene extends Phaser.Scene {
             // Audio (Scene context gerekli olabilir)
             AudioManager.init(this); // Scene play için referans veriyoruz (opsiyonel)
 
+            // Haptic Manager başlat
+            await HapticManager.init();
+            console.log('✅ HapticManager initialized');
+
             // Kullanıcı ayarlarına göre ses ve titreşim durumlarını ayarla
             const settings = GameManager.getSettings();
             if (settings) {

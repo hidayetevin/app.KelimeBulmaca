@@ -7,6 +7,7 @@ class HapticManager {
     private static instance: HapticManager;
     private isEnabled: boolean = true;
     private isCapacitorAvailable: boolean = false;
+    private haptics: any; // Capacitor Haptics plugin
 
     private constructor() {
         // Singleton pattern

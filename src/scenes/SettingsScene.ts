@@ -131,9 +131,11 @@ export default class SettingsScene extends Phaser.Scene {
                 // HapticManager'ı kontrol et
                 if (val) {
                     HapticManager.enable();
+                    console.log('📳 Testing haptic feedback...');
                     HapticManager.light(); // Test titreşimi
                 } else {
                     HapticManager.disable();
+                    console.log('📳 Haptics disabled');
                 }
             }
         });
