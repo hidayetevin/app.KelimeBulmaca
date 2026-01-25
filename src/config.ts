@@ -22,7 +22,8 @@ export const GameConfig: any = {
         roundPixels: true
     },
     // Yüksek çözünürlük desteği
-    resolution: window.devicePixelRatio,
+    // Yüksek çözünürlük desteği (Minimum 3x kaliteye zorla)
+    resolution: Math.max(window.devicePixelRatio, 3),
     physics: {
         default: 'arcade',
         arcade: {

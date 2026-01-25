@@ -43,6 +43,12 @@
         background-color: #1a1a1a;
         z-index: 1000;
       }
+      
+      canvas {
+        image-rendering: -webkit-optimize-contrast; /* Webkit (Chrome/Safari) için keskinlik */
+        image-rendering: crisp-edges; /* Modern tarayıcılar için */
+        image-rendering: pixelated; /* Pikselleri netleştir (gerekiyorsa) */
+      }
     </style>
   </head>
   <body>
