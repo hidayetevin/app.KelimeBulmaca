@@ -4,7 +4,7 @@ export default defineConfig({
     plugins: [],
     server: {
         host: true,
-        port: 6000
+        port: 4300
     },
     resolve: {
         alias: {

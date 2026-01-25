@@ -1,5 +1,6 @@
 import { GameState } from '@/types';
 import StorageManager from './StorageManager';
+import AchievementManager from './AchievementManager';
 
 /**
  * Game Manager - Level-Based System
@@ -29,6 +30,11 @@ export class GameManager {
             StorageManager.saveGameState(this.gameState);
         } else {
             console.log('📂 Game state loaded');
+        }
+
+        // Initial check for achievements
+        if (this.gameState) {
+            AchievementManager.checkAchievements(this.gameState);
         }
     }
 
@@ -164,7 +170,12 @@ export class GameManager {
             this.unlockLevel(level + 1);
         }
 
+
         this.saveGame();
+
+        // Check achievements
+        AchievementManager.checkAchievements(this.gameState);
+
         console.log(`✅ Level ${level} completed: ${stars} stars, ${time}s`);
     }
 
@@ -173,13 +184,21 @@ export class GameManager {
     public addWordsFound(count: number): void {
         if (!this.gameState) return;
         this.gameState.user.totalWordsFound += count;
+
         this.saveGame();
+
+        // Check achievements (Word Finder)
+        AchievementManager.checkAchievements(this.gameState);
     }
 
     public addStars(amount: number): void {
         if (!this.gameState) return;
         this.gameState.user.totalStars += amount;
+
         this.saveGame();
+
+        // Check achievements (Star Collector)
+        AchievementManager.checkAchievements(this.gameState);
     }
 
     public useHint(): void {
@@ -267,7 +286,15 @@ export class GameManager {
         const totalReward = baseReward + streakBonus;
 
         this.addStars(totalReward);
+
+
+        // Sync streak to UserData for AchievementManager
+        this.gameState.user.streakDays = this.gameState.dailyReward.currentStreak;
+
         this.saveGame();
+
+        // Check achievements (Streak)
+        AchievementManager.checkAchievements(this.gameState);
 
         return totalReward;
     }
