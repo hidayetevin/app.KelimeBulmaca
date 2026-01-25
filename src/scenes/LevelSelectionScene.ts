@@ -198,7 +198,8 @@ export default class LevelSelectionScene extends Phaser.Scene {
         } else {
             // Lock icon
             const lockText = this.add.text(0, 0, '🔒', {
-                fontSize: '28px'
+                fontSize: '28px',
+                padding: { top: 10, bottom: 10 }
             }).setOrigin(0.5);
             container.add(lockText);
         }
