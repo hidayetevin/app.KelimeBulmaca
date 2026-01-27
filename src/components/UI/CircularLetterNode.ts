@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { FONT_FAMILY_PRIMARY } from '@/utils/constants';
+import ThemeManager from '@/managers/ThemeManager';
+import { numberToHex } from '@/utils/colors';
 
 export interface CircularLetterNodeConfig {
     scene: Phaser.Scene;
@@ -21,6 +23,7 @@ export default class CircularLetterNode extends Phaser.GameObjects.Container {
     private radius: number;
     private onSelectCallback?: () => void;
     private onDeselectCallback?: () => void;
+    private colors = ThemeManager.getCurrentColors();
 
     constructor(config: CircularLetterNodeConfig) {
         super(config.scene, config.x, config.y);
@@ -40,10 +43,11 @@ export default class CircularLetterNode extends Phaser.GameObjects.Container {
         this.add(this.circle);
 
         // Letter text - CREATE FIRST before updateCircle
+        const textColorHex = numberToHex(this.colors.textPrimary);
         this.letterText = this.scene.add.text(0, 0, this.letter, {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: `${this.radius}px`,
-            color: '#1F2937',
+            color: textColorHex,
             fontStyle: 'bold'
         }).setOrigin(0.5).setResolution(window.devicePixelRatio);
         this.add(this.letterText);
@@ -54,26 +58,27 @@ export default class CircularLetterNode extends Phaser.GameObjects.Container {
 
     private updateCircle() {
         this.circle.clear();
+        const textPrimaryHex = numberToHex(this.colors.textPrimary);
 
         if (this.isUsed) {
-            // Used state: Gray
-            this.circle.fillStyle(0xD1D5DB, 1);
+            // Used state: Dimmed
+            this.circle.fillStyle(this.colors.secondary, 0.5);
             this.circle.fillCircle(0, 0, this.radius);
-            this.letterText.setColor('#9CA3AF');
+            this.letterText.setColor(numberToHex(this.colors.textSecondary));
         } else if (this.isSelected) {
-            // Selected state: Blue
-            this.circle.fillStyle(0x3B82F6, 1);
+            // Selected state: Accent
+            this.circle.fillStyle(this.colors.accent, 1);
             this.circle.fillCircle(0, 0, this.radius);
-            this.circle.lineStyle(3, 0x1E40AF);
+            this.circle.lineStyle(3, 0xffffff, 0.8);
             this.circle.strokeCircle(0, 0, this.radius);
             this.letterText.setColor('#FFFFFF');
         } else {
-            // Normal state: White
-            this.circle.fillStyle(0xFFFFFF, 1);
+            // Normal state: Primary
+            this.circle.fillStyle(this.colors.letterCircleBg, 1);
             this.circle.fillCircle(0, 0, this.radius);
-            this.circle.lineStyle(2, 0xE5E7EB);
+            this.circle.lineStyle(2, this.colors.letterCircleBorder, 1);
             this.circle.strokeCircle(0, 0, this.radius);
-            this.letterText.setColor('#1F2937');
+            this.letterText.setColor(textPrimaryHex);
         }
     }
 

@@ -113,13 +113,15 @@ class StorageManager {
             },
             levels,
             achievements: this.getDefaultAchievements(),
+            unlockedThemeIds: ['default'],
             settings: {
                 language: 'tr',
                 darkMode: false,
                 soundEnabled: true,
                 soundVolume: 0.7,
                 vibrationEnabled: true,
-                showHints: true
+                showHints: true,
+                activeThemeId: 'default'
             },
             dailyReward: {
                 lastClaimedDate: null,
@@ -303,6 +305,19 @@ class StorageManager {
             newState.user = {
                 ...newState.user,
                 ...oldState.user,
+            };
+        }
+
+        // Temaları koru veya ekle
+        if (oldState.unlockedThemeIds) {
+            newState.unlockedThemeIds = oldState.unlockedThemeIds;
+        }
+
+        if (oldState.settings) {
+            newState.settings = {
+                ...newState.settings,
+                ...oldState.settings,
+                activeThemeId: oldState.settings.activeThemeId || 'default'
             };
         }
 

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { SCENES, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY, HINT_COST_STARS } from '@/utils/constants';
 import GameManager, { GameManager as GameManagerClass } from '@/managers/GameManager';
+import ThemeManager from '@/managers/ThemeManager';
 import WordDataGenerator from '@/data/WordDataGenerator';
 import Button from '@/components/UI/Button';
 import LetterPalette from '@/components/UI/LetterPalette';
@@ -24,6 +25,9 @@ export default class GameScene extends Phaser.Scene {
     private currentWordDisplay!: CurrentWordDisplay;
     private timerText!: Phaser.GameObjects.Text;
 
+    // Theme Colors
+    private colors!: any;
+
     // Timer
     private startTime: number = 0;
     private elapsedTime: number = 0;
@@ -41,6 +45,7 @@ export default class GameScene extends Phaser.Scene {
         this.startTime = 0;
         this.elapsedTime = 0;
         this.isGameReady = false;
+        this.colors = ThemeManager.getCurrentColors();
 
         // Reset UI references to ensure no leftovers from previous levels
         this.timerText = null as any;
@@ -54,8 +59,8 @@ export default class GameScene extends Phaser.Scene {
         this.isGameReady = false;
         GameManagerClass.setToastScene(this);
 
-        // Background - SYNC
-        this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0xF7FAFC).setOrigin(0);
+        // Background - Dynamic
+        this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, this.colors.background).setOrigin(0);
         console.log('✅ Background created');
 
         // Load crossword data - ASYNC
@@ -131,7 +136,7 @@ export default class GameScene extends Phaser.Scene {
 
     private createHeader() {
         const headerHeight = 80;
-        this.add.rectangle(0, 0, GAME_WIDTH, headerHeight, 0xFFFFFF).setOrigin(0);
+        this.add.rectangle(0, 0, GAME_WIDTH, headerHeight, this.colors.primary).setOrigin(0);
 
         // Back button
         new Button({
@@ -147,11 +152,13 @@ export default class GameScene extends Phaser.Scene {
             }
         });
 
+        const textColorHex = this.colors.textPrimary === 0x1A202C ? '#1A202C' : '#F1F5F9';
+
         // Level title - Stacked Top
         this.add.text(GAME_WIDTH / 2, 28, `SEVİYE ${this.levelNumber}`, {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '22px',
-            color: '#2D3748',
+            color: textColorHex,
             fontStyle: 'bold'
         }).setOrigin(0.5);
 
@@ -159,7 +166,7 @@ export default class GameScene extends Phaser.Scene {
         this.timerText = this.add.text(GAME_WIDTH / 2, 52, '⏱️ 00:00', {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '16px',
-            color: '#4A5568',
+            color: textColorHex,
             fontStyle: 'bold'
         }).setOrigin(0.5);
 

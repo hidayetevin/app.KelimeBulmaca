@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
-import { LIGHT_COLORS } from '@/utils/colors';
+import ThemeManager from '@/managers/ThemeManager';
 import { FONT_FAMILY_PRIMARY } from '@/utils/constants';
+import { numberToHex } from '@/utils/colors';
 
 interface GridTileConfig {
     scene: Phaser.Scene;
@@ -26,7 +27,7 @@ export default class GridTile extends Phaser.GameObjects.Container {
     public isFound = false;
     public isHinted = false;
 
-    private colors = LIGHT_COLORS;
+    private colors = ThemeManager.getCurrentColors();
 
     constructor(config: GridTileConfig) {
         super(config.scene, config.x, config.y);
@@ -49,10 +50,11 @@ export default class GridTile extends Phaser.GameObjects.Container {
         this.add(this.bg);
 
         // Text
+        const textColorHex = numberToHex(this.colors.textPrimary);
         this.text = this.scene.add.text(0, 0, this.letter, {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: `${s * 0.6}px`,
-            color: '#' + this.colors.TEXT_DARK.toString(16).padStart(6, '0'),
+            color: textColorHex,
             fontStyle: 'bold'
         }).setOrigin(0.5).setResolution(window.devicePixelRatio);
         this.add(this.text);
@@ -63,23 +65,24 @@ export default class GridTile extends Phaser.GameObjects.Container {
 
         const s = this.size;
         const r = 8;
+        const textColorHex = numberToHex(this.colors.textPrimary);
 
         if (this.isFound) {
-            this.bg.fillStyle(this.colors.SUCCESS, 1); // Green
+            this.bg.fillStyle(this.colors.wordFound, 1);
             this.bg.lineStyle(2, 0xffffff, 1);
             this.text?.setColor('#FFFFFF');
         } else if (this.isSelected) {
-            this.bg.fillStyle(this.colors.PRIMARY, 1); // Orange/Primary
+            this.bg.fillStyle(this.colors.accent, 1);
             this.bg.lineStyle(2, 0xffffff, 1);
             this.text?.setColor('#FFFFFF');
         } else if (this.isHinted) {
-            this.bg.fillStyle(0xFFEB3B, 1); // Yellowish
-            this.bg.lineStyle(1, 0xE2E8F0, 1);
-            this.text?.setColor('#' + this.colors.TEXT_DARK.toString(16).padStart(6, '0'));
+            this.bg.fillStyle(this.colors.wordHint, 1);
+            this.bg.lineStyle(1, this.colors.gridCellBorder, 1);
+            this.text?.setColor(textColorHex);
         } else {
-            this.bg.fillStyle(0xFFFFFF, 1); // White
-            this.bg.lineStyle(1, 0xE2E8F0, 1); // Border
-            this.text?.setColor('#' + this.colors.TEXT_DARK.toString(16).padStart(6, '0'));
+            this.bg.fillStyle(this.colors.gridCellBg, 1);
+            this.bg.lineStyle(2, this.colors.gridCellBorder, 1);
+            this.text?.setColor(textColorHex);
         }
 
         this.bg.fillRoundedRect(-s / 2, -s / 2, s, s, r);

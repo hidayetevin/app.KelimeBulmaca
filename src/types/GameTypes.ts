@@ -18,6 +18,7 @@ export interface GameState {
     achievements: Achievement[];        // Başarı rozetleri durumu
     settings: GameSettings;             // Oyun ayarları
     dailyReward: DailyRewardData;       // Günlük ödül durumu
+    unlockedThemeIds: string[];         // Satın alınan temaların ID'leri
 }
 
 /**
@@ -90,6 +91,7 @@ export interface GameSettings {
     soundVolume: number;                // Ses seviyesi (0.0 - 1.0)
     vibrationEnabled: boolean;          // Titreşim açık mı
     showHints: boolean;                 // Öğretici ipuçları gösterilsin mi
+    activeThemeId: string;              // Aktif tema ID'si
 }
 
 /**

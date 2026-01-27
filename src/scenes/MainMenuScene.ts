@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { SCENES, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY } from '@/utils/constants';
-import { LIGHT_COLORS } from '@/utils/colors';
-import GameManager from '@/managers/GameManager';
+import ThemeManager from '@/managers/ThemeManager';
+import gameManager from '@/managers/GameManager';
 import LocalizationManager from '@/managers/LocalizationManager';
 import AdManager from '@/managers/AdManager';
 import AudioManager from '@/managers/AudioManager';
@@ -18,21 +18,23 @@ export default class MainMenuScene extends Phaser.Scene {
         const width = GAME_WIDTH;
         const height = GAME_HEIGHT;
         const centerX = width / 2;
-        const colors = LIGHT_COLORS;
+        const colors = ThemeManager.getCurrentColors();
 
         // 1. Background (Gradient)
         const bg = this.add.graphics();
-        bg.fillGradientStyle(colors.BACKGROUND, colors.BACKGROUND, colors.SECONDARY, colors.SECONDARY, 1);
+        bg.fillGradientStyle(colors.background, colors.background, colors.secondary, colors.secondary, 1, 1);
         bg.fillRect(0, 0, width, height);
 
         // 2. Logo
+        const textColor = ThemeManager.getCurrentColors().textPrimary === 0x1A202C ? '#1A202C' : '#F1F5F9';
+
         const logoText = this.add.text(centerX, 150, 'KELİME\nUSTASI', {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '56px',
-            color: '#1A202C', // colors.TEXT_PRIMARY
+            color: textColor,
             fontStyle: 'bold',
             align: 'center',
-            stroke: '#ffffff',
+            stroke: colors.primary === 0xFFFFFF ? '#ffffff' : '#000000',
             strokeThickness: 6,
             shadow: {
                 offsetX: 2,
@@ -59,29 +61,17 @@ export default class MainMenuScene extends Phaser.Scene {
             scene: this,
             x: centerX,
             y: 250,
-            initialValue: GameManager.getGameState()?.user.totalStars || 0
+            initialValue: gameManager.getGameState()?.user.totalStars || 0
         });
         starDisplay.setX(centerX + 20);
 
         // 4. Buttons
 
-        // Achievements (Secondary, Top)
-        new Button({
-            scene: this,
-            x: centerX,
-            y: 350,
-            text: LocalizationManager.t('mainMenu.achievements', 'BAŞARILAR'),
-            style: 'secondary',
-            onClick: () => {
-                this.scene.start(SCENES.ACHIEVEMENT);
-            }
-        });
-
         // Play (Success/Big, Center)
         new Button({
             scene: this,
             x: centerX,
-            y: 450,
+            y: 350,
             text: LocalizationManager.t('mainMenu.play', 'OYNA'),
             style: 'success',
             width: 240,
@@ -90,7 +80,30 @@ export default class MainMenuScene extends Phaser.Scene {
             onClick: () => {
                 AudioManager.playSfx('click');
                 this.scene.start(SCENES.LEVEL_SELECTION);
-                // console.log('Category Selection step coming soon...');
+            }
+        });
+
+        // Store (Primary, Middle)
+        new Button({
+            scene: this,
+            x: centerX,
+            y: 440,
+            text: LocalizationManager.t('mainMenu.store', 'MAĞAZA'),
+            style: 'primary',
+            onClick: () => {
+                this.scene.start(SCENES.THEME_STORE);
+            }
+        });
+
+        // Achievements (Secondary)
+        new Button({
+            scene: this,
+            x: centerX,
+            y: 520,
+            text: LocalizationManager.t('mainMenu.achievements', 'BAŞARILAR'),
+            style: 'secondary',
+            onClick: () => {
+                this.scene.start(SCENES.ACHIEVEMENT);
             }
         });
 
@@ -98,7 +111,7 @@ export default class MainMenuScene extends Phaser.Scene {
         new Button({
             scene: this,
             x: centerX,
-            y: 550,
+            y: 600,
             text: LocalizationManager.t('mainMenu.settings', 'AYARLAR'),
             style: 'secondary',
             onClick: () => {

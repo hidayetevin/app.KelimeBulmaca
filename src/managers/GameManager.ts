@@ -256,7 +256,8 @@ export class GameManager {
                 soundEnabled: true,
                 soundVolume: 0.7,
                 vibrationEnabled: true,
-                showHints: true
+                showHints: true,
+                activeThemeId: 'default'
             };
         }
         return this.gameState.settings;

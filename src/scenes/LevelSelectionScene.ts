@@ -1,18 +1,22 @@
 import Phaser from 'phaser';
 import { SCENES, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY } from '@/utils/constants';
-import GameManager, { GameManager as GameManagerClass } from '@/managers/GameManager';
+import gameManager, { GameManager as GameManagerClass } from '@/managers/GameManager';
+import ThemeManager from '@/managers/ThemeManager';
 import Button from '@/components/UI/Button';
 
 export default class LevelSelectionScene extends Phaser.Scene {
     private levelButtons: Phaser.GameObjects.Container[] = [];
     private scrollContainer!: Phaser.GameObjects.Container;
     private scrollY: number = 0;
+    private colors = ThemeManager.getCurrentColors();
 
     constructor() {
         super(SCENES.LEVEL_SELECTION);
     }
 
     create() {
+        this.colors = ThemeManager.getCurrentColors();
+
         // Ensure toast notifications can show in this scene
         GameManagerClass.setToastScene(this);
 
@@ -20,7 +24,7 @@ export default class LevelSelectionScene extends Phaser.Scene {
         const height = GAME_HEIGHT;
 
         // Background
-        this.add.rectangle(0, 0, width, height, 0xF7FAFC).setOrigin(0);
+        this.add.rectangle(0, 0, width, height, this.colors.background).setOrigin(0);
 
         // Create grid first (so it stays behind header)
         this.createLevelGrid();
@@ -38,12 +42,12 @@ export default class LevelSelectionScene extends Phaser.Scene {
         headerContainer.setDepth(100); // Ensure header is always on top
 
         // Header background
-        const bg = this.add.rectangle(0, 0, GAME_WIDTH, headerHeight, 0xFFFFFF).setOrigin(0);
+        const bg = this.add.rectangle(0, 0, GAME_WIDTH, headerHeight, this.colors.primary).setOrigin(0);
         bg.setInteractive(); // Block clicks from passing through
         headerContainer.add(bg);
 
-        // Shadow/Line separator (optional but looks nice)
-        const line = this.add.rectangle(0, headerHeight, GAME_WIDTH, 2, 0xE2E8F0).setOrigin(0);
+        // Shadow/Line separator
+        const line = this.add.rectangle(0, headerHeight, GAME_WIDTH, 2, this.colors.secondary).setOrigin(0);
         headerContainer.add(line);
 
         // Back button
@@ -62,10 +66,11 @@ export default class LevelSelectionScene extends Phaser.Scene {
         headerContainer.add(backBtn);
 
         // Title
+        const textColorHex = this.colors.textPrimary === 0x1A202C ? '#1A202C' : '#F1F5F9';
         const title = this.add.text(GAME_WIDTH / 2, headerHeight / 2, 'SEVİYELER', {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '28px',
-            color: '#2D3748',
+            color: textColorHex,
             fontStyle: 'bold'
         }).setOrigin(0.5);
         headerContainer.add(title);
@@ -86,22 +91,16 @@ export default class LevelSelectionScene extends Phaser.Scene {
 
         this.scrollContainer = this.add.container(0, 0);
 
-        const currentLevel = GameManager.getCurrentLevel();
+        const currentLevel = gameManager.getCurrentLevel();
 
         for (let i = 1; i <= totalLevels; i++) {
             const col = (i - 1) % cols;
             const row = Math.floor((i - 1) / cols);
 
-            // Calculate center position for each button
-            // x = margin + (column * full_space) + half_button_size
             const x = leftMargin + col * (buttonSize + spacing) + (buttonSize / 2);
-
-            // y = start_y + (row * full_space) + half_button_size (if origin is 0.5)
-            // But here buttons are added to container at x,y. 
-            // Let's keep y calculation simple relative to startY
             const y = startY + row * (buttonSize + spacing) + (buttonSize / 2);
 
-            const levelData = GameManager.getLevelData(i);
+            const levelData = gameManager.getLevelData(i);
             const isUnlocked = i === 1 || (levelData?.isUnlocked ?? false);
             const isCompleted = levelData?.isCompleted ?? false;
             const stars = levelData?.stars ?? 0;
@@ -110,12 +109,6 @@ export default class LevelSelectionScene extends Phaser.Scene {
             this.scrollContainer.add(button);
             this.levelButtons.push(button);
         }
-
-        // Add padding at bottom for scrolling
-        // const totalRows = Math.ceil(totalLevels / cols);
-
-        // Invisible graphic to define content height if needed, OR just handle in scroll logic
-        // For now, scroll logic handles bounds.
 
         this.add.existing(this.scrollContainer);
 
@@ -146,12 +139,12 @@ export default class LevelSelectionScene extends Phaser.Scene {
 
         // Background
         const bg = this.add.graphics();
-        let bgColor = 0xE5E7EB; // Locked (gray)
+        let bgColor = this.colors.secondary; // Default locked
 
         if (isCompleted) {
-            bgColor = 0x10B981; // Completed (green)
+            bgColor = this.colors.wordFound; // Completed (greenish)
         } else if (isCurrent || isUnlocked) {
-            bgColor = 0x3B82F6; // Current/Unlocked (blue)
+            bgColor = this.colors.accent; // Current/Unlocked
         }
 
         bg.fillStyle(bgColor, 1);
@@ -188,12 +181,14 @@ export default class LevelSelectionScene extends Phaser.Scene {
                 bg.clear();
                 bg.fillStyle(bgColor, 0.8);
                 bg.fillRoundedRect(-size / 2, -size / 2, size, size, 8);
+                container.setScale(1.05);
             });
 
             container.on('pointerout', () => {
                 bg.clear();
                 bg.fillStyle(bgColor, 1);
                 bg.fillRoundedRect(-size / 2, -size / 2, size, size, 8);
+                container.setScale(1);
             });
         } else {
             // Lock icon

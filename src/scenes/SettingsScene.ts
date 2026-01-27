@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { SCENES, GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY } from '@/utils/constants';
-import { LIGHT_COLORS } from '@/utils/colors';
+import ThemeManager from '@/managers/ThemeManager';
 import GameManager from '@/managers/GameManager';
 import LocalizationManager from '@/managers/LocalizationManager';
 import AudioManager from '@/managers/AudioManager';
@@ -13,6 +13,7 @@ import SoundGenerator from '@/utils/soundGenerator';
 
 export default class SettingsScene extends Phaser.Scene {
     private panel!: Panel;
+    private colors = ThemeManager.getCurrentColors();
 
     constructor() {
         super(SCENES.SETTINGS);
@@ -24,7 +25,7 @@ export default class SettingsScene extends Phaser.Scene {
         const centerX = width / 2;
         const centerY = height / 2;
 
-        this.add.rectangle(0, 0, width, height, 0xF7FAFC).setOrigin(0);
+        this.add.rectangle(0, 0, width, height, this.colors.background).setOrigin(0);
 
         this.panel = new Panel({
             scene: this,
@@ -35,7 +36,7 @@ export default class SettingsScene extends Phaser.Scene {
             title: LocalizationManager.t('settings.title', 'AYARLAR'),
             showCloseButton: true,
             onClose: () => {
-                this.goBack();
+                this.panel.close().then(() => this.goBack());
             }
         });
 
@@ -63,7 +64,8 @@ export default class SettingsScene extends Phaser.Scene {
             soundEnabled: true,
             soundVolume: 1.0,
             vibrationEnabled: true,
-            showHints: true
+            showHints: true,
+            activeThemeId: 'default'
         };
         const settings = gameState?.settings || defaultSettings;
 
@@ -163,7 +165,7 @@ export default class SettingsScene extends Phaser.Scene {
     }
 
     private createLabel(x: number, y: number, text: string) {
-        const colorStr = '#' + LIGHT_COLORS.TEXT_DARK.toString(16).padStart(6, '0');
+        const colorStr = this.colors.textPrimary === 0x1A202C ? '#1A202C' : '#F1F5F9';
         const label = this.add.text(x, y, text, {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '20px',

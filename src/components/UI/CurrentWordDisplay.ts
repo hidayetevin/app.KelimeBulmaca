@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { FONT_FAMILY_PRIMARY } from '@/utils/constants';
+import ThemeManager from '@/managers/ThemeManager';
 
 export interface CurrentWordDisplayConfig {
     scene: Phaser.Scene;
@@ -12,6 +13,7 @@ export default class CurrentWordDisplay extends Phaser.GameObjects.Container {
     private background!: Phaser.GameObjects.Graphics;
     private wordText!: Phaser.GameObjects.Text;
     private bgWidth: number;
+    private colors = ThemeManager.getCurrentColors();
 
     constructor(config: CurrentWordDisplayConfig) {
         super(config.scene, config.x, config.y);
@@ -23,7 +25,7 @@ export default class CurrentWordDisplay extends Phaser.GameObjects.Container {
     }
 
     private createVisuals() {
-        // Yellow background
+        // Dynamic background
         this.background = this.scene.add.graphics();
         this.updateBackground();
         this.add(this.background);
@@ -32,7 +34,7 @@ export default class CurrentWordDisplay extends Phaser.GameObjects.Container {
         this.wordText = this.scene.add.text(0, 0, '', {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '32px',
-            color: '#1F2937',
+            color: '#FFFFFF',
             fontStyle: 'bold'
         }).setOrigin(0.5).setResolution(window.devicePixelRatio);
         this.add(this.wordText);
@@ -40,9 +42,9 @@ export default class CurrentWordDisplay extends Phaser.GameObjects.Container {
 
     private updateBackground() {
         this.background.clear();
-        this.background.fillStyle(0xFDE047, 1); // Yellow
+        this.background.fillStyle(this.colors.accent, 0.9);
         this.background.fillRoundedRect(-this.bgWidth / 2, -25, this.bgWidth, 50, 10);
-        this.background.lineStyle(2, 0xFACC15);
+        this.background.lineStyle(2, 0xFFFFFF, 0.5);
         this.background.strokeRoundedRect(-this.bgWidth / 2, -25, this.bgWidth, 50, 10);
     }
 

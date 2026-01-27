@@ -11,6 +11,8 @@
         "delete": "Delete",
         "yes": "Yes",
         "no": "No",
+        "use": "Use",
+        "active": "Active",
         "loading": "Loading...",
         "error": "Error",
         "success": "Success",
@@ -29,7 +31,8 @@
         "achievementButton": "Achievements",
         "dailyReward": "Daily Reward",
         "play": "PLAY",
-        "settings": "Settings"
+        "settings": "Settings",
+        "store": "Store"
     },
     "categories": {
         "title": "Categories",
@@ -157,6 +160,28 @@
         "networkError": "No internet connection",
         "loadFailed": "Loading failed",
         "saveFailed": "Save failed",
-        "notEnoughStars": "Not enough stars"
+        "not_enough_stars": "Not enough stars!"
+    },
+    "themes": {
+        "title": "Themes",
+        "equipped": "Theme equipped!",
+        "purchased": "Theme purchased!",
+        "use": "Use",
+        "active": "Active",
+        "default": {
+            "name": "Default"
+        },
+        "ocean": {
+            "name": "Ocean"
+        },
+        "forest": {
+            "name": "Forest"
+        },
+        "neon": {
+            "name": "Neon"
+        },
+        "sunset": {
+            "name": "Sunset"
+        }
     }
 }

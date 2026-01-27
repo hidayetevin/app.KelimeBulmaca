@@ -6,3 +6,6 @@ export * from './CategoryTypes';
 
 // Achievement Types
 export * from './AchievementTypes';
+
+// Theme Types
+export * from './ThemeTypes';

@@ -173,4 +173,5 @@ export const SCENES = {
     ACHIEVEMENT: 'AchievementScene',
     SETTINGS: 'SettingsScene',
     DAILY_REWARD: 'DailyRewardScene',
+    THEME_STORE: 'ThemeStoreScene',
 } as const;

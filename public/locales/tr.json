@@ -11,13 +11,15 @@
         "delete": "Sil",
         "yes": "Evet",
         "no": "Hayır",
+        "use": "Kullan",
+        "active": "Aktif",
         "loading": "Yükleniyor...",
         "error": "Hata",
         "success": "Başarılı",
         "warning": "Uyarı",
         "confirm": "Onayla",
         "retry": "Tekrar Dene",
-        "reset": "Sıfırla",
+        "reset": "Sürekli",
         "settings": "Ayarlar"
     },
     "mainMenu": {
@@ -29,7 +31,8 @@
         "achievementButton": "Başarılar",
         "dailyReward": "Günlük Ödül",
         "play": "OYNA",
-        "settings": "Ayarlar"
+        "settings": "Ayarlar",
+        "store": "Mağaza"
     },
     "categories": {
         "title": "Kategoriler",
@@ -157,6 +160,28 @@
         "networkError": "İnternet bağlantısı yok",
         "loadFailed": "Yükleme başarısız",
         "saveFailed": "Kaydetme başarısız",
-        "notEnoughStars": "Yeterli yıldızınız yok"
+        "not_enough_stars": "Yetersiz yıldız!"
+    },
+    "themes": {
+        "title": "Temalar",
+        "equipped": "Tema kuşandı!",
+        "purchased": "Tema satın alındı!",
+        "use": "Kullan",
+        "active": "Aktif",
+        "default": {
+            "name": "Varsayılan"
+        },
+        "ocean": {
+            "name": "Okyanus"
+        },
+        "forest": {
+            "name": "Orman"
+        },
+        "neon": {
+            "name": "Neon"
+        },
+        "sunset": {
+            "name": "Gün Batımı"
+        }
     }
 }

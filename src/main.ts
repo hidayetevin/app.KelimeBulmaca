@@ -8,6 +8,7 @@ import SettingsScene from './scenes/SettingsScene';
 import AchievementScene from './scenes/AchievementScene';
 import LevelSelectionScene from './scenes/LevelSelectionScene';
 import GameScene from './scenes/GameScene';
+import ThemeStoreScene from './scenes/ThemeStoreScene';
 
 // Oyun instance'ını başlat
 const game = new Phaser.Game({
@@ -20,7 +21,8 @@ const game = new Phaser.Game({
         SettingsScene,
         AchievementScene,
         LevelSelectionScene,
-        GameScene
+        GameScene,
+        ThemeStoreScene
     ]
 });
 

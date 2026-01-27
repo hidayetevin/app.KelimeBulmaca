@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { FONT_FAMILY_PRIMARY } from '@/utils/constants';
-import { LIGHT_COLORS } from '@/utils/colors';
+import ThemeManager from '@/managers/ThemeManager';
 import AudioManager from '@/managers/AudioManager';
 
 type ButtonStyle = 'primary' | 'secondary' | 'danger' | 'success';
@@ -33,7 +33,7 @@ export default class Button extends Phaser.GameObjects.Container {
     constructor(config: ButtonConfig) {
         super(config.scene, config.x, config.y);
         this.config = config;
-        this.colors = LIGHT_COLORS; // Default theme for now
+        this.colors = ThemeManager.getCurrentColors();
 
         this.scene.add.existing(this);
 
@@ -89,27 +89,27 @@ export default class Button extends Phaser.GameObjects.Container {
         let bgColor: number;
         let textColor: string = '#FFFFFF';
 
-        // Colors based on style
+        // Colors based on style from current theme
         switch (this.config.style) {
             case 'primary':
-                bgColor = this.colors.PRIMARY;
-                textColor = '#1A202C'; // Dark text on white
+                bgColor = this.colors.buttonPrimary;
+                textColor = (bgColor === 0xFFFFFF || this.colors.primary === 0xFFFFFF) ? '#1A202C' : '#FFFFFF';
                 break;
             case 'secondary':
-                bgColor = this.colors.SECONDARY; // Gray
-                textColor = '#1A202C';
+                bgColor = this.colors.buttonSecondary;
+                textColor = (bgColor === 0xFFFFFF || this.colors.primary === 0xFFFFFF) ? '#1A202C' : '#FFFFFF';
                 break;
             case 'danger':
-                bgColor = this.colors.ERROR;
+                bgColor = 0xF56565; // Keeping specific colors for danger/success or map them
                 textColor = '#FFFFFF';
                 break;
             case 'success':
-                bgColor = this.colors.SUCCESS;
+                bgColor = 0x48BB78;
                 textColor = '#FFFFFF';
                 break;
             default:
-                bgColor = this.colors.PRIMARY;
-                textColor = '#1A202C';
+                bgColor = this.colors.buttonPrimary;
+                textColor = '#FFFFFF';
         }
 
         // Override if custom color provided
