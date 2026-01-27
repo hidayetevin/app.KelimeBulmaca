@@ -247,8 +247,12 @@ export default class GameScene extends Phaser.Scene {
 
         if (foundWord) {
             this.onWordFound(foundWord);
+
+            // Show green success feedback (Success animation handles clearing text after delay)
+            this.currentWordDisplay.showSuccess();
+
+            // Clear selection line immediately or after brief delay
             this.letterPalette.clearSelection();
-            this.currentWordDisplay.setWord('');
         } else {
             // Wrong word feedback
             console.log('❌ Word not found');
