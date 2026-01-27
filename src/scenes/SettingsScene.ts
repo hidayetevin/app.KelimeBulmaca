@@ -53,7 +53,7 @@ export default class SettingsScene extends Phaser.Scene {
     }
 
     private createSettingsContent() {
-        const startY = -120;
+        const startY = -80;
         const gap = 80; // Increased gap for better look
         let yPos = startY;
 
@@ -69,26 +69,7 @@ export default class SettingsScene extends Phaser.Scene {
         };
         const settings = gameState?.settings || defaultSettings;
 
-        // 1. Language Row
-        this.createLabel(-140, yPos, LocalizationManager.t('settings.language', 'Dil'));
-
-        const currentLang = LocalizationManager.getCurrentLanguage().toUpperCase();
-        const langBtn = new Button({
-            scene: this,
-            x: 100,
-            y: yPos,
-            text: currentLang,
-            width: 80,
-            height: 40,
-            fontSize: 18,
-            style: 'secondary',
-            onClick: async () => {
-                const newLang = currentLang === 'TR' ? 'en' : 'tr';
-                localStorage.setItem('language', newLang);
-                window.location.reload();
-            }
-        });
-        this.panel.add(langBtn);
+        // 1. Language Row - REMOVED
 
         yPos += gap;
 
