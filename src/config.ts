@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME_WIDTH, GAME_HEIGHT } from './utils/constants';
+import { GAME_WIDTH, GAME_HEIGHT, GAME_RESOLUTION } from './utils/constants';
 
 export const GameConfig: any = {
     type: Phaser.AUTO,
@@ -19,11 +19,11 @@ export const GameConfig: any = {
         // Pixel art olmadığı için false
         pixelArt: false,
         // Akıcı animasyonlar için false
-        roundPixels: true
+        roundPixels: false
     },
     // Yüksek çözünürlük desteği
     // Yüksek çözünürlük desteği (Minimum 3x kaliteye zorla)
-    resolution: Math.max(window.devicePixelRatio, 3),
+    resolution: GAME_RESOLUTION,
     physics: {
         default: 'arcade',
         arcade: {

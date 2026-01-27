@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY } from '@/utils/constants';
+import { GAME_WIDTH, GAME_HEIGHT, FONT_FAMILY_PRIMARY, GAME_RESOLUTION } from '@/utils/constants';
 import Button from './Button';
 
 export default class LevelCompleteModal extends Phaser.GameObjects.Container {
@@ -60,25 +60,25 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
             fontSize: '32px',
             color: '#2D3748',
             fontStyle: 'bold'
-        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
+        }).setOrigin(0.5).setResolution(GAME_RESOLUTION);
         this.contentContainer.add(titleText);
 
         // Stars
-        const starText = this.sceneRef.add.text(0, -modalHeight * 0.15, '⭐'.repeat(stars), {
+        const starText = this.sceneRef.add.text(0, -modalHeight * 0.25, '⭐'.repeat(stars), {
             fontSize: '48px',
             padding: { top: 10, bottom: 10 }
-        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
+        }).setOrigin(0.5).setResolution(GAME_RESOLUTION);
         this.contentContainer.add(starText);
 
-        const scoreLabel = this.sceneRef.add.text(0, -modalHeight * 0.15 + 60, `${stars} Yıldız Kazandın`, {
+        const scoreLabel = this.sceneRef.add.text(0, -modalHeight * 0.25 + 60, `${stars} Yıldız Kazandın`, {
             fontFamily: FONT_FAMILY_PRIMARY,
             fontSize: '20px',
             color: '#718096'
-        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
+        }).setOrigin(0.5).setResolution(GAME_RESOLUTION);
         this.contentContainer.add(scoreLabel);
 
         // Performance info
-        let yOffset = -modalHeight * 0.15 + 90;
+        let yOffset = -modalHeight * 0.25 + 90;
 
         if (time !== undefined) {
             const minutes = Math.floor(time / 60);
@@ -87,7 +87,7 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
                 fontFamily: FONT_FAMILY_PRIMARY,
                 fontSize: '16px',
                 color: '#4A5568'
-            }).setOrigin(0.5).setResolution(window.devicePixelRatio);
+            }).setOrigin(0.5).setResolution(GAME_RESOLUTION);
             this.contentContainer.add(timeText);
             yOffset += 25;
         }
@@ -97,7 +97,7 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
                 fontFamily: FONT_FAMILY_PRIMARY,
                 fontSize: '16px',
                 color: '#4A5568'
-            }).setOrigin(0.5).setResolution(window.devicePixelRatio);
+            }).setOrigin(0.5).setResolution(GAME_RESOLUTION);
             this.contentContainer.add(hintsText);
             yOffset += 25;
         }
@@ -110,7 +110,7 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
             color: stars === 3 ? '#48BB78' : stars === 2 ? '#F6AD55' : '#718096',
             fontStyle: 'bold',
             padding: { bottom: 5 }
-        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
+        }).setOrigin(0.5).setResolution(GAME_RESOLUTION);
         this.contentContainer.add(performanceText);
 
         // Buttons

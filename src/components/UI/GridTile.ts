@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import ThemeManager from '@/managers/ThemeManager';
-import { FONT_FAMILY_PRIMARY } from '@/utils/constants';
+import { FONT_FAMILY_PRIMARY, GAME_RESOLUTION } from '@/utils/constants';
 import { numberToHex } from '@/utils/colors';
 
 interface GridTileConfig {
@@ -56,7 +56,7 @@ export default class GridTile extends Phaser.GameObjects.Container {
             fontSize: `${s * 0.6}px`,
             color: textColorHex,
             fontStyle: 'bold'
-        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
+        }).setOrigin(0.5).setResolution(GAME_RESOLUTION);
         this.add(this.text);
     }
 

@@ -1,108 +1,109 @@
 import Phaser from 'phaser';
-import { FONT_FAMILY_PRIMARY } from '@/utils/constants';
 import ThemeManager from '@/managers/ThemeManager';
+import { FONT_FAMILY_PRIMARY, GAME_RESOLUTION } from '@/utils/constants';
 import { numberToHex } from '@/utils/colors';
 
-export interface CircularLetterNodeConfig {
+interface CircularLetterNodeConfig {
     scene: Phaser.Scene;
     x: number;
     y: number;
+    size: number;
     letter: string;
-    radius?: number;
-    onSelect?: () => void;
-    onDeselect?: () => void;
+    index: number;
 }
 
 export default class CircularLetterNode extends Phaser.GameObjects.Container {
     public letter: string;
-    public isSelected: boolean = false;
-    public isUsed: boolean = false;
+    public index: number;
+    private size: number;
+    private bg!: Phaser.GameObjects.Graphics;
+    private text!: Phaser.GameObjects.Text;
 
-    private circle!: Phaser.GameObjects.Graphics;
-    private letterText!: Phaser.GameObjects.Text;
-    private radius: number;
-    private onSelectCallback?: () => void;
-    private onDeselectCallback?: () => void;
+    public isSelected = false;
+    public isUsed = false;
+
     private colors = ThemeManager.getCurrentColors();
 
     constructor(config: CircularLetterNodeConfig) {
         super(config.scene, config.x, config.y);
+        this.scene.add.existing(this);
 
         this.letter = config.letter;
-        this.radius = config.radius || 30;
-        this.onSelectCallback = config.onSelect;
-        this.onDeselectCallback = config.onDeselect;
+        this.index = config.index;
+        this.size = config.size;
 
-        this.createVisuals();
-        this.scene.add.existing(this);
+        this.createContent();
+
+        // Interactive zone
+        this.setSize(this.size, this.size);
+        this.setInteractive(new Phaser.Geom.Circle(0, 0, this.size / 2), Phaser.Geom.Circle.Contains);
     }
 
-    private createVisuals() {
-        // Circle background
-        this.circle = this.scene.add.graphics();
-        this.add(this.circle);
+    private createContent() {
+        // Background
+        this.bg = this.scene.add.graphics();
+        this.add(this.bg);
 
-        // Letter text - CREATE FIRST before updateCircle
-        const textColorHex = numberToHex(this.colors.textPrimary);
-        this.letterText = this.scene.add.text(0, 0, this.letter, {
+        // Text
+        const textColorHex = numberToHex(this.colors.textSecondary);
+        this.text = this.scene.add.text(0, 0, this.letter, {
             fontFamily: FONT_FAMILY_PRIMARY,
-            fontSize: `${this.radius}px`,
-            color: textColorHex,
+            fontSize: `${this.size * 0.6}px`,
+            color: textColorHex, // Initial color, will be updated by drawBackground
             fontStyle: 'bold'
-        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
-        this.add(this.letterText);
+        }).setOrigin(0.5).setResolution(GAME_RESOLUTION);
+        this.add(this.text);
 
-        // Now update circle (which modifies letterText color)
-        this.updateCircle();
+        this.drawBackground();
     }
 
-    private updateCircle() {
-        this.circle.clear();
+    private drawBackground() {
+        this.bg.clear();
+        const radius = this.size / 2;
         const textPrimaryHex = numberToHex(this.colors.textPrimary);
+        const textSecondaryHex = numberToHex(this.colors.textSecondary);
 
         if (this.isUsed) {
             // Used state: Dimmed
-            this.circle.fillStyle(this.colors.secondary, 0.5);
-            this.circle.fillCircle(0, 0, this.radius);
-            this.letterText.setColor(numberToHex(this.colors.textSecondary));
+            this.bg.fillStyle(this.colors.secondary, 0.5);
+            this.bg.fillCircle(0, 0, radius);
+            this.text.setColor(textSecondaryHex);
         } else if (this.isSelected) {
             // Selected state: Accent
-            this.circle.fillStyle(this.colors.accent, 1);
-            this.circle.fillCircle(0, 0, this.radius);
-            this.circle.lineStyle(3, 0xffffff, 0.8);
-            this.circle.strokeCircle(0, 0, this.radius);
-            this.letterText.setColor('#FFFFFF');
+            this.bg.fillStyle(this.colors.accent, 1);
+            this.bg.fillCircle(0, 0, radius);
+            this.bg.lineStyle(3, 0xffffff, 0.8);
+            this.bg.strokeCircle(0, 0, radius);
+            this.text.setColor('#FFFFFF');
         } else {
             // Normal state: Primary
-            this.circle.fillStyle(this.colors.letterCircleBg, 1);
-            this.circle.fillCircle(0, 0, this.radius);
-            this.circle.lineStyle(2, this.colors.letterCircleBorder, 1);
-            this.circle.strokeCircle(0, 0, this.radius);
-            this.letterText.setColor(textPrimaryHex);
+            this.bg.fillStyle(this.colors.letterCircleBg, 1);
+            this.bg.fillCircle(0, 0, radius);
+            this.bg.lineStyle(2, this.colors.letterCircleBorder, 1);
+            this.bg.strokeCircle(0, 0, radius);
+            this.text.setColor(textPrimaryHex);
         }
     }
 
     public select() {
         if (this.isUsed) return;
         this.isSelected = true;
-        this.updateCircle();
-        this.onSelectCallback?.();
+        this.drawBackground();
     }
 
     public deselect() {
         this.isSelected = false;
-        this.updateCircle();
-        this.onDeselectCallback?.();
+        this.drawBackground();
     }
 
     public setUsed(used: boolean) {
         this.isUsed = used;
-        this.updateCircle();
+        this.drawBackground();
     }
 
     public reset() {
         this.isSelected = false;
         this.isUsed = false;
-        this.updateCircle();
+        this.drawBackground();
     }
 }

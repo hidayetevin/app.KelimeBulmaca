@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { FONT_FAMILY_PRIMARY } from '@/utils/constants';
+import { FONT_FAMILY_PRIMARY, GAME_RESOLUTION } from '@/utils/constants';
 import ThemeManager from '@/managers/ThemeManager';
 import AudioManager from '@/managers/AudioManager';
 
@@ -58,7 +58,7 @@ export default class Button extends Phaser.GameObjects.Container {
             color: '#FFFFFF',
             fontStyle: 'bold',
             align: 'center'
-        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
+        }).setOrigin(0.5).setResolution(GAME_RESOLUTION);
         this.add(this.btnText);
 
         // Hit Area

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { FONT_FAMILY_PRIMARY } from '@/utils/constants';
+import { FONT_FAMILY_PRIMARY, GAME_RESOLUTION } from '@/utils/constants';
 import ThemeManager from '@/managers/ThemeManager';
 
 export interface CurrentWordDisplayConfig {
@@ -36,7 +36,7 @@ export default class CurrentWordDisplay extends Phaser.GameObjects.Container {
             fontSize: '32px',
             color: '#FFFFFF',
             fontStyle: 'bold'
-        }).setOrigin(0.5).setResolution(window.devicePixelRatio);
+        }).setOrigin(0.5).setResolution(GAME_RESOLUTION);
         this.add(this.wordText);
     }
 

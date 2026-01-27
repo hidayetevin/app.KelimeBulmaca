@@ -50,7 +50,8 @@ export default class LetterPalette extends Phaser.GameObjects.Container {
                 x: x,
                 y: y,
                 letter: letter,
-                radius: radius
+                size: radius * 2,
+                index: index
             });
 
             this.nodes.push(node);
