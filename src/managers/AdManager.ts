@@ -1,23 +1,10 @@
 import GameManager from '@/managers/GameManager';
-
-// Google AdMob Test IDs
-const TEST_ADS = {
-    ANDROID: {
-        BANNER: 'ca-app-pub-3940256099942544/6300978111',
-        INTERSTITIAL: 'ca-app-pub-3940256099942544/1033173712',
-        REWARDED: 'ca-app-pub-3940256099942544/5224354917'
-    },
-    IOS: {
-        BANNER: 'ca-app-pub-3940256099942544/2934735716',
-        INTERSTITIAL: 'ca-app-pub-3940256099942544/4411468910',
-        REWARDED: 'ca-app-pub-3940256099942544/1712485313'
-    }
-};
+import { AD_IDS } from '@/utils/constants';
 
 class AdManager {
     private static instance: AdManager;
     private isAdMobAvailable: boolean = false;
-    private isTestMode: boolean = true;
+    private isTestMode: boolean = false;
 
     // Capacitor AdMob References
     private AdMob: any = null;
@@ -51,8 +38,8 @@ class AdManager {
 
                 await this.AdMob.initialize({
                     requestTrackingAuthorization: true,
-                    testingDevices: ['2077ef9a63d2b398840261c8221a0c9b'],
-                    initializeForTesting: true,
+                    // testingDevices: ['2077ef9a63d2b398840261c8221a0c9b'], // Removed for production
+                    initializeForTesting: false,
                 });
 
                 this.isAdMobAvailable = true;
@@ -122,7 +109,7 @@ class AdManager {
         }
 
         try {
-            const adId = TEST_ADS.ANDROID.BANNER;
+            const adId = AD_IDS.BANNER;
 
             await this.AdMob.showBanner({
                 adId: adId,
@@ -151,7 +138,7 @@ class AdManager {
         try {
             console.log('↻ Preloading Interstitial...');
             await this.AdMob.prepareInterstitial({
-                adId: TEST_ADS.ANDROID.INTERSTITIAL,
+                adId: AD_IDS.INTERSTITIAL,
                 isTesting: this.isTestMode
             });
         } catch (e) {
@@ -190,7 +177,7 @@ class AdManager {
         try {
             console.log('↻ Preloading Rewarded...');
             await this.AdMob.prepareRewardVideoAd({
-                adId: TEST_ADS.ANDROID.REWARDED,
+                adId: AD_IDS.REWARDED,
                 isTesting: this.isTestMode
             });
         } catch (e) {

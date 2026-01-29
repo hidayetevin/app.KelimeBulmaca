@@ -134,11 +134,11 @@ export const DAILY_REWARDS = [
 export const AD_COOLDOWN_SECONDS = 120; // Interstitial reklamlar arası minimum süre (2 dk)
 export const REWARDED_AD_REWARD_STARS = 5; // Rewarded reklam ödülü
 
-// Test AdMob IDs (Production'da değiştirilecek)
+// Production AdMob IDs
 export const AD_IDS = {
-    BANNER: 'ca-app-pub-3940256099942544/6300978111',
-    INTERSTITIAL: 'ca-app-pub-3940256099942544/1033173712',
-    REWARDED: 'ca-app-pub-3940256099942544/5224354917',
+    BANNER: 'ca-app-pub-4190858087915294/9589942066',
+    INTERSTITIAL: 'ca-app-pub-4190858087915294/3889659295',
+    REWARDED: 'ca-app-pub-4190858087915294/8100367048',
 } as const;
 
 // ==================== STORAGE KEYS ====================
