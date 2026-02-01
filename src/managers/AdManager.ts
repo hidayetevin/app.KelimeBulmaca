@@ -40,6 +40,10 @@ class AdManager {
                     requestTrackingAuthorization: true,
                     // testingDevices: ['2077ef9a63d2b398840261c8221a0c9b'], // Removed for production
                     initializeForTesting: false,
+                    // ✅ Google Play Families Policy Compliance
+                    tagForChildDirectedTreatment: false,    // App is NOT designed for children
+                    tagForUnderAgeOfConsent: false,          // Users are NOT under age of consent
+                    maxAdContentRating: 'G'                  // Only General Audience ads (Family-safe)
                 });
 
                 this.isAdMobAvailable = true;

@@ -122,6 +122,24 @@ export default class MainMenuScene extends Phaser.Scene {
         // 5. Banner Ad
         AdManager.showBanner();
 
+        // ✅ Google Play Policy: Add "Reklam" label above banner
+        // This clearly differentiates ads from app content
+        this.add.text(
+            width / 2,
+            height - 60, // 60px above bottom (banner is at bottom)
+            'Reklam / Advertisement',
+            {
+                fontFamily: 'Arial',
+                fontSize: '11px',
+                color: '#999999',
+                backgroundColor: '#00000022',
+                padding: { x: 8, y: 3 }
+            }
+        )
+            .setOrigin(0.5, 0.5)
+            .setDepth(9999) // High z-index above other elements
+            .setScrollFactor(0); // Fixed position
+
         // 6. Fade In
         fadeIn(this, logoText, 800);
     }
