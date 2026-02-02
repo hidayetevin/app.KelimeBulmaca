@@ -19,7 +19,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("upload-keystore.jks")
+            storeFile file("../../../AAB Files/KelimeUstasi.jks")  // ✅ Doğru keystore (SHA1 eşleşti!)
             storePassword "kelimeustasi123"
             keyAlias "upload"
             keyPassword "kelimeustasi123"
