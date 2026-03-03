@@ -26,7 +26,7 @@ export default class HintModal {
             scene: this.scene,
             x: GAME_WIDTH / 2,
             y: GAME_HEIGHT / 2,
-            width: 300,
+            width: 320,
             height: 350,
             title: 'İPUCU AL',
             showCloseButton: true,
@@ -75,8 +75,9 @@ export default class HintModal {
             x: 0,
             y: 20,
             text: '🎬 REKLAM İZLE & KAZAN',
-            width: 240,
+            width: 270,
             height: 50,
+            fontSize: 16,
             style: 'primary',
             backgroundColor: 0x8B5CF6, // Purple-ish for Ad
             onClick: () => {
@@ -104,10 +105,11 @@ export default class HintModal {
             x: 0,
             y: 90,
             text: `${this.config.hintCost} ⭐ Harca`,
-            width: 240,
+            width: 270,
             height: 50,
-            style: canAfford ? 'secondary' : 'secondary', // Could add 'disabled' style
-            backgroundColor: canAfford ? 0xF59E0B : 0xCBD5E1, // Orange vs Grey
+            fontSize: 16,
+            style: canAfford ? 'secondary' : 'secondary',
+            backgroundColor: canAfford ? 0xF59E0B : 0xCBD5E1,
             onClick: () => {
                 if (canAfford) {
                     this.config.onUseStars();

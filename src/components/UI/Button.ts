@@ -61,6 +61,9 @@ export default class Button extends Phaser.GameObjects.Container {
         }).setOrigin(0.5).setResolution(GAME_RESOLUTION);
         this.add(this.btnText);
 
+        // Auto-shrink font if text overflows button width
+        this.fitTextToButton();
+
         // Hit Area
         this.hitAreaRect = this.scene.add.rectangle(0, 0, this.config.width, this.config.height, 0x000000, 0);
         this.add(this.hitAreaRect);
@@ -76,6 +79,15 @@ export default class Button extends Phaser.GameObjects.Container {
 
         // Initial Draw
         this.draw();
+    }
+
+    private fitTextToButton() {
+        const maxWidth = this.config.width! - 24; // 12px padding each side
+        let fontSize = this.config.fontSize!;
+        while (this.btnText.width > maxWidth && fontSize > 10) {
+            fontSize -= 1;
+            this.btnText.setFontSize(fontSize);
+        }
     }
 
     private draw() {
