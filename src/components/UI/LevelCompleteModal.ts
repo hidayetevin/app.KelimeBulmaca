@@ -121,7 +121,7 @@ export default class LevelCompleteModal extends Phaser.GameObjects.Container {
             scene: this.sceneRef,
             x: 0,
             y: buttonYUserInfo,
-            text: '📺 2x KAZAN',
+            text: '📺 REKLAM İZLE (2x)',
             width: modalWidth - 60,
             height: 60,
             style: 'primary', // Maybe a special style for ads?

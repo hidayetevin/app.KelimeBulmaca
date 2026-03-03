@@ -109,6 +109,21 @@ export default class GameScene extends Phaser.Scene {
             this.startTime = this.time.now;
             this.elapsedTime = 0;
             this.isGameReady = true;
+
+            // ✅ Google Play Policy: Add "Reklam" label for Banner
+            this.add.text(
+                GAME_WIDTH / 2,
+                GAME_HEIGHT - 60,
+                'Reklam / Advertisement',
+                {
+                    fontFamily: 'Arial',
+                    fontSize: '11px',
+                    color: '#999999',
+                    backgroundColor: '#00000044', // Darker bg for contrast in game
+                    padding: { x: 8, y: 3 }
+                }
+            ).setOrigin(0.5).setDepth(100);
+
             console.log('🎮 GameScene: Create sequence finished');
         }).catch(error => {
             console.error('❌ CRITICAL Error in loadCrosswordData:', error);

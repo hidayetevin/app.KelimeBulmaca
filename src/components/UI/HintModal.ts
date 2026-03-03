@@ -74,7 +74,7 @@ export default class HintModal {
             scene: this.scene,
             x: 0,
             y: 20,
-            text: '🎬 İzle ve Kazan',
+            text: '🎬 REKLAM İZLE & KAZAN',
             width: 240,
             height: 50,
             style: 'primary',

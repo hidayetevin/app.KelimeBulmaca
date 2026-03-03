@@ -14,6 +14,8 @@ export default class LetterPalette extends Phaser.GameObjects.Container {
     private selectedNodes: CircularLetterNode[] = [];
     private selectionLine: Phaser.GameObjects.Graphics;
     private isDragging: boolean = false;
+    private activePointerId: number | null = null;
+    private lastLocalPos: { x: number, y: number } | null = null;
     private onWordSubmitCallback: (word: string) => void;
 
     constructor(config: LetterPaletteConfig) {
@@ -64,50 +66,77 @@ export default class LetterPalette extends Phaser.GameObjects.Container {
         this.scene.input.on('pointerdown', this.onPointerDown, this);
         this.scene.input.on('pointermove', this.onPointerMove, this);
         this.scene.input.on('pointerup', this.onPointerUp, this);
+        this.scene.input.on('pointerupoutside', this.onPointerUp, this);
     }
 
     private onPointerDown(pointer: Phaser.Input.Pointer) {
+        if (this.isDragging) return;
+
         const worldPoint = this.scene.cameras.main.getWorldPoint(pointer.x, pointer.y);
         const localPoint = this.pointToContainer(worldPoint);
 
         const node = this.getNodeAtPosition(localPoint.x, localPoint.y);
         if (node && !node.isUsed) {
             this.isDragging = true;
+            this.activePointerId = pointer.id;
             this.selectedNodes = [node];
             node.select();
             this.updateSelectionLine();
+            this.lastLocalPos = { x: localPoint.x, y: localPoint.y };
         }
     }
 
     private onPointerMove(pointer: Phaser.Input.Pointer) {
-        if (!this.isDragging) return;
+        if (!this.isDragging || pointer.id !== this.activePointerId) return;
 
         const worldPoint = this.scene.cameras.main.getWorldPoint(pointer.x, pointer.y);
         const localPoint = this.pointToContainer(worldPoint);
 
-        const node = this.getNodeAtPosition(localPoint.x, localPoint.y);
+        if (this.lastLocalPos) {
+            const dist = Phaser.Math.Distance.Between(this.lastLocalPos.x, this.lastLocalPos.y, localPoint.x, localPoint.y);
+            const steps = Math.max(1, Math.ceil(dist / 10)); // Stepping to prevent fast-swipe skipping
 
-        if (node && !node.isUsed) {
-            const index = this.selectedNodes.indexOf(node);
+            let selectionChanged = false;
 
-            if (index === -1) {
-                // New node - add to selection
-                this.selectedNodes.push(node);
-                node.select();
-                this.updateSelectionLine();
-            } else if (index === this.selectedNodes.length - 2) {
-                // Backtrack - remove last node
-                const removed = this.selectedNodes.pop();
-                removed?.deselect();
+            for (let i = 1; i <= steps; i++) {
+                const t = i / steps;
+                const px = Phaser.Math.Interpolation.Linear([this.lastLocalPos.x, localPoint.x], t);
+                const py = Phaser.Math.Interpolation.Linear([this.lastLocalPos.y, localPoint.y], t);
+
+                const node = this.getNodeAtPosition(px, py);
+
+                if (node && !node.isUsed) {
+                    const index = this.selectedNodes.indexOf(node);
+
+                    if (index === -1) {
+                        this.selectedNodes.push(node);
+                        node.select();
+                        selectionChanged = true;
+                    } else if (index === this.selectedNodes.length - 2) {
+                        const removed = this.selectedNodes.pop();
+                        removed?.deselect();
+                        selectionChanged = true;
+                    }
+                }
+            }
+
+            if (selectionChanged) {
                 this.updateSelectionLine();
             }
         }
+
+        this.lastLocalPos = { x: localPoint.x, y: localPoint.y };
+
+        // Follow the finger visually
+        this.updateSelectionLine(localPoint);
     }
 
-    private onPointerUp() {
-        if (!this.isDragging) return;
+    private onPointerUp(pointer: Phaser.Input.Pointer) {
+        if (!this.isDragging || pointer.id !== this.activePointerId) return;
 
         this.isDragging = false;
+        this.activePointerId = null;
+        this.lastLocalPos = null;
 
         const word = this.selectedNodes.map(n => n.letter).join('');
 
@@ -128,10 +157,11 @@ export default class LetterPalette extends Phaser.GameObjects.Container {
         return null;
     }
 
-    private updateSelectionLine() {
+    private updateSelectionLine(currentPointer?: { x: number, y: number }) {
         this.selectionLine.clear();
 
-        if (this.selectedNodes.length < 2) return;
+        if (this.selectedNodes.length === 0) return;
+        if (this.selectedNodes.length === 1 && !currentPointer) return;
 
         this.selectionLine.lineStyle(8, 0x3B82F6, 0.8);
         this.selectionLine.beginPath();
@@ -144,6 +174,10 @@ export default class LetterPalette extends Phaser.GameObjects.Container {
             this.selectionLine.lineTo(node.x, node.y);
         }
 
+        if (currentPointer) {
+            this.selectionLine.lineTo(currentPointer.x, currentPointer.y);
+        }
+
         this.selectionLine.strokePath();
     }
 
@@ -154,7 +188,6 @@ export default class LetterPalette extends Phaser.GameObjects.Container {
     }
 
     public markLettersAsUsed(word: string) {
-        // Mark used letters (optional feature)
         const letters = word.split('');
         letters.forEach(letter => {
             const node = this.nodes.find(n => n.letter === letter && !n.isUsed);
@@ -173,6 +206,7 @@ export default class LetterPalette extends Phaser.GameObjects.Container {
         this.scene.input.off('pointerdown', this.onPointerDown, this);
         this.scene.input.off('pointermove', this.onPointerMove, this);
         this.scene.input.off('pointerup', this.onPointerUp, this);
+        this.scene.input.off('pointerupoutside', this.onPointerUp, this);
         super.destroy();
     }
 }

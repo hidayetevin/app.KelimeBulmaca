@@ -281,6 +281,20 @@ export class CrosswordGenerator {
         direction: 'horizontal' | 'vertical',
         placedWords: CrosswordWord[]
     ): boolean {
+        // Yeni Kural 1: Aynı satırda birden fazla yatay kelime olamaz
+        if (direction === 'horizontal') {
+            if (placedWords.some(w => w.direction === 'horizontal' && w.startRow === startRow)) {
+                return false;
+            }
+        }
+
+        // Yeni Kural 2: Aynı sütunda birden fazla dikey kelime olamaz
+        if (direction === 'vertical') {
+            if (placedWords.some(w => w.direction === 'vertical' && w.startCol === startCol)) {
+                return false;
+            }
+        }
+
         const wordLen = word.length;
 
         // 1. Identify which cells this word will occupy
